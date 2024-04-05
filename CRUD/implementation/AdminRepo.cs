@@ -1,4 +1,6 @@
 ﻿using CRUD.interfaces;
+using Microsoft.EntityFrameworkCore;
+using OfficeMonitor.DataBase;
 using OfficeMonitor.DataBase.Models;
 using System;
 using System.Collections.Generic;
@@ -11,29 +13,63 @@ namespace CRUD.implementation
 {
     public class AdminRepo : IntRepoInterface<Admin>
     {
-        public Task<bool> DeleteById(int id)
+        private AppDbContext context;
+        public AdminRepo(AppDbContext _context)
         {
-            throw new NotImplementedException();
+            context = _context;
+        }
+        public async Task<bool> DeleteById(int id)
+        {
+            Admin? admin = (await GetAll()).FirstOrDefault(x => x != null && x.Id.Equals(id));
+            if (admin == null)
+                return false;
+            context.Admins.Remove(admin);
+            await context.SaveChangesAsync();
+            return true;
         }
 
-        public Task<List<Admin>> GetAll()
+        public async Task<List<Admin>> GetAll()
         {
-            throw new NotImplementedException();
+            return await context.Admins.ToListAsync();
         }
 
-        public Task<Admin> GetById(int id)
+        public async Task<Admin?> GetById(int id)
         {
-            throw new NotImplementedException();
+            return await context.Admins.FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public Task<Admin> GetTrackById(int id)
+        public async Task<Admin?> GetTrackById(int id)
         {
-            throw new NotImplementedException();
+            return await context.Admins.AsTracking().FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public Task<bool> Save(Admin entityToSave)
+        public async Task<bool> Save(Admin entityToSave)
         {
-            throw new NotImplementedException();
+            Admin? Admin = await GetTrackById(entityToSave.Id);
+            //Admin? admin = await context.Admins.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(AdminToSave.Id));
+            if (Admin != null && entityToSave != null)
+            {
+                /*context.Admins.Entry(AdminToSave).State = EntityState.Detached;
+                context.Set<Admin>().Update(AdminToSave);*/
+                Admin.Name = entityToSave.Name;
+                Admin.Surname = entityToSave.Surname;
+                Admin.Patronamic = entityToSave.Patronamic;
+                Admin.Login = entityToSave.Login;
+                Admin.Password = entityToSave.Password;
+
+                await context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                if (entityToSave != null)
+                {
+                    await context.Admins.AddAsync(entityToSave);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

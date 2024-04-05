@@ -47,7 +47,7 @@ namespace CRUD.implementation
         {
             MyAction? action = await GetTrackById(entityToSave.Id);
             //Admin? admin = await context.Admins.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(AdminToSave.Id));
-            if (action != null)
+            if (action != null && entityToSave != null)
             {
                 /*context.Admins.Entry(AdminToSave).State = EntityState.Detached;
                 context.Set<Admin>().Update(AdminToSave);*/

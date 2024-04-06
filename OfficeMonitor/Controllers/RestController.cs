@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using DataBase.Repository.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using OfficeMonitor.DataBase.Models;
 using OfficeMonitor.DTOs;
 using OfficeMonitor.Models;
 using OfficeMonitor.Services.MasterService;

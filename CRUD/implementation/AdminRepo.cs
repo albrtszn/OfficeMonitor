@@ -1,12 +1,12 @@
 ﻿using CRUD.interfaces;
 using Microsoft.EntityFrameworkCore;
-using OfficeMonitor.DataBase;
-using OfficeMonitor.DataBase.Models;
+using DataBase.Repository.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataBase.Repository;
 
 
 namespace CRUD.implementation

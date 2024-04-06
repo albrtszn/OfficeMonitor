@@ -1,5 +1,5 @@
-﻿using OfficeMonitor.DataBase.Models;
-using OfficeMonitor.DataBase;
+﻿using DataBase.Repository.Models;
+using DataBase.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +51,6 @@ namespace CRUD.implementation
                 /*context.Profiles.Entry(ProfileToSave).State = EntityState.Detached;
                 context.Set<Profile>().Update(ProfileToSave);*/
                 Profile.Name = entityToSave.Name;
-                Profile.IdCompany = entityToSave.IdCompany;
                 Profile.IdDepartment = entityToSave.IdDepartment;
 
                 await context.SaveChangesAsync();

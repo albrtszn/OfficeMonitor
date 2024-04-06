@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CRUD.implementation;
-using OfficeMonitor.DataBase.Models;
+using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
-using Action = OfficeMonitor.DataBase.Models.Action;
+using Action = DataBase.Repository.Models.Action;
 
 namespace OfficeMonitor.Services
 {

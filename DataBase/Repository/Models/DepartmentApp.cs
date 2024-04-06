@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace OfficeMonitor.DataBase.Models;
+namespace DataBase.Repository.Models;
 
 [Table("DepartmentApp")]
 public partial class DepartmentApp

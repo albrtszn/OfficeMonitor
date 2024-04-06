@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace OfficeMonitor.DataBase.Models;
+namespace DataBase.Repository.Models;
 
 [Table("Company")]
 public partial class Company
@@ -47,10 +47,10 @@ public partial class Company
     [Column("dateOfEndPayment", TypeName = "datetime")]
     public DateTime? DateOfEndPayment { get; set; }
 
+    [InverseProperty("IdCompanyNavigation")]
+    public virtual ICollection<Department> Departments { get; set; } = new List<Department>();
+
     [ForeignKey("IdPlan")]
     [InverseProperty("Companies")]
     public virtual Plan? IdPlanNavigation { get; set; }
-
-    [InverseProperty("IdCompanyNavigation")]
-    public virtual ICollection<Profile> Profiles { get; set; } = new List<Profile>();
 }

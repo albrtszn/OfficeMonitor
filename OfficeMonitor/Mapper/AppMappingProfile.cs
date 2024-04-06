@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using OfficeMonitor.DataBase.Models;
+using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
-using Action = OfficeMonitor.DataBase.Models.Action;
-using Profile = OfficeMonitor.DataBase.Models.Profile;
+using Action = DataBase.Repository.Models.Action;
+using Profile = DataBase.Repository.Models.Profile;
 
 namespace OfficeMonitor.Mapper
 {

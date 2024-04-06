@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace OfficeMonitor.DataBase.Models;
+namespace DataBase.Repository.Models;
 
 [Table("Department")]
 public partial class Department
@@ -21,11 +21,18 @@ public partial class Department
     [StringLength(100)]
     public string? Description { get; set; }
 
+    [Column("idCompany")]
+    public int? IdCompany { get; set; }
+
     [InverseProperty("IdDepartmentNavigation")]
     public virtual ICollection<DepartmentApp> DepartmentApps { get; set; } = new List<DepartmentApp>();
 
     [InverseProperty("IdDepartmentNavigation")]
     public virtual ICollection<DepartmentManager> DepartmentManagers { get; set; } = new List<DepartmentManager>();
+
+    [ForeignKey("IdCompany")]
+    [InverseProperty("Departments")]
+    public virtual Company? IdCompanyNavigation { get; set; }
 
     [InverseProperty("IdDepartmentNavigation")]
     public virtual ICollection<Profile> Profiles { get; set; } = new List<Profile>();

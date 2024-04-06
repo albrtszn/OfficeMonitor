@@ -1,5 +1,5 @@
-﻿using OfficeMonitor.DataBase.Models;
-using OfficeMonitor.DataBase;
+﻿using DataBase.Repository.Models;
+using DataBase.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;

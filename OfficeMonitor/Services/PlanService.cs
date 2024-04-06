@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CRUD.implementation;
-using OfficeMonitor.DataBase.Models;
+using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
 
 namespace OfficeMonitor.Services

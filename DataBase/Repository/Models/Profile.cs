@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace OfficeMonitor.DataBase.Models;
+namespace DataBase.Repository.Models;
 
 [Table("Profile")]
 public partial class Profile
@@ -17,18 +17,11 @@ public partial class Profile
     [StringLength(50)]
     public string? Name { get; set; }
 
-    [Column("idCompany")]
-    public int? IdCompany { get; set; }
-
     [Column("idDepartment")]
     public int? IdDepartment { get; set; }
 
     [InverseProperty("IdProfileNavigation")]
     public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
-
-    [ForeignKey("IdCompany")]
-    [InverseProperty("Profiles")]
-    public virtual Company? IdCompanyNavigation { get; set; }
 
     [ForeignKey("IdDepartment")]
     [InverseProperty("Profiles")]

@@ -1,17 +1,17 @@
 ﻿using CRUD.interfaces;
 using Microsoft.EntityFrameworkCore;
-using OfficeMonitor.DataBase;
-using OfficeMonitor.DataBase.Models;
+using DataBase.Repository.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MyAction = OfficeMonitor.DataBase.Models.Action;
+using DataBase.Repository;
+using Action = DataBase.Repository.Models.Action;
 
 namespace CRUD.implementation
 {
-    public class ActionRepo : IntRepoInterface<MyAction>
+    public class ActionRepo : IntRepoInterface<Action>
     {
         private AppDbContext context;
         public ActionRepo(AppDbContext _context)
@@ -20,7 +20,7 @@ namespace CRUD.implementation
         }
         public async Task<bool> DeleteById(int id)
         {
-            MyAction? action = (await GetAll()).FirstOrDefault(x=> x!=null && x.Id.Equals(id));
+            Action? action = (await GetAll()).FirstOrDefault(x=> x!=null && x.Id.Equals(id));
             if (action == null) 
                 return false;
             context.Actions.Remove(action);
@@ -28,24 +28,24 @@ namespace CRUD.implementation
             return true;
         }
 
-        public async Task<List<MyAction>> GetAll()
+        public async Task<List<Action>> GetAll()
         {
             return await context.Actions.ToListAsync();
         }
 
-        public async Task<MyAction?> GetById(int id)
+        public async Task<Action?> GetById(int id)
         {
             return await context.Actions.FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public async Task<MyAction?> GetTrackById(int id)
+        public async Task<Action?> GetTrackById(int id)
         {
             return await context.Actions.AsTracking().FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public async Task<bool> Save(MyAction entityToSave)
+        public async Task<bool> Save(Action entityToSave)
         {
-            MyAction? action = await GetTrackById(entityToSave.Id);
+            Action? action = await GetTrackById(entityToSave.Id);
             //Admin? admin = await context.Admins.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(AdminToSave.Id));
             if (action != null && entityToSave != null)
             {

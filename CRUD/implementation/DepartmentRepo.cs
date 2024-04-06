@@ -1,5 +1,5 @@
-﻿using OfficeMonitor.DataBase.Models;
-using OfficeMonitor.DataBase;
+﻿using DataBase.Repository.Models;
+using DataBase.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +52,7 @@ namespace CRUD.implementation
                 context.Set<Department>().Update(DepartmentToSave);*/
                 Department.Name = entityToSave.Name;
                 Department.Description = entityToSave.Description;
+                Department.IdCompany = entityToSave.IdCompany;
 
                 await context.SaveChangesAsync();
                 return true;

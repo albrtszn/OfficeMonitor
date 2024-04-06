@@ -6,6 +6,7 @@ using OfficeMonitor.DataBase;
 using OfficeMonitor.Mapper;
 using OfficeMonitor.Services;
 using Newtonsoft.Json.Serialization;
+using OfficeMonitor.Services.MasterService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +17,35 @@ builder.Services.AddScoped<AppDbContext>();
 builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 
 builder.Services.AddScoped<ActionRepo>();
+builder.Services.AddScoped<AdminRepo>();
+builder.Services.AddScoped<AppRepo>();
+builder.Services.AddScoped<CompanyRepo>();
+builder.Services.AddScoped<CustomerRequestRepo>();
+builder.Services.AddScoped<DepartmentAppRepo>();
+builder.Services.AddScoped<DepartmentManagerRepo>();
+builder.Services.AddScoped<DepartmentRepo>();
+builder.Services.AddScoped<EmployeeRepo>();
+builder.Services.AddScoped<ManagerRepo>();
+builder.Services.AddScoped<PlanRepo>();
+builder.Services.AddScoped<ProfileRepo>();
+builder.Services.AddScoped<TypeAppRepo>();
+builder.Services.AddScoped<WorkTimeRepo>();
 
 builder.Services.AddScoped<ActionService>();
+builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<AppService>();
+builder.Services.AddScoped<CompanyService>();
+builder.Services.AddScoped<CustomerRequestService>();
+builder.Services.AddScoped<DepartmentAppService>();
+builder.Services.AddScoped<DepartmentManagerService>();
+builder.Services.AddScoped<DepartmentService>();
+builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<ManagerService>();
+builder.Services.AddScoped<PlanService>();
+builder.Services.AddScoped<ProfileService>();
+builder.Services.AddScoped<TypeAppService>();
+builder.Services.AddScoped<WorkTimeService>();
+builder.Services.AddScoped<MasterService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     //options.UseSqlServer(builder.Configuration.GetConnectionString("DefautConnection"))
@@ -31,7 +59,7 @@ builder.Services.AddControllers()
    });
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Personal-Testing-System", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "OfficeMonitor", Version = "v1" });
 
     c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
     {
@@ -56,7 +84,7 @@ builder.Services.AddSwaggerGen(c =>
                             new string[] {}
         }
                 });
-    //c.EnableAnnotations();
+    c.EnableAnnotations();
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

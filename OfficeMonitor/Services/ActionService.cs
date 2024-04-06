@@ -1,4 +1,5 @@
-﻿using CRUD.implementation;
+﻿using AutoMapper;
+using CRUD.implementation;
 using OfficeMonitor.DataBase.Models;
 using OfficeMonitor.DTOs;
 using Action = OfficeMonitor.DataBase.Models.Action;
@@ -7,62 +8,50 @@ namespace OfficeMonitor.Services
 {
     public class ActionService
     {
-        /*private ActionRepo ActionRepo;
-        public ActionService(ActionRepo _ActionRepo)
+        private ActionRepo ActionRepo;
+        private IMapper mapper;
+        public ActionService(ActionRepo _ActionRepo, IMapper _mapper)
         {
-            this.ActionRepo = _ActionRepo;
+            ActionRepo = _ActionRepo;
+            mapper = _mapper;
         }
 
-        public async Task<bool> DeleteActionById(int id)
+        public async Task<bool> DeleteById(int id)
         {
             return await ActionRepo.DeleteById(id);
         }
 
-        public async Task<List<Action>> GetAllActions()
+        public async Task<List<Action>> GetAll()
         {
             return await ActionRepo.GetAll();
         }
 
-        public async Task<List<ActionDto>> GetAllActionDtos()
+        public async Task<List<ActionDto>> GetAllDtos()
         {
             List<ActionDto> Actions = new List<ActionDto>();
-            List<Action> list = await ActionRepo.GetAllActions();
-            list.ForEach(x => Actions.Add(ConvertToActionDto(x)));
+            List<Action> list = await ActionRepo.GetAll();
+            list.ForEach(x => Actions.Add(mapper.Map<ActionDto>(x)));
             return Actions;
         }
 
-        public async Task<Action> GetActionById(int id)
+        public async Task<Action?> GetById(int id)
         {
-            return await ActionRepo.GetActionById(id);
+            return await ActionRepo.GetById(id);
         }
 
-        public async Task<Action> GetActionByLogin(int login)
+        public async Task<ActionDto> GetDtoById(int id)
         {
-            Action? Action = (await ActionRepo.GetAllActions())
-                                    .FirstOrDefault(x => x != null &&
-                                                         !x.Login.IsNullOrEmpty() &&
-                                                         x.Login.Equals(login));
-            return Action;
+            return mapper.Map<ActionDto>(await ActionRepo.GetById(id));
         }
 
-        public async Task<ActionDto> GetActionDtoById(string id)
+        public async Task<bool> Save(Action ActionToSave)
         {
-            return ConvertToActionDto(await ActionRepo.GetActionById(id));
+            return await ActionRepo.Save(ActionToSave);
         }
 
-        public async Task<bool> SaveAction(Action ActionToSave)
+        public async Task<bool> Save(ActionDto ActionDtoToSave)
         {
-            return await ActionRepo.SaveAction(ActionToSave);
+            return await ActionRepo.Save(mapper.Map<Action>(ActionDtoToSave));
         }
-
-        public async Task<bool> SaveAction(ActionDto ActionDtoToSave)
-        {
-            return await ActionRepo.SaveAction(ConvertToAction(ActionDtoToSave));
-        }
-
-        public async Task<bool> SaveAction(AddActionModel ActionDtoToAdd)
-        {
-            return await ActionRepo.SaveAction(ConvertToAction(ActionDtoToAdd));
-        }*/
     }
 }

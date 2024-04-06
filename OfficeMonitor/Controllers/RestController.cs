@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeMonitor.DataBase.Models;
 using OfficeMonitor.DTOs;
+using OfficeMonitor.Models;
+using OfficeMonitor.Services.MasterService;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json.Serialization;
 
 namespace OfficeMonitor.Controllers
@@ -14,11 +18,14 @@ namespace OfficeMonitor.Controllers
     {
         private readonly ILogger<HomeController> logger;
         private IMapper mapper;
+        private MasterService ms;
 
-        public RestController(ILogger<HomeController> _logger, IMapper _mapper)
+        public RestController(ILogger<HomeController> _logger, IMapper _mapper,
+                              MasterService _ms)
         {
             logger = _logger;
             mapper = _mapper;
+            ms = _ms;
         }
 
         [HttpGet("Ping")]
@@ -43,7 +50,64 @@ namespace OfficeMonitor.Controllers
 
             var emplDto = mapper.Map<EmployeeDto>(empl);
 
-            return Ok(new { message = $"{DateTime.Now} Employee type: {emplDto.GetType()} ." , emplDto});
+            return Ok(new { message = $"{DateTime.Now} Employee type: {emplDto.GetType()} .", emplDto });
+        }
+
+        /*
+         *  Department
+         */
+        [SwaggerOperation(Tags = new[] { "Rest/Department" })]
+        [HttpGet("GetDepartments")]
+        public async Task<IActionResult> GetDepartments() {
+            return Ok(await ms.Department.GetAllDtos());
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Department" })]
+        [HttpPost("GetDepartment")]
+        public async Task<IActionResult> GetDepartment([FromBody] IntIdModel? id)
+        {
+            if (id == null || !id.Id.HasValue || id.Id == 0)
+                return BadRequest("ошибка:Невалидное значение");
+            DepartmentDto? dto = await ms.Department.GetDtoById(id.Id.Value);
+            if (dto == null)
+                return NotFound("ошибка:Запись не найдена");
+            return Ok(dto);
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Department" })]
+        [HttpPost("AddDepartment")]
+        public async Task<IActionResult> AddDepartment([FromBody] AddDepartmentModel? model)
+        {
+            if (model == null || model.Name.IsNullOrEmpty() || model.Description.IsNullOrEmpty())
+                return BadRequest("ошибка:невалидное значение");
+            await ms.Department.Save(model);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Department" })]
+        [HttpPost("UpdateDepartment")]
+        public async Task<IActionResult> UpdateDepartment([FromBody] DepartmentDto? dto)
+        {
+            if(dto == null || dto.Id <= 0 || dto.Name.IsNullOrEmpty() || dto.Description.IsNullOrEmpty())
+                return BadRequest("ошибка:невалидное значение");
+            Department? department = await ms.Department.GetById(dto.Id);
+            if (department == null)
+                return NotFound("ошибка:Запись не найдена");
+            await ms.Department.Save(dto);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Department" })]
+        [HttpDelete("DeleteDepartment")]
+        public async Task<IActionResult> DeleteDepartment([FromBody] IntIdModel? id)
+        {
+            if (id == null || !id.Id.HasValue || id.Id == 0)
+                return BadRequest("ошибка:невалидное значение");
+            Department? department = await ms.Department.GetById(id.Id.Value);
+            if (department == null)
+                return NotFound("ошибка:Запись не найдена");
+            await ms.Department.DeleteById(id.Id.Value);
+            return Ok();
         }
     }
 }

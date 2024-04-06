@@ -1,16 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using OfficeMonitor.Models;
+using OfficeMonitor.Services.MasterService;
 using System.Diagnostics;
 
 namespace OfficeMonitor.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<HomeController> logger;
+        private MasterService ms;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> _logger, MasterService _ms)
         {
-            _logger = logger;
+            logger = _logger;
+            ms = _ms;
         }
 
         public IActionResult Index()
@@ -19,6 +22,11 @@ namespace OfficeMonitor.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Login()
         {
             return View();
         }

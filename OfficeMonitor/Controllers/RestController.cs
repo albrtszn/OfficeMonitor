@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeMonitor.DTOs;
+using OfficeMonitor.ErrorHandler.Errors;
 using OfficeMonitor.Models;
 using OfficeMonitor.Services.MasterService;
 using Swashbuckle.AspNetCore.Annotations;
@@ -29,7 +30,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [HttpGet("Ping")]
-        public IActionResult Ping()
+        public async Task<IActionResult> Ping()
         {
             return Ok(new { message = $"Ping: {HttpContext.Request.Host + HttpContext.Request.Path} {DateTime.Now}." });
         }
@@ -47,7 +48,6 @@ namespace OfficeMonitor.Controllers
                 Password = "password",
                 IdProfile = 1
             };
-
             var emplDto = mapper.Map<EmployeeDto>(empl);
 
             return Ok(new { message = $"{DateTime.Now} Employee type: {emplDto.GetType()} .", emplDto });

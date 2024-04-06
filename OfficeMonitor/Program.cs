@@ -2,11 +2,12 @@ using CRUD.implementation;
 using CRUD.interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using OfficeMonitor.DataBase;
 using OfficeMonitor.Mapper;
 using OfficeMonitor.Services;
 using Newtonsoft.Json.Serialization;
 using OfficeMonitor.Services.MasterService;
+using DataBase.Repository;
+using OfficeMonitor.ErrorHandler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,6 +91,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<ErrorHandler>();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DataBase.Repository.Models;
 
 [Table("CustomerRequest")]
+[Index("Email", Name = "UQ__Customer__AB6E6164BBEB6FA9", IsUnique = true)]
 public partial class CustomerRequest
 {
     [Key]
@@ -20,4 +21,7 @@ public partial class CustomerRequest
     [Column("name")]
     [StringLength(150)]
     public string? Name { get; set; }
+
+    [Column("isReplyed")]
+    public bool? IsReplyed { get; set; }
 }

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DataBase.Repository.Models;
 
 [Table("Employee")]
+[Index("Login", Name = "UQ__Employee__7838F27261F42656", IsUnique = true)]
 public partial class Employee
 {
     [Key]

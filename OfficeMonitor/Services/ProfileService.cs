@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CRUD.implementation;
 using OfficeMonitor.DTOs;
+using OfficeMonitor.Models;
 using Profile = DataBase.Repository.Models.Profile;
 
 namespace OfficeMonitor.Services
@@ -51,6 +52,11 @@ namespace OfficeMonitor.Services
         public async Task<bool> Save(ProfileDto ProfileDtoToSave)
         {
             return await ProfileRepo.Save(mapper.Map<Profile>(ProfileDtoToSave));
+        }
+
+        public async Task<bool> Save(AddProfileModel ProfileModelToSave)
+        {
+            return await ProfileRepo.Save(mapper.Map<Profile>(ProfileModelToSave));
         }
     }
 }

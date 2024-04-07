@@ -2,6 +2,9 @@
 using CRUD.implementation;
 using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
+using OfficeMonitor.MiddleWares;
+using OfficeMonitor.MiddleWares.Authorization;
+using OfficeMonitor.Models;
 
 namespace OfficeMonitor.Services
 {
@@ -9,10 +12,13 @@ namespace OfficeMonitor.Services
     {
         private EmployeeRepo EmployeeRepo;
         private IMapper mapper;
-        public EmployeeService(EmployeeRepo _EmployeeRepo, IMapper _mapper)
+        private JwtProvider jwt;
+        public EmployeeService(EmployeeRepo _EmployeeRepo, IMapper _mapper,
+                               JwtProvider _jwt)
         {
             EmployeeRepo = _EmployeeRepo;
             mapper = _mapper;
+            jwt = _jwt;
         }
 
         public async Task<bool> DeleteById(int id)
@@ -38,6 +44,31 @@ namespace OfficeMonitor.Services
             return await EmployeeRepo.GetById(id);
         }
 
+        public async Task<Employee?> GetByEmail(string email)
+        {
+            Employee? employee = (await EmployeeRepo.GetAll())
+                .FirstOrDefault(x => x!= null && x.Login!= null 
+                                && x.Login.Equals(email));
+            return employee;
+        }
+
+        public async Task<string?> Login(string email, string password)
+        {
+            Employee? employee = await GetByEmail(email);
+            if (employee == null)
+                return "error";
+            if(PasswordHasher.Verify(password, employee.Password))
+            {
+                string token = jwt.GenerateToken(employee);
+                return token;
+            }
+            else
+            {
+                return "error";
+            }
+
+        }
+
         public async Task<EmployeeDto> GetDtoById(int id)
         {
             return mapper.Map<EmployeeDto>(await EmployeeRepo.GetById(id));
@@ -45,12 +76,20 @@ namespace OfficeMonitor.Services
 
         public async Task<bool> Save(Employee EmployeeToSave)
         {
+            EmployeeToSave.Password = PasswordHasher.Generate(EmployeeToSave.Password);
             return await EmployeeRepo.Save(EmployeeToSave);
         }
 
         public async Task<bool> Save(EmployeeDto EmployeeDtoToSave)
         {
+            EmployeeDtoToSave.Password = PasswordHasher.Generate(EmployeeDtoToSave.Password);
             return await EmployeeRepo.Save(mapper.Map<Employee>(EmployeeDtoToSave));
+        }
+
+        public async Task<bool> Save(AddEmployeeModel EmployeeModelToSave)
+        {
+            EmployeeModelToSave.Password = PasswordHasher.Generate(EmployeeModelToSave.Password);
+            return await EmployeeRepo.Save(mapper.Map<Employee>(EmployeeModelToSave));
         }
     }
 }

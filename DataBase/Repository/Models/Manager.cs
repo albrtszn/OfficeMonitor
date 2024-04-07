@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DataBase.Repository.Models;
 
 [Table("Manager")]
+[Index("Login", Name = "UQ__Manager__7838F272BF621C35", IsUnique = true)]
 public partial class Manager
 {
     [Key]

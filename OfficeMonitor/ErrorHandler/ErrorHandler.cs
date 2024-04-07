@@ -34,7 +34,7 @@ namespace OfficeMonitor.ErrorHandler
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await context.Response.WriteAsJsonAsync(new
                 {
-                    StatusCode = StatusCodes.Status404NotFound,
+                    StatusCode = StatusCodes.Status401Unauthorized,
                     Message = ex.Message
                 });
             }
@@ -43,7 +43,7 @@ namespace OfficeMonitor.ErrorHandler
                 context.Response.StatusCode = StatusCodes.Status403Forbidden;
                 await context.Response.WriteAsJsonAsync(new
                 {
-                    StatusCode = StatusCodes.Status404NotFound,
+                    StatusCode = StatusCodes.Status403Forbidden,
                     Message = ex.Message
                 });
             }
@@ -52,14 +52,21 @@ namespace OfficeMonitor.ErrorHandler
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await context.Response.WriteAsJsonAsync(new
                 {
-                    StatusCode = StatusCodes.Status404NotFound,
+                    StatusCode = StatusCodes.Status400BadRequest,
                     Message = ex.Message
                 });
             }
+            // todo override catch exception
+            /*
             catch (Exception ex)
             {
-                await context.Response.WriteAsJsonAsync(ex);
-            }
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    StatusCode = ex.Source,
+                    Message = ex.Message
+                });
+            }*/
         }
     }
 }

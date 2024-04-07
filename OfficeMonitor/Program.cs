@@ -1,14 +1,19 @@
 using CRUD.implementation;
-using CRUD.interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using OfficeMonitor.Mapper;
 using OfficeMonitor.Services;
-using Newtonsoft.Json.Serialization;
 using OfficeMonitor.Services.MasterService;
 using DataBase.Repository;
 using OfficeMonitor.ErrorHandler;
+using OfficeMonitor.MiddleWares.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Reflection;
+using Microsoft.Extensions.Options;
 
+//todo 1) create BdContextConfiguration
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -32,6 +37,7 @@ builder.Services.AddScoped<ProfileRepo>();
 builder.Services.AddScoped<TypeAppRepo>();
 builder.Services.AddScoped<WorkTimeRepo>();
 
+builder.Services.AddScoped<JwtProvider>();
 builder.Services.AddScoped<ActionService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AppService>();
@@ -52,6 +58,35 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     //options.UseSqlServer(builder.Configuration.GetConnectionString("DefautConnection"))
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
 );
+
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new()
+        {
+            // указывает, будет ли валидироваться издатель при валидации токена
+            ValidateIssuer = false,
+            // будет ли валидироваться потребитель токена
+            ValidateAudience = false,
+            // будет ли валидироваться время существования
+            ValidateLifetime = true,
+            // установка ключа безопасности
+            // todo secret key
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ssseeecccrrreeettt_kkkeeeyyy_12345")),
+            // валидация ключа безопасности
+            ValidateIssuerSigningKey = true,
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["cookie#1"];
+                return Task.CompletedTask;
+            }
+        };
+    });
 
 builder.Services.AddControllers()
    .AddJsonOptions(options =>
@@ -85,6 +120,14 @@ builder.Services.AddSwaggerGen(c =>
                             new string[] {}
         }
                 });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
+    /*var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);*/
+
     c.EnableAnnotations();
 });
 builder.Services.AddEndpointsApiExplorer();
@@ -113,6 +156,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Strict,
+    HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
+    Secure = CookieSecurePolicy.Always
+});
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

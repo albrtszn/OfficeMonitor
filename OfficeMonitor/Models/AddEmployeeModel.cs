@@ -5,15 +5,21 @@ namespace OfficeMonitor.Models
     public class AddEmployeeModel
     {
         [StringLength(50)]
-        public string? Name { get; set; }
+        [Required]
+        public string Name { get; set; }
+        [Required]
         [StringLength(50)]
-        public string? Surname { get; set; }
+        public string Surname { get; set; }
+        [Required]
         [StringLength(50)]
-        public string? Patronamic { get; set; }
+        public string Patronamic { get; set; }
+        [Required]
         [StringLength(255)]
         public string Login { get; set; } = null!;
+        [Required]
         [StringLength(150)]
         public string Password { get; set; } = null!;
-        public int? IdProfile { get; set; }
+        [Required]
+        public int IdProfile { get; set; }
     }
 }

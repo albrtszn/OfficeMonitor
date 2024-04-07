@@ -5,7 +5,9 @@ namespace OfficeMonitor.Models
     public class AddProfileModel
     {
         [StringLength(50)]
-        public string? Name { get; set; }
-        public int? IdDepartment { get; set; }
+        [Required(ErrorMessage = "Name is required")]
+        public string Name { get; set; }
+        [Required(ErrorMessage = "IdDepartment is required")]
+        public int IdDepartment { get; set; }
     }
 }

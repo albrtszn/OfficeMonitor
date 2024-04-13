@@ -52,6 +52,7 @@ namespace CRUD.implementation
                 /*context.Admins.Entry(AdminToSave).State = EntityState.Detached;
                 context.Set<Admin>().Update(AdminToSave);*/
                 Admin.Name = entityToSave.Name;
+                Admin.IdClaimRole = entityToSave.IdClaimRole;
                 Admin.Surname = entityToSave.Surname;
                 Admin.Patronamic = entityToSave.Patronamic;
                 Admin.Login = entityToSave.Login;

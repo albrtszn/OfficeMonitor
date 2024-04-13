@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CRUD.implementation;
 using DataBase.Repository.Models;
+using Microsoft.IdentityModel.Tokens;
 using OfficeMonitor.DTOs;
+using OfficeMonitor.Models.ClaimRole;
 
 namespace OfficeMonitor.Services
 {
@@ -23,6 +25,27 @@ namespace OfficeMonitor.Services
         public async Task<List<ClaimRole>> GetAll()
         {
             return await ClaimRoleRepo.GetAll();
+        }
+
+        public async Task<ClaimRole?> GetEmployeeRole()
+        {
+            return (await ClaimRoleRepo.GetAll()).FirstOrDefault(x=> x!=null && !x.Name.IsNullOrEmpty()
+                                                                     && x.Name.Equals("USER"));
+        }
+        public async Task<ClaimRole?> GetManagerRole()
+        {
+            return (await ClaimRoleRepo.GetAll()).FirstOrDefault(x => x != null && !x.Name.IsNullOrEmpty()
+                                                                     && x.Name.Equals("MANAGER"));
+        }
+        public async Task<ClaimRole?> GetAdminRole()
+        {
+            return (await ClaimRoleRepo.GetAll()).FirstOrDefault(x => x != null && !x.Name.IsNullOrEmpty()
+                                                                     && x.Name.Equals("ADMIN"));
+        }
+        public async Task<ClaimRole?> GetCompanyRole()
+        {
+            return (await ClaimRoleRepo.GetAll()).FirstOrDefault(x => x != null && !x.Name.IsNullOrEmpty()
+                                                                     && x.Name.Equals("COMPANY"));
         }
 
         public async Task<List<ClaimRoleDto>> GetAllDtos()
@@ -49,6 +72,16 @@ namespace OfficeMonitor.Services
         }
 
         public async Task<bool> Save(ClaimRoleDto ClaimRoleDtoToSave)
+        {
+            return await ClaimRoleRepo.Save(mapper.Map<ClaimRole>(ClaimRoleDtoToSave));
+        }
+
+        public async Task<bool> Save(AddClaimRoleModel ClaimRoleDtoToSave)
+        {
+            return await ClaimRoleRepo.Save(mapper.Map<ClaimRole>(ClaimRoleDtoToSave));
+        }        
+        
+        public async Task<bool> Save(UpdateClaimRoleModel ClaimRoleDtoToSave)
         {
             return await ClaimRoleRepo.Save(mapper.Map<ClaimRole>(ClaimRoleDtoToSave));
         }

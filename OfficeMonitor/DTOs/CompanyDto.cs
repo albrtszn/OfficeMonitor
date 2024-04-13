@@ -6,6 +6,8 @@ namespace OfficeMonitor.DTOs
     public class CompanyDto
     {
         public int Id { get; set; }
+        public int? IdClaimRole { get; set; }
+
         [StringLength(255)]
         public string Login { get; set; } = null!;
         [StringLength(150)]

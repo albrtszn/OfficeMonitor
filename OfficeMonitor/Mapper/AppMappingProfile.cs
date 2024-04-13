@@ -2,6 +2,8 @@
 using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
 using OfficeMonitor.Models;
+using OfficeMonitor.Models.ClaimRole;
+using OfficeMonitor.Models.Company;
 using Action = DataBase.Repository.Models.Action;
 using Profile = DataBase.Repository.Models.Profile;
 
@@ -43,7 +45,12 @@ namespace OfficeMonitor.Mapper
             CreateMap<Department, AddDepartmentModel>().ReverseMap();
             CreateMap<Profile, AddProfileModel>().ReverseMap();
             CreateMap<Employee, AddEmployeeModel>().ReverseMap();
+            CreateMap<Manager, AddManagerModel>().ReverseMap();
+            CreateMap<Admin, AddAdminModel>().ReverseMap();
+            CreateMap<ClaimRole, AddClaimRoleModel>().ReverseMap();
             //  UpdateModels
+            CreateMap<ClaimRole, UpdateClaimRoleModel>().ReverseMap();
+            CreateMap<Company, UpdateCompanyModel>().ReverseMap();
         }
     }
 }

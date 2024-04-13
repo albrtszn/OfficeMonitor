@@ -51,7 +51,6 @@ namespace CRUD.implementation
                 /*context.TokenAdmins.Entry(TokenAdminToSave).State = EntityState.Detached;
                 context.Set<TokenAdmin>().Update(TokenAdminToSave);*/
                 TokenAdmin.IdAdmin = entityToSave.IdAdmin;
-                TokenAdmin.IdClaimRole = entityToSave.IdClaimRole;
                 TokenAdmin.Token = entityToSave.Token;
                 TokenAdmin.DateOfCreation = entityToSave.DateOfCreation;
 

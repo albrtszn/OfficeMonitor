@@ -4,20 +4,23 @@ using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
 using OfficeMonitor.MiddleWares;
 using OfficeMonitor.MiddleWares.Authorization;
+using OfficeMonitor.Models;
 
 namespace OfficeMonitor.Services
 {
     public class AdminService
     {
         private AdminRepo AdminRepo;
+        private ClaimRoleRepo ClaimRoleRepo;
         private IMapper mapper;
         private JwtProvider jwt;
         public AdminService(AdminRepo _AdminRepo, IMapper _mapper,
-                            JwtProvider _jwt)
+                            JwtProvider _jwt, ClaimRoleRepo _ClaimRoleRepo)
         {
             AdminRepo = _AdminRepo;
             mapper = _mapper;
             jwt = _jwt;
+            ClaimRoleRepo = _ClaimRoleRepo;
         }
 
         public async Task<bool> DeleteById(int id)
@@ -58,7 +61,8 @@ namespace OfficeMonitor.Services
                 return null;
             if (PasswordHasher.Verify(password, admin.Password))
             {
-                string token = jwt.GenerateToken(admin);
+                ClaimRole role = (await ClaimRoleRepo.GetById(admin.IdClaimRole.Value));
+                string token = jwt.GenerateToken(admin, role != null ? role.Name : "ADMIN");
                 return token;
             }
             else
@@ -73,12 +77,29 @@ namespace OfficeMonitor.Services
 
         public async Task<bool> Save(Admin AdminToSave)
         {
+            AdminToSave.Password = PasswordHasher.Generate(AdminToSave.Password);
             return await AdminRepo.Save(AdminToSave);
         }
 
         public async Task<bool> Save(AdminDto AdminDtoToSave)
         {
+            AdminDtoToSave.Password = PasswordHasher.Generate(AdminDtoToSave.Password);
             return await AdminRepo.Save(mapper.Map<Admin>(AdminDtoToSave));
+        }        
+        
+        public async Task<bool> Save(AddAdminModel AdminToSave)
+        {
+            AdminToSave.Password = PasswordHasher.Generate(AdminToSave.Password);
+            return await AdminRepo.Save(mapper.Map<Admin>(AdminToSave));
+        }        
+        
+        public async Task<bool> Save(AddAdminModel AdminToSave, ClaimRole? claimRole)
+        {
+            Admin admin = mapper.Map<Admin>(AdminToSave);
+            admin.Password = PasswordHasher.Generate(admin.Password);
+            if (claimRole != null)
+                admin.IdClaimRole = claimRole.Id;
+            return await AdminRepo.Save(admin);
         }
     }
 }

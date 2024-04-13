@@ -18,14 +18,14 @@ public partial class ClaimRole
     public string Name { get; set; } = null!;
 
     [InverseProperty("IdClaimRoleNavigation")]
-    public virtual ICollection<TokenAdmin> TokenAdmins { get; set; } = new List<TokenAdmin>();
+    public virtual ICollection<Admin> Admins { get; set; } = new List<Admin>();
 
     [InverseProperty("IdClaimRoleNavigation")]
-    public virtual ICollection<TokenCompany> TokenCompanies { get; set; } = new List<TokenCompany>();
+    public virtual ICollection<Company> Companies { get; set; } = new List<Company>();
 
     [InverseProperty("IdClaimRoleNavigation")]
-    public virtual ICollection<TokenEmployee> TokenEmployees { get; set; } = new List<TokenEmployee>();
+    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
     [InverseProperty("IdClaimRoleNavigation")]
-    public virtual ICollection<TokenManager> TokenManagers { get; set; } = new List<TokenManager>();
+    public virtual ICollection<Manager> Managers { get; set; } = new List<Manager>();
 }

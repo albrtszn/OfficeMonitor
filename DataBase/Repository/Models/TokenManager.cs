@@ -16,19 +16,12 @@ public partial class TokenManager
     [Column("idManager")]
     public int? IdManager { get; set; }
 
-    [Column("idClaimRole")]
-    public int? IdClaimRole { get; set; }
-
     [Column("token")]
     [StringLength(250)]
     public string? Token { get; set; }
 
     [Column("dateOfCreation", TypeName = "datetime")]
     public DateTime? DateOfCreation { get; set; }
-
-    [ForeignKey("IdClaimRole")]
-    [InverseProperty("TokenManagers")]
-    public virtual ClaimRole? IdClaimRoleNavigation { get; set; }
 
     [ForeignKey("IdManager")]
     [InverseProperty("TokenManagers")]

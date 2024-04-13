@@ -51,7 +51,6 @@ namespace CRUD.implementation
                 /*context.TokenManagers.Entry(TokenManagerToSave).State = EntityState.Detached;
                 context.Set<TokenManager>().Update(TokenManagerToSave);*/
                 TokenManager.IdManager = entityToSave.IdManager;
-                TokenManager.IdClaimRole = entityToSave.IdClaimRole;
                 TokenManager.Token = entityToSave.Token;
                 TokenManager.DateOfCreation = entityToSave.DateOfCreation;
 

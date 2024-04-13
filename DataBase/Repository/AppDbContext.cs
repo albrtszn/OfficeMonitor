@@ -63,181 +63,181 @@ public partial class AppDbContext : DbContext
     {
         modelBuilder.Entity<Action>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Action__3213E83F1E0304AF");
+            entity.HasKey(e => e.Id).HasName("PK__Action__3213E83F9869D344");
 
             entity.HasOne(d => d.IdAppNavigation).WithMany(p => p.Actions)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Action__idApp__5CD6CB2B");
+                .HasConstraintName("FK__Action__idApp__619B8048");
 
             entity.HasOne(d => d.IdEmployeeNavigation).WithMany(p => p.Actions)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Action__idEmploy__5BE2A6F2");
+                .HasConstraintName("FK__Action__idEmploy__60A75C0F");
         });
 
         modelBuilder.Entity<Admin>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Admin__3213E83F7275672E");
+            entity.HasKey(e => e.Id).HasName("PK__Admin__3213E83FFE0E42DA");
+
+            entity.HasOne(d => d.IdClaimRoleNavigation).WithMany(p => p.Admins)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK__Admin__idClaimRo__3A81B327");
         });
 
         modelBuilder.Entity<App>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__App__3213E83FF07B5596");
+            entity.HasKey(e => e.Id).HasName("PK__App__3213E83FD2C1EDCC");
 
             entity.HasOne(d => d.IdTypeAppNavigation).WithMany(p => p.Apps)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__App__idTypeApp__5535A963");
+                .HasConstraintName("FK__App__idTypeApp__59FA5E80");
         });
 
         modelBuilder.Entity<ClaimRole>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ClaimRol__3213E83F113B7205");
+            entity.HasKey(e => e.Id).HasName("PK__ClaimRol__3213E83FE8BC1807");
         });
 
         modelBuilder.Entity<Company>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Company__3213E83FF116A134");
+            entity.HasKey(e => e.Id).HasName("PK__Company__3213E83F6DFF4EFE");
+
+            entity.HasOne(d => d.IdClaimRoleNavigation).WithMany(p => p.Companies)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK__Company__idClaim__44FF419A");
 
             entity.HasOne(d => d.IdPlanNavigation).WithMany(p => p.Companies)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Company__idPlan__4316F928");
+                .HasConstraintName("FK__Company__idPlan__46E78A0C");
         });
 
         modelBuilder.Entity<CustomerRequest>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Customer__3213E83F0F6C5BDE");
+            entity.HasKey(e => e.Id).HasName("PK__Customer__3213E83F4EA98EB7");
         });
 
         modelBuilder.Entity<Department>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Departme__3213E83F131F6EB0");
+            entity.HasKey(e => e.Id).HasName("PK__Departme__3213E83F49763EC3");
 
             entity.HasOne(d => d.IdCompanyNavigation).WithMany(p => p.Departments)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Departmen__idCom__45F365D3");
+                .HasConstraintName("FK__Departmen__idCom__49C3F6B7");
         });
 
         modelBuilder.Entity<DepartmentApp>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Departme__3213E83F56EAF32D");
+            entity.HasKey(e => e.Id).HasName("PK__Departme__3213E83F05D3704F");
 
             entity.HasOne(d => d.IdAppNavigation).WithMany(p => p.DepartmentApps)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Departmen__idApp__59063A47");
+                .HasConstraintName("FK__Departmen__idApp__5DCAEF64");
 
             entity.HasOne(d => d.IdDepartmentNavigation).WithMany(p => p.DepartmentApps)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Departmen__idDep__5812160E");
+                .HasConstraintName("FK__Departmen__idDep__5CD6CB2B");
         });
 
         modelBuilder.Entity<DepartmentManager>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Departme__3213E83FF9106335");
+            entity.HasKey(e => e.Id).HasName("PK__Departme__3213E83F98A0128F");
 
             entity.HasOne(d => d.IdDepartmentNavigation).WithMany(p => p.DepartmentManagers)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Departmen__idDep__6477ECF3");
+                .HasConstraintName("FK__Departmen__idDep__6A30C649");
 
             entity.HasOne(d => d.IdManagerNavigation).WithMany(p => p.DepartmentManagers)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Departmen__idMan__656C112C");
+                .HasConstraintName("FK__Departmen__idMan__6B24EA82");
         });
 
         modelBuilder.Entity<Employee>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Employee__3213E83F2EDCB01A");
+            entity.HasKey(e => e.Id).HasName("PK__Employee__3213E83FCFE031C6");
+
+            entity.HasOne(d => d.IdClaimRoleNavigation).WithMany(p => p.Employees)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK__Employee__idClai__534D60F1");
 
             entity.HasOne(d => d.IdProfileNavigation).WithMany(p => p.Employees)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Employee__idProf__5070F446");
+                .HasConstraintName("FK__Employee__idProf__5535A963");
         });
 
         modelBuilder.Entity<Manager>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Manager__3213E83F1CE6E7DA");
+            entity.HasKey(e => e.Id).HasName("PK__Manager__3213E83F87B7637A");
+
+            entity.HasOne(d => d.IdClaimRoleNavigation).WithMany(p => p.Managers)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK__Manager__idClaim__656C112C");
 
             entity.HasOne(d => d.IdProfileNavigation).WithMany(p => p.Managers)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Manager__idProfi__619B8048");
+                .HasConstraintName("FK__Manager__idProfi__6754599E");
         });
 
         modelBuilder.Entity<Plan>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Plans__3213E83F779A65BD");
+            entity.HasKey(e => e.Id).HasName("PK__Plans__3213E83F309994EE");
         });
 
         modelBuilder.Entity<Profile>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Profile__3213E83F314DDE95");
+            entity.HasKey(e => e.Id).HasName("PK__Profile__3213E83F26A4B1C2");
 
             entity.HasOne(d => d.IdDepartmentNavigation).WithMany(p => p.Profiles)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Profile__idDepar__4BAC3F29");
+                .HasConstraintName("FK__Profile__idDepar__4F7CD00D");
         });
 
         modelBuilder.Entity<TokenAdmin>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TokenAdm__3213E83F0B8C3B52");
+            entity.HasKey(e => e.Id).HasName("PK__TokenAdm__3213E83F980AAFAF");
 
             entity.HasOne(d => d.IdAdminNavigation).WithMany(p => p.TokenAdmins)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenAdmi__idAdm__71D1E811");
-
-            entity.HasOne(d => d.IdClaimRoleNavigation).WithMany(p => p.TokenAdmins)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenAdmi__idCla__72C60C4A");
+                .HasConstraintName("FK__TokenAdmi__idAdm__73BA3083");
         });
 
         modelBuilder.Entity<TokenCompany>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TokenCom__3213E83F054E9B0C");
-
-            entity.HasOne(d => d.IdClaimRoleNavigation).WithMany(p => p.TokenCompanies)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenComp__idCla__76969D2E");
+            entity.HasKey(e => e.Id).HasName("PK__TokenCom__3213E83F77827610");
 
             entity.HasOne(d => d.IdCompanyNavigation).WithMany(p => p.TokenCompanies)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenComp__idCom__75A278F5");
+                .HasConstraintName("FK__TokenComp__idCom__76969D2E");
         });
 
         modelBuilder.Entity<TokenEmployee>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TokenEmp__3213E83F2A1DAE6A");
-
-            entity.HasOne(d => d.IdClaimRoleNavigation).WithMany(p => p.TokenEmployees)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenEmpl__idCla__6B24EA82");
+            entity.HasKey(e => e.Id).HasName("PK__TokenEmp__3213E83F25EC08EB");
 
             entity.HasOne(d => d.IdEmployeeNavigation).WithMany(p => p.TokenEmployees)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenEmpl__idEmp__6A30C649");
+                .HasConstraintName("FK__TokenEmpl__idEmp__6E01572D");
         });
 
         modelBuilder.Entity<TokenManager>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TokenMan__3213E83FDBB96162");
-
-            entity.HasOne(d => d.IdClaimRoleNavigation).WithMany(p => p.TokenManagers)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenMana__idCla__6EF57B66");
+            entity.HasKey(e => e.Id).HasName("PK__TokenMan__3213E83F9AA0BED7");
 
             entity.HasOne(d => d.IdManagerNavigation).WithMany(p => p.TokenManagers)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenMana__idMan__6E01572D");
+                .HasConstraintName("FK__TokenMana__idMan__70DDC3D8");
         });
 
         modelBuilder.Entity<TypeApp>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TypeApp__3213E83F083F70B3");
+            entity.HasKey(e => e.Id).HasName("PK__TypeApp__3213E83F3882A751");
         });
 
         modelBuilder.Entity<WorkTime>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__WorkTime__3213E83F2084F89F");
+            entity.HasKey(e => e.Id).HasName("PK__WorkTime__3213E83FB206D91E");
 
             entity.HasOne(d => d.IdDepartmentNavigation).WithMany(p => p.WorkTimes)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__WorkTime__idDepa__48CFD27E");
+                .HasConstraintName("FK__WorkTime__idDepa__4CA06362");
         });
 
         OnModelCreatingPartial(modelBuilder);

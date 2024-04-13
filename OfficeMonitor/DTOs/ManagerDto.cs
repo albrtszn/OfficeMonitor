@@ -6,6 +6,8 @@ namespace OfficeMonitor.DTOs
     public class ManagerDto
     {
         public int Id { get; set; }
+        public int? IdClaimRole { get; set; }
+
         [StringLength(50)]
         public string? Name { get; set; }
         [StringLength(50)]

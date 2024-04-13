@@ -4,21 +4,23 @@ using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
 using OfficeMonitor.MiddleWares;
 using OfficeMonitor.MiddleWares.Authorization;
-using OfficeMonitor.Models;
+using OfficeMonitor.Models.Company;
 
 namespace OfficeMonitor.Services
 {
     public class CompanyService
     {
         private CompanyRepo CompanyRepo;
+        private ClaimRoleRepo ClaimRoleRepo;
         private IMapper mapper;
         private JwtProvider jwt;
         public CompanyService(CompanyRepo _CompanyRepo, IMapper _mapper,
-                              JwtProvider _jwt)
+                              JwtProvider _jwt, ClaimRoleRepo _ClaimRoleRepo)
         {
             CompanyRepo = _CompanyRepo;
             mapper = _mapper;
             jwt = _jwt;
+            ClaimRoleRepo = _ClaimRoleRepo;
         }
 
         public async Task<bool> DeleteById(int id)
@@ -64,7 +66,8 @@ namespace OfficeMonitor.Services
                 return null;
             if (PasswordHasher.Verify(password, company.Password))
             {
-                string token = jwt.GenerateToken(company);
+                ClaimRole role = (await ClaimRoleRepo.GetById(company.IdClaimRole.Value));
+                string token = jwt.GenerateToken(company, role != null ? role.Name : "COMPANY");
                 return token;
             }
             else
@@ -75,17 +78,35 @@ namespace OfficeMonitor.Services
 
         public async Task<bool> Save(Company CompanyToSave)
         {
+            CompanyToSave.Password = PasswordHasher.Generate(CompanyToSave.Password);
             return await CompanyRepo.Save(CompanyToSave);
         }
 
         public async Task<bool> Save(CompanyDto CompanyDtoToSave)
         {
+            CompanyDtoToSave.Password = PasswordHasher.Generate(CompanyDtoToSave.Password);
+            return await CompanyRepo.Save(mapper.Map<Company>(CompanyDtoToSave));
+        }        
+        
+        public async Task<bool> Save(UpdateCompanyModel CompanyDtoToSave)
+        {
+            CompanyDtoToSave.Password = PasswordHasher.Generate(CompanyDtoToSave.Password);
             return await CompanyRepo.Save(mapper.Map<Company>(CompanyDtoToSave));
         }
 
         public async Task<bool> Save(AddCompanyModel CompanyModelToSave)
         {
+            CompanyModelToSave.Password = PasswordHasher.Generate(CompanyModelToSave.Password);
             return await CompanyRepo.Save(mapper.Map<Company>(CompanyModelToSave));
+        }
+
+        public async Task<bool> Save(AddCompanyModel CompanyModelToSave, ClaimRole? claimRole)
+        {
+            Company company = mapper.Map<Company>(CompanyModelToSave);
+            company.Password = PasswordHasher.Generate(company.Password);
+            if (claimRole != null)
+                company.IdClaimRole = claimRole.Id;
+            return await CompanyRepo.Save(company);
         }
     }
 }

@@ -5,20 +5,23 @@ using OfficeMonitor.DTOs;
 using OfficeMonitor.MiddleWares;
 using OfficeMonitor.MiddleWares.Authorization;
 using OfficeMonitor.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace OfficeMonitor.Services
 {
     public class EmployeeService
     {
         private EmployeeRepo EmployeeRepo;
+        private ClaimRoleRepo ClaimRoleRepo;
         private IMapper mapper;
         private JwtProvider jwt;
         public EmployeeService(EmployeeRepo _EmployeeRepo, IMapper _mapper,
-                               JwtProvider _jwt)
+                               JwtProvider _jwt, ClaimRoleRepo claimRoleRepo)
         {
             EmployeeRepo = _EmployeeRepo;
             mapper = _mapper;
             jwt = _jwt;
+            ClaimRoleRepo = claimRoleRepo;
         }
 
         public async Task<bool> DeleteById(int id)
@@ -59,7 +62,8 @@ namespace OfficeMonitor.Services
                 return null;
             if(PasswordHasher.Verify(password, employee.Password))
             {
-                string token = jwt.GenerateToken(employee);
+                ClaimRole role = (await ClaimRoleRepo.GetById(employee.IdClaimRole.Value));
+                string token = jwt.GenerateToken(employee, role!=null? role.Name : "USER");
                 return token;
             }
             else
@@ -89,6 +93,15 @@ namespace OfficeMonitor.Services
         {
             EmployeeModelToSave.Password = PasswordHasher.Generate(EmployeeModelToSave.Password);
             return await EmployeeRepo.Save(mapper.Map<Employee>(EmployeeModelToSave));
+        }        
+        
+        public async Task<bool> Save(AddEmployeeModel EmployeeModelToSave, ClaimRole? claimRole)
+        {
+            EmployeeModelToSave.Password = PasswordHasher.Generate(EmployeeModelToSave.Password);
+            Employee employee = mapper.Map<Employee>(EmployeeModelToSave);
+            if (claimRole != null)
+                employee.IdClaimRole = claimRole.Id;
+            return await EmployeeRepo.Save(employee);
         }
     }
 }

@@ -51,7 +51,6 @@ namespace CRUD.implementation
                 /*context.TokenEmployees.Entry(TokenEmployeeToSave).State = EntityState.Detached;
                 context.Set<TokenEmployee>().Update(TokenEmployeeToSave);*/
                 TokenEmployee.IdEmployee = entityToSave.IdEmployee;
-                TokenEmployee.IdClaimRole = entityToSave.IdClaimRole;
                 TokenEmployee.Token = entityToSave.Token;
                 TokenEmployee.DateOfCreation = entityToSave.DateOfCreation;
 

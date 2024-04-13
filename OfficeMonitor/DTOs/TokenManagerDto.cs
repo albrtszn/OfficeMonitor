@@ -7,7 +7,6 @@ namespace OfficeMonitor.DTOs
     {
         public int Id { get; set; }
         public int? IdManager { get; set; }
-        public int? IdClaimRole { get; set; }
         [StringLength(250)]
         public string? Token { get; set; }
         public DateTime? DateOfCreation { get; set; }

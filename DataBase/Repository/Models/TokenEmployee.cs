@@ -16,19 +16,12 @@ public partial class TokenEmployee
     [Column("idEmployee")]
     public int? IdEmployee { get; set; }
 
-    [Column("idClaimRole")]
-    public int? IdClaimRole { get; set; }
-
     [Column("token")]
     [StringLength(250)]
     public string? Token { get; set; }
 
     [Column("dateOfCreation", TypeName = "datetime")]
     public DateTime? DateOfCreation { get; set; }
-
-    [ForeignKey("IdClaimRole")]
-    [InverseProperty("TokenEmployees")]
-    public virtual ClaimRole? IdClaimRoleNavigation { get; set; }
 
     [ForeignKey("IdEmployee")]
     [InverseProperty("TokenEmployees")]

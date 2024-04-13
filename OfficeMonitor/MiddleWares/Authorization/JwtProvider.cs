@@ -11,12 +11,11 @@ namespace OfficeMonitor.MiddleWares.Authorization
     {
         //todo JWT secret-key
         private string secret_key = "ssseeecccrrreeettt_kkkeeeyyy_12345";
-        public string GenerateToken(Employee employee)
+        public string GenerateToken(Employee employee, string role)
         {
-
             Claim[] claims = [
-                new("employeeId", employee.Id.ToString()),
-                new("role", "user")
+                new("userId", employee.Id.ToString()),
+                new("role", role)
                 ];
 
             SigningCredentials signInCreadentials = new SigningCredentials(
@@ -35,11 +34,11 @@ namespace OfficeMonitor.MiddleWares.Authorization
             return token;
         }
 
-        public string GenerateToken(Manager manager)
+        public string GenerateToken(Manager manager, string role)
         {
             Claim[] claims = [
-                new("managerId", manager.Id.ToString()),
-                new("role", "user")
+                new("userId", manager.Id.ToString()),
+                new("role", role)
                 ];
 
             SigningCredentials signInCreadentials = new SigningCredentials(
@@ -58,11 +57,11 @@ namespace OfficeMonitor.MiddleWares.Authorization
             return token;
         }
 
-        public string GenerateToken(Admin admin)
+        public string GenerateToken(Admin admin, string role)
         {
             Claim[] claims = [
-                new("adminId", admin.Id.ToString()),
-                new("role", "user")
+                new("userId", admin.Id.ToString()),
+                new("role", role)
                 ];
 
             SigningCredentials signInCreadentials = new SigningCredentials(
@@ -81,11 +80,11 @@ namespace OfficeMonitor.MiddleWares.Authorization
             return token;
         }
 
-        public string GenerateToken(Company company)
+        public string GenerateToken(Company company, string role)
         {
             Claim[] claims = [
                 new("companyId", company.Id.ToString()),
-                new("role", "user")
+                new("role", role)
                 ];
 
             SigningCredentials signInCreadentials = new SigningCredentials(

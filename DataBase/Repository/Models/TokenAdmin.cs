@@ -16,9 +16,6 @@ public partial class TokenAdmin
     [Column("idAdmin")]
     public int? IdAdmin { get; set; }
 
-    [Column("idClaimRole")]
-    public int? IdClaimRole { get; set; }
-
     [Column("token")]
     [StringLength(250)]
     public string? Token { get; set; }
@@ -29,8 +26,4 @@ public partial class TokenAdmin
     [ForeignKey("IdAdmin")]
     [InverseProperty("TokenAdmins")]
     public virtual Admin? IdAdminNavigation { get; set; }
-
-    [ForeignKey("IdClaimRole")]
-    [InverseProperty("TokenAdmins")]
-    public virtual ClaimRole? IdClaimRoleNavigation { get; set; }
 }

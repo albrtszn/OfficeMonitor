@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace OfficeMonitor.Models
+namespace OfficeMonitor.Models.Company
 {
-    public class AddCompanyModel
+    public class UpdateCompanyModel
     {
+        [Required]
+        public int Id { get; set; }
         [StringLength(255)]
         [Required]
         public string Login { get; set; } = null!;
@@ -18,13 +20,12 @@ namespace OfficeMonitor.Models
         public string Description { get; set; }
         [Required]
         public int IdPlan { get; set; }
-        // todo other fields
-        //[Required]
-        //public decimal? Balance { get; set; }
+        [Required]
+        public decimal? Balance { get; set; }
         [Required]
         public bool IsActive { get; set; }
-        //[Required]
-        //public bool? IsBanned { get; set; }
+        [Required]
+        public bool? IsBanned { get; set; }
         /*public DateTime? DateOfRegister { get; set; }
         public DateTime? DateOfEndPayment { get; set; }*/
     }

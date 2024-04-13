@@ -7,12 +7,15 @@ using Microsoft.EntityFrameworkCore;
 namespace DataBase.Repository.Models;
 
 [Table("Employee")]
-[Index("Login", Name = "UQ__Employee__7838F272F705AE81", IsUnique = true)]
+[Index("Login", Name = "UQ__Employee__7838F272C42D4C36", IsUnique = true)]
 public partial class Employee
 {
     [Key]
     [Column("id")]
     public int Id { get; set; }
+
+    [Column("idClaimRole")]
+    public int? IdClaimRole { get; set; }
 
     [Column("name")]
     [StringLength(50)]
@@ -39,6 +42,10 @@ public partial class Employee
 
     [InverseProperty("IdEmployeeNavigation")]
     public virtual ICollection<Action> Actions { get; set; } = new List<Action>();
+
+    [ForeignKey("IdClaimRole")]
+    [InverseProperty("Employees")]
+    public virtual ClaimRole? IdClaimRoleNavigation { get; set; }
 
     [ForeignKey("IdProfile")]
     [InverseProperty("Employees")]

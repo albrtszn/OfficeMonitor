@@ -50,6 +50,7 @@ namespace CRUD.implementation
             {
                 /*context.Managers.Entry(ManagerToSave).State = EntityState.Detached;
                 context.Set<Manager>().Update(ManagerToSave);*/
+                Manager.IdClaimRole = entityToSave.IdClaimRole;
                 Manager.Name = entityToSave.Name;
                 Manager.Surname = entityToSave.Surname;
                 Manager.Patronamic = entityToSave.Patronamic;

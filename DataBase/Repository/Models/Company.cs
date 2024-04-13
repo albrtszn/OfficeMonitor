@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DataBase.Repository.Models;
 
 [Table("Company")]
-[Index("Login", Name = "UQ__Company__7838F272C8F2AD99", IsUnique = true)]
+[Index("Login", Name = "UQ__Company__7838F272626A30BD", IsUnique = true)]
 public partial class Company
 {
     [Key]
@@ -54,4 +54,7 @@ public partial class Company
     [ForeignKey("IdPlan")]
     [InverseProperty("Companies")]
     public virtual Plan? IdPlanNavigation { get; set; }
+
+    [InverseProperty("IdCompanyNavigation")]
+    public virtual ICollection<TokenCompany> TokenCompanies { get; set; } = new List<TokenCompany>();
 }

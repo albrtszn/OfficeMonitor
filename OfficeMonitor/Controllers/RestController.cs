@@ -71,17 +71,17 @@ namespace OfficeMonitor.Controllers
         /// <summary>
         /// Login through email
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="model"></param>
         /// <returns>Status, token</returns>
         /// <remarks>
         /// Sample request:
-        ///
-        ///     POST /Todo
+        /// 
+        ///  POST /Login
         ///     {
         ///        "Login": "employee@gmail.com",
         ///        "Password": "password"
         ///     }
-        ///
+        ///     
         /// </remarks>
         /// <response code="201">Returns the newly token</response>
         /// <response code="400">If the LoginModel is incorrect</response>
@@ -93,20 +93,20 @@ namespace OfficeMonitor.Controllers
             {
                 throw new BadRequestException("Невалидное значение");
             }
-            string token = await ms.Employee.Login(model.Login, model.Password);
-            if (token.Equals("error"))
-                throw new NotFoundException("Запись не найдена");
+            string? token = await ms.Employee.Login(model.Login, model.Password);
+            if (token == null)
+                throw new NotFoundException("Неправильные данные");
 
             // todo cookie numberations
             HttpContext.Response.Cookies.Append("cookie#1", token);
 
-            return Ok(new { message = $"log succesful. token:{token}" });
+            return Ok(new { message = $"login succesful. token:{token}" });
         }
 
         /*
         *  #Plan
         */
-        [Authorize()]
+        [Authorize(Roles = "user")]
         [SwaggerOperation(Tags = new[] { "Rest/Plan" })]
         [HttpGet("GetPlans")]
         public async Task<IActionResult> GetPlans()

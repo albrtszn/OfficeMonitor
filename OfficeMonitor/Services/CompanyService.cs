@@ -2,6 +2,8 @@
 using CRUD.implementation;
 using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
+using OfficeMonitor.MiddleWares;
+using OfficeMonitor.MiddleWares.Authorization;
 using OfficeMonitor.Models;
 
 namespace OfficeMonitor.Services
@@ -10,10 +12,13 @@ namespace OfficeMonitor.Services
     {
         private CompanyRepo CompanyRepo;
         private IMapper mapper;
-        public CompanyService(CompanyRepo _CompanyRepo, IMapper _mapper)
+        private JwtProvider jwt;
+        public CompanyService(CompanyRepo _CompanyRepo, IMapper _mapper,
+                              JwtProvider _jwt)
         {
             CompanyRepo = _CompanyRepo;
             mapper = _mapper;
+            jwt = _jwt;
         }
 
         public async Task<bool> DeleteById(int id)
@@ -42,6 +47,30 @@ namespace OfficeMonitor.Services
         public async Task<CompanyDto> GetDtoById(int id)
         {
             return mapper.Map<CompanyDto>(await CompanyRepo.GetById(id));
+        }
+
+        public async Task<Company?> GetByEmail(string email)
+        {
+            Company? company = (await CompanyRepo.GetAll())
+                .FirstOrDefault(x => x != null && x.Login != null
+                                && x.Login.Equals(email));
+            return company;
+        }
+
+        public async Task<string?> Login(string email, string password)
+        {
+            Company? company = await GetByEmail(email);
+            if (company == null)
+                return null;
+            if (PasswordHasher.Verify(password, company.Password))
+            {
+                string token = jwt.GenerateToken(company);
+                return token;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<bool> Save(Company CompanyToSave)

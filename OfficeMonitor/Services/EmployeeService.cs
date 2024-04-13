@@ -56,7 +56,7 @@ namespace OfficeMonitor.Services
         {
             Employee? employee = await GetByEmail(email);
             if (employee == null)
-                return "error";
+                return null;
             if(PasswordHasher.Verify(password, employee.Password))
             {
                 string token = jwt.GenerateToken(employee);
@@ -64,9 +64,8 @@ namespace OfficeMonitor.Services
             }
             else
             {
-                return "error";
+                return null;
             }
-
         }
 
         public async Task<EmployeeDto> GetDtoById(int id)

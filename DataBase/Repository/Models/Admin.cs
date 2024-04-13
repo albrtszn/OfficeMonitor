@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DataBase.Repository.Models;
 
 [Table("Admin")]
-[Index("Login", Name = "UQ__Admin__7838F27283D8A6AD", IsUnique = true)]
+[Index("Login", Name = "UQ__Admin__7838F272E5B7C025", IsUnique = true)]
 public partial class Admin
 {
     [Key]
@@ -33,4 +33,7 @@ public partial class Admin
     [Column("password")]
     [StringLength(150)]
     public string Password { get; set; } = null!;
+
+    [InverseProperty("IdAdminNavigation")]
+    public virtual ICollection<TokenAdmin> TokenAdmins { get; set; } = new List<TokenAdmin>();
 }

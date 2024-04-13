@@ -16,13 +16,21 @@
         public ProfileService Profile { get; }
         public TypeAppService TypeApp { get; }
         public WorkTimeService WorkTime { get; }
+        public ClaimRoleService ClaimRole { get; }
+        public TokenEmployeeService TokenEmployee { get; }
+        public TokenManagerService TokenManager { get; }
+        public TokenAdminService TokenAdmin { get; }
+        public TokenCompanyService TokenCompany { get; }
 
         public MasterService(ActionService _Action, AdminService _Admin, AppService _App,
                              CompanyService _Company, CustomerRequestService _CustomerRequest,
                              DepartmentAppService _DepartmentApp, DepartmentManagerService _DepartmentManager,
                              DepartmentService _Department, EmployeeService _Employee,
                              ManagerService _Manager, PlanService _Plan, ProfileService _Profile,
-                             TypeAppService _TypeApp, WorkTimeService _WorkTime) { 
+                             TypeAppService _TypeApp, WorkTimeService _WorkTime, 
+                             ClaimRoleService _ClaimRole, TokenEmployeeService _TokenEmployee,
+                             TokenManagerService _TokenManager, TokenAdminService  _TokenAdmin,
+                             TokenCompanyService _TokenCompany) { 
             Action = _Action;
             Admin = _Admin;
             App = _App;
@@ -37,6 +45,12 @@
             Profile = _Profile;
             TypeApp = _TypeApp;
             WorkTime = _WorkTime;
+            ClaimRole = _ClaimRole;
+            TokenEmployee = _TokenEmployee;
+            TokenManager = _TokenManager;
+            TokenManager = _TokenManager;
+            TokenAdmin = _TokenAdmin;
+            TokenCompany = _TokenCompany;
         }
     }
 }

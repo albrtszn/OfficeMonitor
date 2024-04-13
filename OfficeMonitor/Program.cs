@@ -36,6 +36,11 @@ builder.Services.AddScoped<PlanRepo>();
 builder.Services.AddScoped<ProfileRepo>();
 builder.Services.AddScoped<TypeAppRepo>();
 builder.Services.AddScoped<WorkTimeRepo>();
+builder.Services.AddScoped<ClaimRoleRepo>();
+builder.Services.AddScoped<TokenEmployeeRepo>();
+builder.Services.AddScoped<TokenManagerRepo>();
+builder.Services.AddScoped<TokenAdminRepo>();
+builder.Services.AddScoped<TokenCompanyRepo>();
 
 builder.Services.AddScoped<JwtProvider>();
 builder.Services.AddScoped<ActionService>();
@@ -52,6 +57,11 @@ builder.Services.AddScoped<PlanService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<TypeAppService>();
 builder.Services.AddScoped<WorkTimeService>();
+builder.Services.AddScoped<ClaimRoleService>();
+builder.Services.AddScoped<TokenEmployeeService>();
+builder.Services.AddScoped<TokenManagerService>();
+builder.Services.AddScoped<TokenAdminService>();
+builder.Services.AddScoped<TokenCompanyService>();
 builder.Services.AddScoped<MasterService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>

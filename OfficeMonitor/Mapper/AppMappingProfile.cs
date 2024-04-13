@@ -10,6 +10,9 @@ namespace OfficeMonitor.Mapper
     public class AppMappingProfile : AutoMapper.Profile
     {
         public AppMappingProfile() {
+            /*
+             *  DTOs
+             */
             CreateMap<Action, ActionDto>().ReverseMap();
             CreateMap<Admin, AdminDto>().ReverseMap();
             CreateMap<App, AppDto>().ReverseMap();
@@ -24,6 +27,11 @@ namespace OfficeMonitor.Mapper
             CreateMap<Profile, ProfileDto>().ReverseMap();
             CreateMap<TypeApp, TypeAppDto>().ReverseMap();
             CreateMap<WorkTime, WorkTimeDto>().ReverseMap();
+            CreateMap<ClaimRole, ClaimRoleDto>().ReverseMap();
+            CreateMap<TokenEmployee, TokenEmployeeDto>().ReverseMap();
+            CreateMap<TokenManager, TokenManagerDto>().ReverseMap();
+            CreateMap<TokenAdmin, TokenAdminDto>().ReverseMap();
+            CreateMap<TokenCompany, TokenCompanyDto>().ReverseMap();
 
             /*
              *  Models

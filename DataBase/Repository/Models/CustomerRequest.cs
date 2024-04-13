@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DataBase.Repository.Models;
 
 [Table("CustomerRequest")]
-[Index("Email", Name = "UQ__Customer__AB6E6164BBEB6FA9", IsUnique = true)]
+[Index("Email", Name = "UQ__Customer__AB6E616460A04541", IsUnique = true)]
 public partial class CustomerRequest
 {
     [Key]

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DataBase.Repository.Models;
 
 [Table("Manager")]
-[Index("Login", Name = "UQ__Manager__7838F272BF621C35", IsUnique = true)]
+[Index("Login", Name = "UQ__Manager__7838F272EA7647C4", IsUnique = true)]
 public partial class Manager
 {
     [Key]
@@ -43,4 +43,7 @@ public partial class Manager
     [ForeignKey("IdProfile")]
     [InverseProperty("Managers")]
     public virtual Profile? IdProfileNavigation { get; set; }
+
+    [InverseProperty("IdManagerNavigation")]
+    public virtual ICollection<TokenManager> TokenManagers { get; set; } = new List<TokenManager>();
 }

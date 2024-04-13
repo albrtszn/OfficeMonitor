@@ -13,15 +13,18 @@ namespace OfficeMonitor.Services
     {
         private ManagerRepo ManagerRepo;
         private ClaimRoleRepo ClaimRoleRepo;
+        private TokenManagerRepo TokenManagerRepo;
         private IMapper mapper;
         private JwtProvider jwt;
         public ManagerService(ManagerRepo _ManagerRepo, IMapper _mapper,
-                              JwtProvider _jwt, ClaimRoleRepo _ClaimRoleRepo)
+                              JwtProvider _jwt, ClaimRoleRepo _ClaimRoleRepo, 
+                              TokenManagerRepo tokenManagerRepo)
         {
             ManagerRepo = _ManagerRepo;
             mapper = _mapper;
             jwt = _jwt;
             ClaimRoleRepo = _ClaimRoleRepo;
+            TokenManagerRepo = tokenManagerRepo;
         }
 
         public async Task<bool> DeleteById(int id)
@@ -67,9 +70,24 @@ namespace OfficeMonitor.Services
                 return null;
             if (PasswordHasher.Verify(password, manager.Password))
             {
-                ClaimRole role = (await ClaimRoleRepo.GetById(manager.IdClaimRole.Value));
-                string token = jwt.GenerateToken(manager, role != null ? role.Name : "MANAGER");
-                return token;
+                TokenManager? tokenManager = await TokenManagerRepo.GetByManagerId(manager.Id);
+                //  todo token ttl
+                if (!TokenManagerRepo.IsTokenExpired(tokenManager))
+                {
+                    return tokenManager.Token;
+                }
+                else
+                {
+                    ClaimRole role = (await ClaimRoleRepo.GetById(manager.IdClaimRole.Value));
+                    string token = jwt.GenerateToken(manager, role != null ? role.Name : "MANAGER");
+                    await TokenManagerRepo.Save(new TokenManager
+                    {
+                        IdManager = manager.Id,
+                        Token = token,
+                        DateOfCreation = DateTime.Now
+                    });
+                    return token;
+                }
             }
             else
             {

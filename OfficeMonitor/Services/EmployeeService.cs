@@ -13,15 +13,18 @@ namespace OfficeMonitor.Services
     {
         private EmployeeRepo EmployeeRepo;
         private ClaimRoleRepo ClaimRoleRepo;
+        private TokenEmployeeRepo TokenEmployeeRepo;
         private IMapper mapper;
         private JwtProvider jwt;
         public EmployeeService(EmployeeRepo _EmployeeRepo, IMapper _mapper,
-                               JwtProvider _jwt, ClaimRoleRepo claimRoleRepo)
+                               JwtProvider _jwt, ClaimRoleRepo claimRoleRepo, 
+                               TokenEmployeeRepo tokenEmployeeRepo)
         {
             EmployeeRepo = _EmployeeRepo;
             mapper = _mapper;
             jwt = _jwt;
             ClaimRoleRepo = claimRoleRepo;
+            TokenEmployeeRepo = tokenEmployeeRepo;
         }
 
         public async Task<bool> DeleteById(int id)
@@ -62,9 +65,23 @@ namespace OfficeMonitor.Services
                 return null;
             if(PasswordHasher.Verify(password, employee.Password))
             {
-                ClaimRole role = (await ClaimRoleRepo.GetById(employee.IdClaimRole.Value));
-                string token = jwt.GenerateToken(employee, role!=null? role.Name : "USER");
-                return token;
+                TokenEmployee? tokenEmployee = await TokenEmployeeRepo.GetByEmployeeId(employee.Id);
+                if (!TokenEmployeeRepo.IsTokenExpired(tokenEmployee))
+                {
+                    return tokenEmployee.Token;
+                }
+                else
+                {
+                    ClaimRole? role = (await ClaimRoleRepo.GetById(employee.IdClaimRole.Value));
+                    string token = jwt.GenerateToken(employee, role != null ? role.Name : "USER");
+                    await TokenEmployeeRepo.Save(new TokenEmployee
+                    {
+                        IdEmployee = employee.Id,
+                        Token = token,
+                        DateOfCreation = DateTime.Now
+                    });
+                    return token;
+                }
             }
             else
             {

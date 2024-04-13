@@ -12,15 +12,18 @@ namespace OfficeMonitor.Services
     {
         private CompanyRepo CompanyRepo;
         private ClaimRoleRepo ClaimRoleRepo;
+        private TokenCompanyRepo TokenCompanyRepo;
         private IMapper mapper;
         private JwtProvider jwt;
         public CompanyService(CompanyRepo _CompanyRepo, IMapper _mapper,
-                              JwtProvider _jwt, ClaimRoleRepo _ClaimRoleRepo)
+                              JwtProvider _jwt, ClaimRoleRepo _ClaimRoleRepo, 
+                              TokenCompanyRepo _TokenCompanyRepo)
         {
             CompanyRepo = _CompanyRepo;
             mapper = _mapper;
             jwt = _jwt;
             ClaimRoleRepo = _ClaimRoleRepo;
+            TokenCompanyRepo = _TokenCompanyRepo;
         }
 
         public async Task<bool> DeleteById(int id)
@@ -66,9 +69,23 @@ namespace OfficeMonitor.Services
                 return null;
             if (PasswordHasher.Verify(password, company.Password))
             {
-                ClaimRole role = (await ClaimRoleRepo.GetById(company.IdClaimRole.Value));
-                string token = jwt.GenerateToken(company, role != null ? role.Name : "COMPANY");
-                return token;
+                TokenCompany? tokenCompany = await TokenCompanyRepo.GetByCompanyId(company.Id);
+                if (!TokenCompanyRepo.IsTokenExpired(tokenCompany))
+                {
+                    return tokenCompany.Token;
+                }
+                else
+                {
+                    ClaimRole? role = (await ClaimRoleRepo.GetById(company.IdClaimRole.Value));
+                    string token = jwt.GenerateToken(company, role != null ? role.Name : "COMPANY");
+                    await TokenCompanyRepo.Save(new TokenCompany
+                    {
+                        IdCompany = company.Id,
+                        Token = token,
+                        DateOfCreation = DateTime.Now
+                    });
+                    return token;
+                }
             }
             else
             {

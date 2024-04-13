@@ -96,21 +96,25 @@ namespace OfficeMonitor.Controllers
             {
                 throw new BadRequestException("Невалидное значение");
             }
-
+            //  todo create Token in DB
             string? token = null;
-            if(await ms.Employee.GetByEmail(model.Login) != null)
+            Employee? employee = await ms.Employee.GetByEmail(model.Login);
+            Manager? manager = await ms.Manager.GetByEmail(model.Login);
+            Admin? admin = await ms.Admin.GetByEmail(model.Login);
+            Company? company = await ms.Company.GetByEmail(model.Login);
+            if(employee != null)
             {
                 token = await ms.Employee.Login(model.Login, model.Password);
             }
-            if (await ms.Manager.GetByEmail(model.Login) != null)
+            if (manager != null)
             {
                 token = await ms.Manager.Login(model.Login, model.Password);
             }
-            if (await ms.Admin.GetByEmail(model.Login) != null)
+            if (admin != null)
             {
                 token = await ms.Admin.Login(model.Login, model.Password);
             }
-            if (await ms.Company.GetByEmail(model.Login) != null)
+            if (company != null)
             {
                 token = await ms.Company.Login(model.Login, model.Password);
             }
@@ -150,6 +154,34 @@ namespace OfficeMonitor.Controllers
         public async Task<IActionResult> TestCompany()
         {
             return Ok("Success, company");
+        }
+
+        /*
+        *  #Tokens
+        */
+        [SwaggerOperation(Tags = new[] { "Rest/Token" })]
+        [HttpGet("GetEmployeeTokens")]
+        public async Task<IActionResult> GetEmployeeTokens()
+        {
+            return Ok(await ms.TokenEmployee.GetAllDtos());
+        }
+        [SwaggerOperation(Tags = new[] { "Rest/Token" })]
+        [HttpGet("GetManagerTokens")]
+        public async Task<IActionResult> GetManagerTokens()
+        {
+            return Ok(await ms.TokenManager.GetAllDtos());
+        }
+        [SwaggerOperation(Tags = new[] { "Rest/Token" })]
+        [HttpGet("GetAdminTokens")]
+        public async Task<IActionResult> GetAdminTokens()
+        {
+            return Ok(await ms.TokenAdmin.GetAllDtos());
+        }
+        [SwaggerOperation(Tags = new[] { "Rest/Token" })]
+        [HttpGet("GetCompanyTokens")]
+        public async Task<IActionResult> GetCompanyTokens()
+        {
+            return Ok(await ms.TokenCompany.GetAllDtos());
         }
 
         /*
@@ -482,7 +514,7 @@ namespace OfficeMonitor.Controllers
             Profile? profile = await ms.Profile.GetById(id.Id);
             if (profile == null)
                 throw new NotFoundException("Запись не найдена");
-            await ms.Department.DeleteById(id.Id);
+            await ms.Profile.DeleteById(id.Id);
             return Ok();
         }
 
@@ -550,7 +582,7 @@ namespace OfficeMonitor.Controllers
             Employee? company = await ms.Employee.GetById(id.Id);
             if (company == null)
                 throw new NotFoundException("Запись не найдена");
-            await ms.Department.DeleteById(id.Id);
+            await ms.Employee.DeleteById(id.Id);
             return Ok();
         }
 
@@ -618,7 +650,7 @@ namespace OfficeMonitor.Controllers
             Manager? company = await ms.Manager.GetById(id.Id);
             if (company == null)
                 throw new NotFoundException("Запись не найдена");
-            await ms.Department.DeleteById(id.Id);
+            await ms.Manager.DeleteById(id.Id);
             return Ok();
         }
 
@@ -680,7 +712,7 @@ namespace OfficeMonitor.Controllers
             Admin? company = await ms.Admin.GetById(id.Id);
             if (company == null)
                 throw new NotFoundException("Запись не найдена");
-            await ms.Department.DeleteById(id.Id);
+            await ms.Admin.DeleteById(id.Id);
             return Ok();
         }
     }

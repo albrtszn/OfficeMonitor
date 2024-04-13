@@ -37,6 +37,25 @@ namespace CRUD.implementation
             return await context.TokenManagers.FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
+        public async Task<TokenManager?> GetByManagerId(int idManager)
+        {
+            return await context.TokenManagers.FirstOrDefaultAsync(x => x.IdManager != null && x.IdManager.Equals(idManager));
+        }
+
+        public static bool IsTokenExpired(TokenManager? token)
+        {
+            //  todo ttl of Token
+            if (token != null && token.DateOfCreation != null
+                && (token.DateOfCreation - DateTime.Now).Value.Hours <= 24)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public async Task<TokenManager?> GetTrackById(int id)
         {
             return await context.TokenManagers.AsTracking().FirstOrDefaultAsync(x => x.Id.Equals(id));

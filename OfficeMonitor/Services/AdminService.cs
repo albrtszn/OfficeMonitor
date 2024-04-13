@@ -5,6 +5,7 @@ using OfficeMonitor.DTOs;
 using OfficeMonitor.MiddleWares;
 using OfficeMonitor.MiddleWares.Authorization;
 using OfficeMonitor.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace OfficeMonitor.Services
 {
@@ -12,15 +13,18 @@ namespace OfficeMonitor.Services
     {
         private AdminRepo AdminRepo;
         private ClaimRoleRepo ClaimRoleRepo;
+        private TokenAdminRepo TokenAdminRepo;
         private IMapper mapper;
         private JwtProvider jwt;
         public AdminService(AdminRepo _AdminRepo, IMapper _mapper,
-                            JwtProvider _jwt, ClaimRoleRepo _ClaimRoleRepo)
+                            JwtProvider _jwt, ClaimRoleRepo _ClaimRoleRepo, 
+                            TokenAdminRepo _TokenAdminRepo)
         {
             AdminRepo = _AdminRepo;
             mapper = _mapper;
             jwt = _jwt;
             ClaimRoleRepo = _ClaimRoleRepo;
+            TokenAdminRepo = _TokenAdminRepo;
         }
 
         public async Task<bool> DeleteById(int id)
@@ -61,9 +65,23 @@ namespace OfficeMonitor.Services
                 return null;
             if (PasswordHasher.Verify(password, admin.Password))
             {
-                ClaimRole role = (await ClaimRoleRepo.GetById(admin.IdClaimRole.Value));
-                string token = jwt.GenerateToken(admin, role != null ? role.Name : "ADMIN");
-                return token;
+                TokenAdmin? tokenCompany = await TokenAdminRepo.GetByAdminId(admin.Id);
+                if (!TokenAdminRepo.IsTokenExpired(tokenCompany))
+                {
+                    return tokenCompany.Token;
+                }
+                else
+                {
+                    ClaimRole? role = (await ClaimRoleRepo.GetById(admin.IdClaimRole.Value));
+                    string token = jwt.GenerateToken(admin, role != null ? role.Name : "COMPANY");
+                    await TokenAdminRepo.Save(new TokenAdmin
+                    {
+                        IdAdmin = admin.Id,
+                        Token = token,
+                        DateOfCreation = DateTime.Now
+                    });
+                    return token;
+                }
             }
             else
             {

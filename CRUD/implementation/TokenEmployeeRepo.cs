@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace CRUD.implementation
 {
@@ -35,6 +36,25 @@ namespace CRUD.implementation
         public async Task<TokenEmployee?> GetById(int id)
         {
             return await context.TokenEmployees.FirstOrDefaultAsync(x => x.Id.Equals(id));
+        }
+
+        public async Task<TokenEmployee?> GetByEmployeeId(int idEmployee)
+        {
+            return await context.TokenEmployees.FirstOrDefaultAsync(x => x.IdEmployee != null && x.IdEmployee.Equals(idEmployee));
+        }
+
+        public static bool IsTokenExpired(TokenEmployee? token)
+        {
+            //  todo ttl of Token
+            if (token != null && token.DateOfCreation != null 
+                && (token.DateOfCreation - DateTime.Now).Value.Hours <= 24)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         public async Task<TokenEmployee?> GetTrackById(int id)

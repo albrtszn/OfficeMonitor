@@ -37,6 +37,25 @@ namespace CRUD.implementation
             return await context.TokenCompanies.FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
+        public async Task<TokenCompany?> GetByCompanyId(int idCompany)
+        {
+            return await context.TokenCompanies.FirstOrDefaultAsync(x => x.IdCompany != null && x.IdCompany.Equals(idCompany));
+        }
+
+        public static bool IsTokenExpired(TokenCompany? token)
+        {
+            //  todo ttl of Token
+            if (token != null && token.DateOfCreation != null
+                && (token.DateOfCreation - DateTime.Now).Value.Hours <= 24)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public async Task<TokenCompany?> GetTrackById(int id)
         {
             return await context.TokenCompanies.AsTracking().FirstOrDefaultAsync(x => x.Id.Equals(id));

@@ -13,6 +13,12 @@
     position: relative;
 }
 
+body {
+    background: #dde1e7;
+    display: flex;
+    flex-direction: column;
+}
+
 .login-button {
     appearance: none;
     user-select: none;
@@ -35,10 +41,6 @@ ul {
 
 a {
     text-decoration: none;
-}
-
-html, body {
-    height: 100%;
 }
 
 .header-wrap {
@@ -135,7 +137,7 @@ html, body {
 
 
 .footer {
-    position: absolute;
+    margin-top: auto;
     bottom: 0;
     width: 100%;
     background-color: rgba(35, 34, 41);
@@ -247,3 +249,165 @@ html, body {
     width: 40%;
     height: auto;
 }
+
+.info-box {
+    padding: 30px 20px;
+    box-sizing: border-box;
+    max-width: 1450px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    height: max-content;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+    .info-box .panels-box {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 50px;
+    }
+
+.panels-box .panels-column {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.info-box .panel-card {
+    border-radius: 20px;
+    padding: 20px;
+    width: 35%;
+    height: auto;
+    box-shadow: -5px -5px 9px rgba(255,255,255,0.45), 5px 5px 9px rgba(94,104,121,0.3);
+}
+
+.panel-card .card-slogan, .panel-slogan {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.panel-card .card-description, .panel-description {
+    font-size: 20px;
+}
+
+.panels-column .panel {
+    border-radius: 20px;
+    padding: 20px;
+    width: 200px;
+    min-height: 150px;
+    box-shadow: inset -5px -5px 9px rgba(255,255,255,0.45), inset 5px 5px 9px rgba(94,104,121,0.3);
+}
+
+
+.company-logos {
+    padding: 0 20px;
+    box-sizing: border-box;
+    max-width: 1450px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+    .company-logos div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        width: 100%;
+        gap: 100px;
+        animation: queue 10s linear infinite;
+    }
+
+        .company-logos div img {
+            height: 60%;
+        }
+
+@keyframes queue {
+    0% {
+        transform: translateX(110%);
+    }
+
+    100% {
+        transform: translateX(-110%);
+    }
+}
+
+.plans {
+    padding: 0 20px;
+    box-sizing: border-box;
+    max-width: 1450px;
+    margin: 40px auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: space-between;
+}
+
+.card {
+    --border-radius: 0.75rem;
+    --primary-color: #7257fa;
+    --secondary-color: #3c3852;
+    width: 210px;
+    font-family: "Arial";
+    padding: 1rem;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    background: #f1f1f3;
+    box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 3%);
+    position: relative;
+}
+
+    .card > * + * {
+        padding: 3px;
+    }
+
+    .card .card__content {
+        color: var(--secondary-color);
+        font-size: 0.86rem;
+    }
+
+    .card .card__title {
+        padding: 0;
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+
+    .card .card__date {
+        color: #6e6b80;
+        font-size: 0.8rem;
+    }
+
+    .card .card__arrow {
+        position: absolute;
+        background: var(--primary-color);
+        padding: 0.4rem;
+        border-top-left-radius: var(--border-radius);
+        border-bottom-right-radius: var(--border-radius);
+        bottom: 0;
+        right: 0;
+        transition: 0.2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card svg {
+        transition: 0.2s;
+    }
+
+    /* hover */
+    .card:hover .card__title {
+        color: var(--primary-color);
+        text-decoration: underline;
+    }
+
+    .card:hover .card__arrow {
+        background: #111;
+    }
+
+        .card:hover .card__arrow svg {
+            transform: translateX(3px);
+        }

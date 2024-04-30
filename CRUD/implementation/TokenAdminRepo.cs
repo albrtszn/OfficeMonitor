@@ -46,7 +46,7 @@ namespace CRUD.implementation
         {
             //  todo ttl of Token
             if (token != null && token.DateOfCreation != null
-                && (token.DateOfCreation - DateTime.Now).Value.Hours <= 24)
+                && (DateTime.Now - token.DateOfCreation.Value).TotalHours <= 24)
             {
                 return false;
             }

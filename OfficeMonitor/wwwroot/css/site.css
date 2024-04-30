@@ -408,6 +408,112 @@ a {
         background: #111;
     }
 
-        .card:hover .card__arrow svg {
-            transform: translateX(3px);
-        }
+    .card:hover .card__arrow svg {
+        transform: translateX(3px);
+    }
+
+/*#login*/
+.login-panel {
+    padding: 0 20px;
+    box-sizing: border-box;
+    max-width: 1000px;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: space-around;
+    background-color: black;
+    border-radius: 20px;
+    border: 2px solid black;
+}
+
+.login-left {
+    display: flex;
+    justify-content: center;
+    max-width: 50%;
+}
+
+.login-image {
+    max-width: 80%;
+    height: auto;
+}
+
+.login-right {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 30%;
+    max-width: 100%;
+}
+
+    .login-right .login-right-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .login-right .login-right-name {
+        font-weight: bold;
+        color: white;
+        font-size: 35px;
+    }
+
+    .login-right input {
+        outline: 0;
+        background: #f2f2f2;
+        width: 100%;
+        border: 0;
+        margin: 0 0 15px;
+        padding: 15px;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+.login-right-form .login-submit-button {
+    font-family: "Roboto", sans-serif;
+    text-transform: uppercase;
+    outline: 0;
+    background: #4CAF50;
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    color: #FFFFFF;
+    font-size: 14px;
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    cursor: pointer;
+}
+
+    .login-right-form .login-submit-button:hover, .form .login-submit-button:active, .form .login-submit-button:focus {
+        background: #43A047;
+    }
+
+.google-button {
+    max-width: 320px;
+    display: flex;
+    padding: 0.5rem 1.4rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    gap: 0.75rem;
+    color: rgb(65, 63, 63);
+    background-color: #fff;
+    cursor: pointer;
+    transition: all .6s ease;
+}
+
+    .google-button svg {
+        height: 24px;
+    }
+
+    .google-button:hover {
+        transform: scale(1.02);
+    }

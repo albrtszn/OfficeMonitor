@@ -65,13 +65,14 @@ namespace OfficeMonitor.Services
                 return null;
             if (PasswordHasher.Verify(password, admin.Password))
             {
-                TokenAdmin? tokenCompany = await TokenAdminRepo.GetByAdminId(admin.Id);
-                if (!TokenAdminRepo.IsTokenExpired(tokenCompany))
+                TokenAdmin? tokenAdmin = await TokenAdminRepo.GetByAdminId(admin.Id);
+                if (!TokenAdminRepo.IsTokenExpired(tokenAdmin))
                 {
-                    return tokenCompany.Token;
+                    return tokenAdmin.Token;
                 }
                 else
                 {
+                    await TokenAdminRepo.DeleteById(tokenAdmin.Id);
                     ClaimRole? role = (await ClaimRoleRepo.GetById(admin.IdClaimRole.Value));
                     string token = jwt.GenerateToken(admin, role != null ? role.Name : "COMPANY");
                     await TokenAdminRepo.Save(new TokenAdmin

@@ -76,6 +76,7 @@ namespace OfficeMonitor.Services
                 }
                 else
                 {
+                    await TokenCompanyRepo.DeleteById(tokenCompany.Id);
                     ClaimRole? role = (await ClaimRoleRepo.GetById(company.IdClaimRole.Value));
                     string token = jwt.GenerateToken(company, role != null ? role.Name : "COMPANY");
                     await TokenCompanyRepo.Save(new TokenCompany

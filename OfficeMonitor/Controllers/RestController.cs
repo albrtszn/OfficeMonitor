@@ -10,6 +10,9 @@ using OfficeMonitor.ErrorHandler.Errors;
 using OfficeMonitor.Models;
 using OfficeMonitor.Models.ClaimRole;
 using OfficeMonitor.Models.Company;
+using OfficeMonitor.Models.Departments;
+using OfficeMonitor.Models.Employee;
+using OfficeMonitor.Models.Manager;
 using OfficeMonitor.Services;
 using OfficeMonitor.Services.MasterService;
 using Swashbuckle.AspNetCore.Annotations;
@@ -351,7 +354,9 @@ namespace OfficeMonitor.Controllers
             Plan? plan = await ms.Plan.GetById(model.IdPlan);
             if (plan == null)
                 throw new NotFoundException("План не найден");
-            await ms.Company.Save(model);
+            ClaimRole? claimRole = (await ms.ClaimRole.GetCompanyRole());
+
+            await ms.Company.Save(model, claimRole);
             return Ok();
         }
 
@@ -559,17 +564,19 @@ namespace OfficeMonitor.Controllers
         [SwaggerOperation(Tags = new[] { "Rest/Employee" })]
         [HttpPost("UpdateEmployee")]
         //todo notificate changing of password through email
-        public async Task<IActionResult> UpdateEmployee([FromBody] EmployeeDto? dto)
+        public async Task<IActionResult> UpdateEmployee([FromBody] UpdateEmployeeModel? model)
         {
-            if (dto == null || dto.Id <= 0 || !ModelState.IsValid)
+            if (model == null || model.Id <= 0 || !ModelState.IsValid)
                 return BadRequest("Невалидное значение");
-            Employee? employee = await ms.Employee.GetById(dto.Id);
+            Employee? employee = await ms.Employee.GetById(model.Id);
             if (employee == null)
                 throw new NotFoundException("Запись не найдена");
-            Profile? profile = await ms.Profile.GetById(dto.IdProfile.Value);
+            Profile? profile = await ms.Profile.GetById(model.IdProfile);
             if (profile == null)
                 throw new NotFoundException("Профиль не найден");
-            await ms.Employee.Save(dto);
+            ClaimRole? claimRole = (await ms.ClaimRole.GetEmployeeRole());
+
+            await ms.Employee.Save(model, claimRole);
             return Ok();
         }
 
@@ -627,17 +634,19 @@ namespace OfficeMonitor.Controllers
         [SwaggerOperation(Tags = new[] { "Rest/Manager" })]
         [HttpPost("UpdateManager")]
         //todo notificate changing of password through email
-        public async Task<IActionResult> UpdateManager([FromBody] ManagerDto? dto)
+        public async Task<IActionResult> UpdateManager([FromBody] UpdateManagerModel? model)
         {
-            if (dto == null || dto.Id <= 0 || !ModelState.IsValid)
+            if (model == null || model.Id <= 0 || !ModelState.IsValid)
                 return BadRequest("Невалидное значение");
-            Manager? Manager = await ms.Manager.GetById(dto.Id);
+            Manager? Manager = await ms.Manager.GetById(model.Id);
             if (Manager == null)
                 throw new NotFoundException("Запись не найдена");
-            Profile? profile = await ms.Profile.GetById(dto.IdProfile.Value);
+            Profile? profile = await ms.Profile.GetById(model.IdProfile.Value);
             if (profile == null)
                 throw new NotFoundException("Профиль не найден");
-            await ms.Manager.Save(dto);
+            ClaimRole? claimRole = (await ms.ClaimRole.GetManagerRole());
+
+            await ms.Manager.Save(model, claimRole);
             return Ok();
         }
 
@@ -651,6 +660,74 @@ namespace OfficeMonitor.Controllers
             if (company == null)
                 throw new NotFoundException("Запись не найдена");
             await ms.Manager.DeleteById(id.Id);
+            return Ok();
+        }
+        /*
+        *  #DepartmentManager
+        */
+        [SwaggerOperation(Tags = new[] { "Rest/DepartmentManager" })]
+        [HttpGet("GetDepartmentManagers")]
+        public async Task<IActionResult> GetDepartmentManagers()
+        {
+            return Ok(await ms.DepartmentManager.GetAllDtos());
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/DepartmentManager" })]
+        [HttpPost("GetDepartmentManager")]
+        public async Task<IActionResult> GetDepartmentManager([FromBody] IntIdModel? id)
+        {
+            //  todo return exception with required field
+            if (id == null || id.Id == 0 || !ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            DepartmentManagerDto? dto = await ms.DepartmentManager.GetDtoById(id.Id);
+            if (dto == null)
+                throw new NotFoundException("Запись не найдена");
+            return Ok(dto);
+        }
+        //  todo password generate
+        [SwaggerOperation(Tags = new[] { "Rest/DepartmentManager" })]
+        [HttpPost("AddDepartmentManager")]
+        public async Task<IActionResult> AddDepartmentManager([FromBody] AddDepartmentManagerModel? model)
+        {
+            if (model == null || !ModelState.IsValid)
+                return BadRequest("Невалидное значение");
+            Manager? manager = await ms.Manager.GetById(model.IdManager);
+            Department? department = await ms.Department.GetById(model.IdDepartment);
+            if (manager == null || department == null)
+                throw new NotFoundException("запись не найдена");
+
+            await ms.DepartmentManager.Save(model);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/DepartmentManager" })]
+        [HttpPost("UpdateDepartmentManager")]
+        //todo notificate changing of password through email
+        public async Task<IActionResult> UpdateDepartmentManager([FromBody] DepartmentManagerDto? dto)
+        {
+            if (dto == null || dto.Id <= 0 || !ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            DepartmentManager? DepartmentManager = await ms.DepartmentManager.GetById(dto.Id);
+            if (DepartmentManager == null)
+                throw new NotFoundException("Запись не найдена");
+            Manager? manager = await ms.Manager.GetById(dto.IdManager);
+            Department? department = await ms.Department.GetById(dto.IdDepartment);
+            if (manager == null || department == null)
+                throw new NotFoundException("Запись не найдена");
+            await ms.DepartmentManager.Save(dto);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/DepartmentManager" })]
+        [HttpDelete("DeleteDepartmentManager")]
+        public async Task<IActionResult> DeleteDepartmentManager([FromBody] IntIdModel? id)
+        {
+            if (id == null || !ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+                return BadRequest("Невалидное значение");
+            DepartmentManager? company = await ms.DepartmentManager.GetById(id.Id);
+            if (company == null)
+                throw new NotFoundException("Запись не найдена");
+            await ms.DepartmentManager.DeleteById(id.Id);
             return Ok();
         }
 

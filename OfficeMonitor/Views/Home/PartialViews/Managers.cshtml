@@ -1,0 +1,34 @@
+﻿@using OfficeMonitor.Models.Manager
+@model List<GetManagerModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Id</th>
+            <th>ФИО</th>
+            <th>Email</th>
+            <th>Пароль</th>
+            <th>Отдел</th>
+            <th>Должность</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int numberOfRow = 1;
+            foreach (GetManagerModel manager in Model)
+            {
+                <tr>
+                    <td>@numberOfRow</td>
+                    <td>@manager.Id</td>
+                    <td>@manager.Surname @manager.Name @manager.Patronamic</td>
+                    <td>@manager.Login</td>
+                    <td>@manager.Password.Substring(0,10) ...</td>
+                    <td>@manager.Department.Name</td>
+                    <td>@manager.Profile.Name</td>
+                </tr>
+                numberOfRow++;
+            }
+        }
+    </tbody>
+</table>

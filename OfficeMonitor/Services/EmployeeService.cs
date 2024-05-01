@@ -4,7 +4,7 @@ using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
 using OfficeMonitor.MiddleWares;
 using OfficeMonitor.MiddleWares.Authorization;
-using OfficeMonitor.Models;
+using OfficeMonitor.Models.Employee;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace OfficeMonitor.Services
@@ -66,13 +66,14 @@ namespace OfficeMonitor.Services
             if(PasswordHasher.Verify(password, employee.Password))
             {
                 TokenEmployee? tokenEmployee = await TokenEmployeeRepo.GetByEmployeeId(employee.Id);
-                if (!TokenEmployeeRepo.IsTokenExpired(tokenEmployee))
+                if (tokenEmployee != null && !TokenEmployeeRepo.IsTokenExpired(tokenEmployee))
                 {
                     return tokenEmployee.Token;
                 }
                 else
                 {
-                    await TokenEmployeeRepo.DeleteById(tokenEmployee.Id);
+                    if(tokenEmployee != null)
+                        await TokenEmployeeRepo.DeleteById(tokenEmployee.Id);
                     ClaimRole? role = (await ClaimRoleRepo.GetById(employee.IdClaimRole.Value));
                     string token = jwt.GenerateToken(employee, role != null ? role.Name : "USER");
                     await TokenEmployeeRepo.Save(new TokenEmployee
@@ -114,6 +115,14 @@ namespace OfficeMonitor.Services
         }        
         
         public async Task<bool> Save(AddEmployeeModel EmployeeModelToSave, ClaimRole? claimRole)
+        {
+            EmployeeModelToSave.Password = PasswordHasher.Generate(EmployeeModelToSave.Password);
+            Employee employee = mapper.Map<Employee>(EmployeeModelToSave);
+            if (claimRole != null)
+                employee.IdClaimRole = claimRole.Id;
+            return await EmployeeRepo.Save(employee);
+        }
+        public async Task<bool> Save(UpdateEmployeeModel EmployeeModelToSave, ClaimRole? claimRole)
         {
             EmployeeModelToSave.Password = PasswordHasher.Generate(EmployeeModelToSave.Password);
             Employee employee = mapper.Map<Employee>(EmployeeModelToSave);

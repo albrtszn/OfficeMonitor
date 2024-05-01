@@ -1,8 +1,12 @@
-﻿namespace OfficeMonitor.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace OfficeMonitor.Models
 {
     public class AddDepartmentManagerModel
     {
-        public int? IdDepartment { get; set; }
-        public int? IdManager { get; set; }
+        [Required]
+        public int IdDepartment { get; set; }
+        [Required]
+        public int IdManager { get; set; }
     }
 }

@@ -15,7 +15,9 @@ namespace OfficeMonitor.MiddleWares.Authorization
         {
             Claim[] claims = [
                 new("userId", employee.Id.ToString()),
-                new("role", role)
+                new("role", role)       
+                //new(ClaimTypes.NameIdentifier, employee.Id.ToString()),
+                //new(ClaimTypes.Role, role)
                 ];
 
             SigningCredentials signInCreadentials = new SigningCredentials(
@@ -25,7 +27,7 @@ namespace OfficeMonitor.MiddleWares.Authorization
 
             JwtSecurityToken securityToken = new JwtSecurityToken(
                 signingCredentials: signInCreadentials,
-                expires: DateTime.UtcNow.AddHours(12),
+                expires: DateTime.UtcNow.AddHours(24),
                 claims: claims
                 );
 
@@ -38,7 +40,9 @@ namespace OfficeMonitor.MiddleWares.Authorization
         {
             Claim[] claims = [
                 new("userId", manager.Id.ToString()),
-                new("role", role)
+                new("role", role)       
+                /*new(ClaimTypes.NameIdentifier, manager.Id.ToString()),
+                new(ClaimTypes.Role, role)*/
                 ];
 
             SigningCredentials signInCreadentials = new SigningCredentials(
@@ -48,7 +52,7 @@ namespace OfficeMonitor.MiddleWares.Authorization
 
             JwtSecurityToken securityToken = new JwtSecurityToken(
                 signingCredentials: signInCreadentials,
-                expires: DateTime.UtcNow.AddHours(12),
+                expires: DateTime.UtcNow.AddHours(24),
                 claims: claims
                 );
 
@@ -61,7 +65,9 @@ namespace OfficeMonitor.MiddleWares.Authorization
         {
             Claim[] claims = [
                 new("userId", admin.Id.ToString()),
-                new("role", role)
+                new("role", role)   
+                //new(ClaimTypes.NameIdentifier, admin.Id.ToString()),
+                //new(ClaimTypes.Role, role)
                 ];
 
             SigningCredentials signInCreadentials = new SigningCredentials(
@@ -71,7 +77,7 @@ namespace OfficeMonitor.MiddleWares.Authorization
 
             JwtSecurityToken securityToken = new JwtSecurityToken(
                 signingCredentials: signInCreadentials,
-                expires: DateTime.UtcNow.AddHours(12),
+                expires: DateTime.UtcNow.AddHours(24),
                 claims: claims
                 );
 
@@ -83,8 +89,10 @@ namespace OfficeMonitor.MiddleWares.Authorization
         public string GenerateToken(Company company, string role)
         {
             Claim[] claims = [
-                new("companyId", company.Id.ToString()),
-                new("role", role)
+                new("userId", company.Id.ToString()),
+                new("role", role)          
+                //new(ClaimTypes.NameIdentifier, company.Id.ToString()),
+                //new(ClaimTypes.Role, role)
                 ];
 
             SigningCredentials signInCreadentials = new SigningCredentials(
@@ -94,7 +102,7 @@ namespace OfficeMonitor.MiddleWares.Authorization
 
             JwtSecurityToken securityToken = new JwtSecurityToken(
                 signingCredentials: signInCreadentials,
-                expires: DateTime.UtcNow.AddHours(12),
+                expires: DateTime.UtcNow.AddHours(24),
                 claims: claims
                 );
 

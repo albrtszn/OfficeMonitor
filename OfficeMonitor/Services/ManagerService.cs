@@ -4,7 +4,7 @@ using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
 using OfficeMonitor.MiddleWares;
 using OfficeMonitor.MiddleWares.Authorization;
-using OfficeMonitor.Models;
+using OfficeMonitor.Models.Manager;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace OfficeMonitor.Services
@@ -72,13 +72,14 @@ namespace OfficeMonitor.Services
             {
                 TokenManager? tokenManager = await TokenManagerRepo.GetByManagerId(manager.Id);
                 //  todo token ttl
-                if (!TokenManagerRepo.IsTokenExpired(tokenManager))
+                if (tokenManager != null &&!TokenManagerRepo.IsTokenExpired(tokenManager))
                 {
                     return tokenManager.Token;
                 }
                 else
                 {
-                    await TokenManagerRepo.DeleteById(tokenManager.Id);
+                    if(tokenManager != null)
+                        await TokenManagerRepo.DeleteById(tokenManager.Id);
                     ClaimRole role = (await ClaimRoleRepo.GetById(manager.IdClaimRole.Value));
                     string token = jwt.GenerateToken(manager, role != null ? role.Name : "MANAGER");
                     await TokenManagerRepo.Save(new TokenManager
@@ -118,6 +119,15 @@ namespace OfficeMonitor.Services
         public async Task<bool> Save(AddManagerModel ManagerDtoToSave, ClaimRole? claimRole)
         {
             Manager manager = mapper.Map<Manager>(ManagerDtoToSave);
+            manager.Password = PasswordHasher.Generate(manager.Password);
+            if (claimRole != null)
+                manager.IdClaimRole = claimRole.Id;
+            return await ManagerRepo.Save(manager);
+        }
+
+        public async Task<bool> Save(UpdateManagerModel ManagerModelToSave, ClaimRole? claimRole)
+        {
+            Manager manager = mapper.Map<Manager>(ManagerModelToSave);
             manager.Password = PasswordHasher.Generate(manager.Password);
             if (claimRole != null)
                 manager.IdClaimRole = claimRole.Id;

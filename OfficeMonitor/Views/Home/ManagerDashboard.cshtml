@@ -1,0 +1,83 @@
+﻿<script>
+    //window.onload = function dashboard() {
+    $(document).ready(function () {
+        var firstElem = document.getElementById("firstElem");
+        var secondElem = document.getElementById("secondElem");
+        var thirdElem = document.getElementById("thirdElem");
+        var fourthElem = document.getElementById("fourthElem");
+
+        var dashboardContent = document.getElementById("dashboard-content");
+
+        function removebackgroundColor() {
+            firstElem.style.backgroundColor = '';
+            secondElem.style.backgroundColor = '';
+            thirdElem.style.backgroundColor = '';
+            fourthElem.style.backgroundColor = '';
+        }
+
+        firstElem.onclick = function () {
+            if (firstElem.style.backgroundColor !== '') {
+                removebackgroundColor();
+                dashboardContent.style.display = 'none';
+            }
+            else {
+                removebackgroundColor();
+                firstElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
+                $("#dashboard-content").load("/GetManagerInfo");
+                dashboardContent.style.display = 'block';
+            }
+        };
+        secondElem.onclick = function () {
+            if (secondElem.style.backgroundColor !== '') {
+                dashboardContent.style.display = 'none';
+                removebackgroundColor();
+            }
+            else {
+                removebackgroundColor();
+                $("#dashboard-content").load("/GetManagerDepartments");
+                secondElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
+                dashboardContent.style.display = 'block';
+            }
+        };
+        thirdElem.onclick = function () {
+            if (thirdElem.style.backgroundColor !== '') {
+                dashboardContent.style.display = 'none';
+                removebackgroundColor();
+            }
+            else {
+                removebackgroundColor();
+                $("#dashboard-content").load("/");
+                thirdElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
+                dashboardContent.style.display = 'block';
+            }
+        };
+        fourthElem.onclick = function () {
+            if (fourthElem.style.backgroundColor !== '') {
+                dashboardContent.style.display = 'none';
+                removebackgroundColor();
+            }
+            else {
+                removebackgroundColor();
+                $("#dashboard-content").load("/");
+                fourthElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
+                dashboardContent.style.display = 'block';
+            }
+        };
+    });
+</script>
+
+<div>
+    <div class="dashboard" id="dashboard">
+        <div class="dashboard-actions">
+            <ul class="dashboard-menu" id="dashboard-menu">
+                <li id="firstElem"><a href="#">Личные данные</a></li>
+                <li id="secondElem"><a href="#">Отделы</a></li>
+                <li id="thirdElem"><a href="#">Option</a></li>
+                <li id="fourthElem"><a href="#">Option</a></li>
+            </ul>
+        </div>
+        <div class="dashboard-content" id="dashboard-content">
+
+        </div>
+    </div>
+</div>

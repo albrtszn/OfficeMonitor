@@ -2,6 +2,7 @@
 using CRUD.implementation;
 using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
+using OfficeMonitor.Models;
 
 namespace OfficeMonitor.Services
 {
@@ -51,6 +52,11 @@ namespace OfficeMonitor.Services
         public async Task<bool> Save(DepartmentManagerDto DepartmentManagerDtoToSave)
         {
             return await DepartmentManagerRepo.Save(mapper.Map<DepartmentManager>(DepartmentManagerDtoToSave));
+        }
+
+        public async Task<bool> Save(AddDepartmentManagerModel DepartmentManagerModelToSave)
+        {
+            return await DepartmentManagerRepo.Save(mapper.Map<DepartmentManager>(DepartmentManagerModelToSave));
         }
     }
 }

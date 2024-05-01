@@ -1,0 +1,65 @@
+﻿@using OfficeMonitor.DTOs
+@model CompanyDto
+
+<div id="firstContent" class="company-info">
+    @{
+        if (Model != null && Model.Name != null)
+        {
+            <div>Наименование:@Model.Name</div>
+        }
+        else
+        {
+            <div>Наименование:-</div>
+        }
+    }
+    @{
+        if (Model != null && Model.Description != null)
+        {
+            <div>Описание:@Model.Description</div>
+        }
+        else
+        {
+            <div>Описание:-</div>
+        }
+    }    
+    @{
+        if (Model != null && Model.Description != null)
+        {
+            <div>Тариф:@Model.IdPlan (IdPlan)</div>
+        }
+        else
+        {
+            <div>Тариф:- (IdPlan)</div>
+        }
+    }
+    @{
+        if (Model != null && Model.Balance != null)
+        {
+            <div>Баланс:@Model.Balance</div>
+        }
+        else
+        {
+            <div>Баланс:-</div>
+        }
+    }
+    @{
+        if (Model != null && Model.IsActive != null)
+        {
+            <div>Статус:@Model.IsActive</div>
+        }
+        else
+        {
+            <div>Статус:-</div>
+        }
+    }
+    @{
+        if (Model != null && Model.DateOfRegister != null)
+        {
+            <div>Дата регистрации:@Model.DateOfRegister</div>
+        }
+        else
+        {
+            <div>Дата регистрации:-</div>
+        }
+    }
+</div>

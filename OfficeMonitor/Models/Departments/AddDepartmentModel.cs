@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace OfficeMonitor.Models
+namespace OfficeMonitor.Models.Departments
 {
     public class AddDepartmentModel
     {

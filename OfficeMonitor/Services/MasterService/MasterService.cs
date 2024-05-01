@@ -1,4 +1,6 @@
-﻿namespace OfficeMonitor.Services.MasterService
+﻿using DataBase.Repository.Models;
+
+namespace OfficeMonitor.Services.MasterService
 {
     public class MasterService
     {
@@ -51,6 +53,18 @@
             TokenManager = _TokenManager;
             TokenAdmin = _TokenAdmin;
             TokenCompany = _TokenCompany;
+        }
+
+        public async Task<bool> IsProfileExistsInDepartment(int profileId, int departmentId)
+        {
+            Profile? profile = await Profile.GetById(profileId);
+            if(profile != null && profile.IdDepartment != null && profile.IdDepartment.Equals(departmentId)) {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

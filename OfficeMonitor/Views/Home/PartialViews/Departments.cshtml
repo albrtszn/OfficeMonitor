@@ -1,0 +1,31 @@
+﻿@using OfficeMonitor.Models.Departments
+@model List<GetDepartmentModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Id</th>
+            <th>Наименование</th>
+            <th>Описание</th>
+            <th>Кол-во сотрудников</th>
+            <th>Кол-во менеджеров</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+        int numberOfRow = 1;
+        foreach (GetDepartmentModel department in Model)
+        {
+            <tr>
+                <td>@numberOfRow.ToString()</td>
+                <td>@department.Id</td>
+                <td>@department.Name</td>
+                <td>@department.Description</td>
+                <td>@department.CountOfWorkers</td>
+                <td>@department.CountOfManagers</td>
+            </tr>
+            numberOfRow++;
+        }}
+    </tbody>
+</table>

@@ -1,18 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace OfficeMonitor.Models
+namespace OfficeMonitor.Models.Manager
 {
-    public class AddEmployeeModel
+    public class UpdateManagerModel
     {
-        [StringLength(50)]
         [Required]
-        public string Name { get; set; }
-        [Required]
-        [StringLength(50)]
-        public string Surname { get; set; }
+        public int Id { get; set; }
         [Required]
         [StringLength(50)]
-        public string Patronamic { get; set; }
+        public string? Name { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string? Surname { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string? Patronamic { get; set; }
         [Required]
         [StringLength(255)]
         public string Login { get; set; } = null!;
@@ -20,6 +22,6 @@ namespace OfficeMonitor.Models
         [StringLength(150)]
         public string Password { get; set; } = null!;
         [Required]
-        public int IdProfile { get; set; }
+        public int? IdProfile { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 using CRUD.implementation;
 using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
-using OfficeMonitor.Models;
+using OfficeMonitor.Models.Departments;
 
 namespace OfficeMonitor.Services
 {

@@ -1,0 +1,9 @@
+﻿@using OfficeMonitor.Models.Manager
+@model GetManagerModel
+
+<div id="firstContent" class="company-info">
+    <div>ФИО:@Model.Surname @Model.Name @Model.Patronamic</div>
+    <div>Email:@Model.Login</div>
+    <div>Отдел:@Model.Department.Name</div>
+    <div>Должность:@Model.Profile.Name</div>
+</div>

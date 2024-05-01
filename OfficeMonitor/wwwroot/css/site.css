@@ -12,7 +12,9 @@
     font-style: normal;
     position: relative;
 }
-
+html, body {
+    height: 100%;
+}
 body {
     background: #dde1e7;
     display: flex;
@@ -516,4 +518,82 @@ a {
 
     .google-button:hover {
         transform: scale(1.02);
+    }
+
+.dashboard {
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+    max-width: 1450px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+}
+
+    .dashboard .dashboard-actions {
+        width: 20%;
+        border-radius: 10px 0 0 10px;
+        background-color: rgb(221, 213, 136);
+    }
+
+.dashboard-actions .dashboard-menu {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+    gap: 5px;
+}
+
+    .dashboard-actions .dashboard-menu li {
+        width: auto;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+        .dashboard-actions .dashboard-menu li:hover {
+            background-color: rgb(168, 167, 167, 0.5);
+            cursor: pointer;
+        }
+
+    .dashboard-actions .dashboard-menu a {
+        list-style: none;
+        text-decoration: none;
+        color: black;
+        justify-content: center;
+    }
+
+.dashboard-content {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+    .dashboard-content div {
+        padding: 20px;
+    }
+
+.company-info, .company-plan, .company-departments, .company-managers {
+    border-radius: 0 10px 10px 0;
+}
+
+    .company-info div {
+        padding: 2%;
+    }
+
+.table {
+    width: 100%;
+    margin-bottom: 20px;
+    border: 2px solid #918f8f;
+    border-collapse: collapse;
+}
+
+    .table th {
+        font-weight: bold;
+        padding: 5px;
+        background: #efefef;
+        border: 2px solid #dddddd;
+    }
+
+    .table td {
+        border: 1px solid #dddddd;
+        padding: 5px;
     }

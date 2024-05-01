@@ -18,8 +18,11 @@
 <style>
 </style>
 
+<script src="~/lib/jquery/dist/jquery.js" type="text/javascript"></script>
+<script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
+
 <script>
-    window.onload = function (event) {
+    function BurgerMenuLogic() {
         var width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
         var menu = document.getElementById('menu-wrap');
         var dropmenu = document.getElementById('dropdown-menu');
@@ -31,17 +34,11 @@
             dropmenu.style.display = 'none';
         }
     }
-    window.onresize = function (event) {
-        var width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-        var menu = document.getElementById('menu-wrap');
-        var dropmenu = document.getElementById('dropdown-menu');
-        if (width < 800) {
-            menu.style.display = 'none';
-            dropmenu.style.display = 'block';
-        } else {
-            menu.style.display = 'block';
-            dropmenu.style.display = 'none';
-        }
+    window.onload = function () {
+        BurgerMenuLogic();
+    }
+    window.onresize = function(){
+        BurgerMenuLogic();
     }
 
     function clickDropMenu() {
@@ -69,26 +66,67 @@
             <nav class="header-nav">
                 <div id="menu-wrap">
                     <ul class="menu" id="menu">
-                        <li><a href="#">Главная</a></li>
-                        <li><a href="#">Кабинет</a></li>
+                        <li><a href="/">Главная</a></li>
+                        @if (User.Claims.Any())
+                        {
+                            if (User.IsInRole("Manager")){
+                                <li><a href="/ManagerDashboard">Личный Кабинет</a></li>
+                            }
+                            if (User.IsInRole("COMPANY"))
+                            {
+                                <li><a href="/CompanyDashboard">Личный Кабинет</a></li>
+                            }
+                            if (User.IsInRole("ADMIN"))
+                            {
+                                <li><a href="/AdminDashboard">Личный Кабинет</a></li>
+                            }
+                        }
                         <li><a href="#">О нас</a></li>
                         <li><a href="#">Отзывы</a></li>
-                        <li><a href="/Home/Login"><button class="login-button">Логин</button></a></li>
+                        
+                        @if (User.Claims.Any())
+                        {
+                            <li><a href="/api/Rest/ClearCookies" style="color:red;"><button class="login-button">Выйти</button></a></li>
+                        }
+                        else
+                        {
+                            <li><a href="/Home/Login"><button class="login-button">Логин</button></a></li>
+                        }
                     </ul>
                 </div>
                 <div class="dropdown-menu" id="dropdown-menu">
                     <img id="menu-image" src="~/images/burger-button.png" class="menu-image" onclick="clickDropMenu()" />
                     <div id="dropdown-list" class="dropdown-list" style="display:none;">
                         <div>
-                            <a href="">Главная</a>
-                            <a href="">Кабинет</a>
-                            <a href="">О нас</a>
+                            <a href="/">Главная</a>
+                            @if (User.Claims.Any())
+                            {
+                                if (User.IsInRole("MANAGER"))
+                                {
+                                    <a href="/ManagerDashboard">Личный Кабинет</a>
+                                }
+                                if (User.IsInRole("COMPANY"))
+                                {
+                                    <a href="/CompanyDashboard">Личный Кабинет</a>
+                                }
+                                if (User.IsInRole("ADMIN"))
+                                {
+                                    <a href="/AdminDashboard">Личный Кабинет</a>
+                                }
+                            }
+                            <a href="/AboutUs">О нас</a>
                             <a href="">Отзывы</a>
                             <a href="/Home/TestUser">TestUser</a>
                             <a href="/Home/TestManager">TestManager</a>
                             <a href="/Home/TestAdmin">TestAdmin</a>
                             <a href="/Home/TestCompany">TestCompany</a>
-                            <a href="/Home/Login">Логин</a>
+                            @if(User.Claims.Any()){
+                                <a href="/api/Rest/ClearCookies" style="color:red;">Выйти</a>
+                            }
+                            else
+                            {
+                                <a href="/Home/Login">Логин</a>
+                            }
                         </div>
 
                     </div>
@@ -126,10 +164,35 @@
                 <h3 class="footer-h3">Карта сайта</h3>
                 <ul class="footer-menu">
                     <li><a href="#">Главная</a></li>
-                    <li><a href="#">Кабинет</a></li>
+                    @if (User.Claims.Any())
+                    {
+                        if (User.IsInRole("MANAGER"))
+                        {
+                            <li><a href="/ManagerDashboard">Личный кабинет</a></li>
+                        }
+                        if (User.IsInRole("COMPANY"))
+                        {
+                            <li><a href="/CompanyDashboard">Личный кабинет</a></li>
+                        }
+                        if (User.IsInRole("ADMIN"))
+                        {
+                            <li><a href="/AdminDashboard">Личный кабинет</a></li>
+                        }
+                    }
                     <li><a href="#">О нас</a></li>
                     <li><a href="#">Отзывы</a></li>
-                    <li><a href="#">Логин</a></li>
+                    @if (!User.Claims.Any())
+                    {
+                        <li><a href="#">Логин</a></li>
+                    }
+                    else
+                    {
+                        <a href="/Home/Login">Логин</a>
+                    }
+                    <li><a href="/CompanyDashboard">CompanyDashboard</a></li>
+                    <li><a href="/ManagerDashboard">ManagerDashboard</a></li>
+                    <li><a href="/AdminDashboard">AdminDashboard</a></li>
+                    <li><a href="/swagger/index.html">Swagger</a></li>
                 </ul>
             </div>
             <div class="footer-element">
@@ -150,7 +213,7 @@
         </div>
     </footer>
 
-
+    <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <!---<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.m in.js"></script>-->
     <script src="~/js/site.js" asp-append-version="true"></script>

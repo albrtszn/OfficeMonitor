@@ -1,9 +1,68 @@
 ﻿@using OfficeMonitor.Models.Manager
 @model GetManagerModel
 
-<div id="firstContent" class="company-info">
-    <div>ФИО:@Model.Surname @Model.Name @Model.Patronamic</div>
-    <div>Email:@Model.Login</div>
-    <div>Отдел:@Model.Department.Name</div>
-    <div>Должность:@Model.Profile.Name</div>
+<div id="firstContent" class="info-page">
+    <div class="info-credentials">
+        @{
+            if (Model != null && (Model.Name != null || Model.Surname != null || Model.Patronamic != null))
+            {
+                <div class="name">@Model.Surname @Model.Name @Model.Patronamic</div>
+            }
+            else
+            {
+                <div class="name">-</div>
+            }
+        }
+        @{
+            if (Model != null && Model.Login != null)
+            {
+                <div class="description">@Model.Login</div>
+            }
+            else
+            {
+                <div class="description">-</div>
+            }
+        }
+    </div>
+    <div class="info-content">
+        <div class="info-card">
+            <div class="name">Отдел</div>
+            @{
+                if (Model != null && Model.Department != null && Model.Department.Name != null)
+                {
+                    <div class="value">@Model.Department.Name</div>
+                }
+                else
+                {
+                    <div class="value">-</div>
+                }
+            }
+        </div>
+        <div class="info-card">
+            <div class="name">Тариф</div>
+            @{
+                if (Model != null && Model.Profile != null && Model.Profile.Name != null)
+                {
+                    <div class="value">@Model.Profile.Name</div>
+                }
+                else
+                {
+                    <div class="value">-</div>
+                }
+            }
+        </div>
+        <div class="info-card">
+            <div class="name">Список менеджируемых отделов</div>
+            @{
+                if (true)
+                {
+                    <div class="value">Список отделов</div>
+                }
+                else
+                {
+                    <div class="value">-</div>
+                }
+            }
+        </div>
+    </div>
 </div>

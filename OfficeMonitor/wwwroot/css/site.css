@@ -519,7 +519,6 @@ a {
     .google-button:hover {
         transform: scale(1.02);
     }
-
 .dashboard {
     width: 100%;
     padding: 0 20px;
@@ -531,7 +530,7 @@ a {
 }
 
     .dashboard .dashboard-actions {
-        width: 20%;
+        width: 25%;
         border-radius: 10px 0 0 10px;
         background-color: rgb(221, 213, 136);
     }
@@ -562,22 +561,68 @@ a {
     }
 
 .dashboard-content {
-    width: 80%;
+    width: 75%;
     display: flex;
     flex-direction: column;
-}
-
-    .dashboard-content div {
-        padding: 20px;
-    }
-
-.company-info, .company-plan, .company-departments, .company-managers {
+    padding: 10px;
+    border: 1px solid black;
     border-radius: 0 10px 10px 0;
 }
 
-    .company-info div {
-        padding: 2%;
+.info-page, .company-plan, .company-departments, .company-managers {
+    border: 1px solid black;
+}
+
+.info-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-credentials {
+    background-color: white;
+    width: fit-content;
+    border-radius: 20px;
+    padding: 10px;
+}
+
+    .info-credentials .name {
+        font-weight: bold;
+        font-size: 24px;
     }
+
+    .info-credentials .description {
+        font-size: 15px;
+        color: #6e6b80;
+    }
+
+.info-content {
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+    .info-card {
+        min-width: 100px;
+        max-width: 200px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+        background-color: white;
+        border-radius: 20px;
+    }
+
+.info-card .name {
+    font-weight: bold;
+}
+
+.info-card .value {
+    margin: 0 auto;
+    ;
+}
 
 .table {
     width: 100%;
@@ -596,4 +641,38 @@ a {
     .table td {
         border: 1px solid #dddddd;
         padding: 5px;
+    }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+}
+
+.modal-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    z-index: 1;
+}
+
+    .modal-close:hover, .modal-close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
     }

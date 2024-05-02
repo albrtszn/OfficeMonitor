@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CRUD.implementation;
 using DataBase.Repository.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using OfficeMonitor.DTOs;
+using OfficeMonitor.Models.WorkTime;
 
 namespace OfficeMonitor.Services
 {
@@ -38,6 +40,15 @@ namespace OfficeMonitor.Services
             return await WorkTimeRepo.GetById(id);
         }
 
+        public async Task<WorkTimeDto?> GetDtoByDepartmentId(int id)
+        {
+            WorkTime? workTime = (await WorkTimeRepo.GetAll()).FirstOrDefault(x=>x!=null && x.IdDepartment!= null 
+                                                                                 && x.IdDepartment.Equals(id));
+            if (workTime == null)
+                return null;
+            return mapper.Map<WorkTimeDto>(workTime);
+        }
+
         public async Task<WorkTimeDto> GetDtoById(int id)
         {
             return mapper.Map<WorkTimeDto>(await WorkTimeRepo.GetById(id));
@@ -51,6 +62,15 @@ namespace OfficeMonitor.Services
         public async Task<bool> Save(WorkTimeDto WorkTimeDtoToSave)
         {
             return await WorkTimeRepo.Save(mapper.Map<WorkTime>(WorkTimeDtoToSave));
+        }
+
+        public async Task<bool> Save(AddWorkTimeModel WorkTimeModelToSave)
+        {
+            return await WorkTimeRepo.Save(mapper.Map<WorkTime>(WorkTimeModelToSave));
+        }
+        public async Task<bool> Save(UpdateWorkTimeModel WorkTimeModelToSave)
+        {
+            return await WorkTimeRepo.Save(mapper.Map<WorkTime>(WorkTimeModelToSave));
         }
     }
 }

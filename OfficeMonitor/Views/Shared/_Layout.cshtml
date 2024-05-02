@@ -54,6 +54,15 @@
             menuimage.style.backgroundColor = '';
         }
     }
+
+    function openModal() {
+        var modal = document.getElementById('modal');
+        modal.style.display = 'block';
+    }
+    function closeModal() {
+        var modal = document.getElementById('modal');
+        modal.style.display = 'none';
+    }
 </script>
 
 <body>
@@ -69,7 +78,7 @@
                         <li><a href="/">Главная</a></li>
                         @if (User.Claims.Any())
                         {
-                            if (User.IsInRole("Manager")){
+                            if (User.IsInRole("MANAGER")){
                                 <li><a href="/ManagerDashboard">Личный Кабинет</a></li>
                             }
                             if (User.IsInRole("COMPANY"))
@@ -86,11 +95,11 @@
                         
                         @if (User.Claims.Any())
                         {
-                            <li><a href="/api/Rest/ClearCookies" style="color:red;"><button class="login-button">Выйти</button></a></li>
+                            <li><a href="/LogOut" style="color:red;"><button class="login-button">Выйти</button></a></li>
                         }
                         else
                         {
-                            <li><a href="/Home/Login"><button class="login-button">Логин</button></a></li>
+                            <li><a href="/Login"><button class="login-button">Логин</button></a></li>
                         }
                     </ul>
                 </div>
@@ -121,11 +130,11 @@
                             <a href="/Home/TestAdmin">TestAdmin</a>
                             <a href="/Home/TestCompany">TestCompany</a>
                             @if(User.Claims.Any()){
-                                <a href="/api/Rest/ClearCookies" style="color:red;">Выйти</a>
+                                <a href="/LogOut" style="color:red;">Выйти</a>
                             }
                             else
                             {
-                                <a href="/Home/Login">Логин</a>
+                                <a href="/Login">Логин</a>
                             }
                         </div>
 
@@ -183,11 +192,11 @@
                     <li><a href="#">Отзывы</a></li>
                     @if (!User.Claims.Any())
                     {
-                        <li><a href="#">Логин</a></li>
+                        <li><a href="/LogOut">Выйти</a></li>
                     }
                     else
                     {
-                        <a href="/Home/Login">Логин</a>
+                        <li><a href="#">Логин</a></li>
                     }
                     <li><a href="/CompanyDashboard">CompanyDashboard</a></li>
                     <li><a href="/ManagerDashboard">ManagerDashboard</a></li>

@@ -1,0 +1,105 @@
+﻿@using OfficeMonitor.Models.WorkTime
+@model List<GetWorkTimeModel>
+
+<script>
+    function loadDepartments(){
+    $.ajax({
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'html',
+        type: 'Get',
+            url: '/api/Rest/GetDepartmentsByManagerHtml',
+        success: function (response) {
+            //alert("Загрузка отделов: "+response);
+            $('#department').html(response);
+        },
+        error: function (response) {
+            alert("Ошибка при загрузке отделов");
+        }
+    });
+    }
+
+    function openUpdateModal(id) {
+        loadDepartments();
+        $("#department").val(id);
+        var modal = document.getElementById('modal');
+        modal.style.display = 'block';
+    }
+    function closeUpdateModal() {
+        var modal = document.getElementById('modal');
+        modal.style.display = 'none';
+    }
+</script>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <div class="modal-body" id="modal-body">
+            <div class="worktime-form">
+                <div class="form-name">Редактирование рабочего времени</div>
+                <hr>
+                <form method="post">
+                    <label for="department">Отдел</label><br>
+                    <select id="department" name="department">
+                        <option value="-">-</option>
+                    </select><br>
+
+                    <label for="start-time">Начало работы</label><br>
+                    <input type="time" min="00:00" max="24:00"><br>
+
+                    <label for="start-time">Конец работы</label><br>
+                    <input type="time" min="00:00" max="24:00"><br>
+
+                    <!--<label for="gender">Gender</label>
+                    <input type="radio"> Male
+                    <input type="radio"> Female
+                    <br>-->
+
+                    <input type="submit">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Id</th>
+            <th>Наименование</th>
+            <th>Начало работы</th>
+            <th>Конец работы</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int numberOfRow = 1;
+            foreach (GetWorkTimeModel workTime in Model)
+            {
+                <tr>
+                    <td>@numberOfRow.ToString()</td>
+                    @if (workTime.Id == 0)
+                    {
+                        <td>-</td>
+                        <td>@workTime.Department.Name</td>
+                        <td>не назначено</td>
+                        <td>не назначено</td>
+                        <td>
+                            <button onclick="openUpdateModal(@workTime.Department.Id)">Редактировать</button>
+                        </td>
+                    }else{
+                        <td>@workTime.Id</td>
+                        <td>@workTime.Department.Name</td>
+                        <td>@workTime.StartTime</td>
+                        <td>@workTime.EndTime</td>
+                        <td>
+                            <button onclick="openUpdateModal(@workTime.Department.Id)">Редактировать</button>
+                        </td>
+                    }
+                </tr>
+                numberOfRow++;
+            }
+        }
+    </tbody>
+</table>

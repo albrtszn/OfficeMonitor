@@ -13,9 +13,11 @@ using OfficeMonitor.Models.Company;
 using OfficeMonitor.Models.Departments;
 using OfficeMonitor.Models.Employee;
 using OfficeMonitor.Models.Manager;
+using OfficeMonitor.Models.WorkTime;
 using OfficeMonitor.Services;
 using OfficeMonitor.Services.MasterService;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Profile = DataBase.Repository.Models.Profile;
 
@@ -70,7 +72,6 @@ namespace OfficeMonitor.Controllers
                 Response.Cookies.Delete(cookie);
                 countOfCookies++;
             }
-
             return Ok(new { message = $"{DateTime.Now} Deleted {countOfCookies} cookies"});
         }
 
@@ -395,12 +396,101 @@ namespace OfficeMonitor.Controllers
         }
 
         /*
+         *  #WorkTime
+         */
+        [SwaggerOperation(Tags = new[] { "Rest/WorkTime" })]
+        [HttpGet("GetWorkTimes")]
+        public async Task<IActionResult> GetWorkTimes()
+        {
+            return Ok(await ms.WorkTime.GetAllDtos());
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/WorkTime" })]
+        [HttpPost("GetWorkTime")]
+        public async Task<IActionResult> GetWorkTime([FromBody] IntIdModel? id)
+        {
+            //  todo return exception with required field
+            if (id == null || id.Id == 0 || !ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            WorkTimeDto? dto = await ms.WorkTime.GetDtoById(id.Id);
+            if (dto == null)
+                throw new NotFoundException("Запись не найдена");
+            return Ok(dto);
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/WorkTime" })]
+        [HttpPost("AddWorkTime")]
+        public async Task<IActionResult> AddWorkTime([FromBody] AddWorkTimeModel? model)
+        {
+            if (model == null || !ModelState.IsValid)
+                return BadRequest("Невалидное значение");
+            Department? department = await ms.Department.GetById(model.IdDepartment);
+            if (department == null)
+                throw new NotFoundException("Отдел не найдена");
+            await ms.WorkTime.Save(model);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/WorkTime" })]
+        [HttpPost("UpdateWorkTime")]
+        public async Task<IActionResult> UpdateWorkTime([FromBody] UpdateWorkTimeModel? model)
+        {
+            if (model == null || model.Id <= 0 || !ModelState.IsValid)
+                return BadRequest("Невалидное значение");
+            WorkTime? WorkTime = await ms.WorkTime.GetById(model.Id);
+            if (WorkTime == null)
+                return NotFound("Запись не найдена");
+            Department? department = await ms.Department.GetById(model.IdDepartment);
+            if (department == null)
+                throw new NotFoundException("Отдел не найдена");
+            await ms.WorkTime.Save(model);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/WorkTime" })]
+        [HttpDelete("DeleteWorkTime")]
+        public async Task<IActionResult> DeleteWorkTime([FromBody] IntIdModel? id)
+        {
+            if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+                return BadRequest("Невалидное значение");
+            WorkTime? WorkTime = await ms.WorkTime.GetById(id.Id);
+            if (WorkTime == null)
+                throw new NotFoundException("Запись не найдена");
+            await ms.WorkTime.DeleteById(id.Id);
+            return Ok();
+        }
+
+        /*
          *  #Department
          */
         [SwaggerOperation(Tags = new[] { "Rest/Department" })]
         [HttpGet("GetDepartments")]
         public async Task<IActionResult> GetDepartments() {
             return Ok(await ms.Department.GetAllDtos());
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Department" })]
+        [HttpGet("GetDepartmentsByManagerHtml")]
+        public async Task<IActionResult> GetDepartmentsByManagerHtml()
+        {
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int managerId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out managerId);
+            var managerDto = await ms.Manager.GetDtoById(managerId);
+            if (managerDto == null)
+                throw new NotFoundException($"Менеджер не найден. id={managerId}");
+            var departmentsManager = (await ms.DepartmentManager.GetAll()).Where(x => x != null && x.IdManager != null && x.IdDepartment != null
+                                                                                            && x.IdManager.Equals(managerId));
+
+            var departmentDtos = (await ms.Department.GetAllDtos()).Where(x => x != null &&
+                                                                            departmentsManager.Any(a => a.IdManager != null && a.IdManager.Equals(managerId) &&
+                                                                                                      a.IdDepartment != null && a.IdDepartment.Equals(x.Id)));
+            string html = "";
+            foreach(DepartmentDto dto in departmentDtos)
+            {
+                html += $"<option value=\"{dto.Id}\">{dto.Name}</option>";
+            }
+            return Content(html);
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Department" })]
@@ -610,6 +700,7 @@ namespace OfficeMonitor.Controllers
             //  todo return exception with required field
             if (id == null || id.Id == 0 || !ModelState.IsValid)
                 throw new BadRequestException("Невалидное значение");
+            logger.LogInformation($"api/Rest/Getmanager id={id.Id}");
             ManagerDto? dto = await ms.Manager.GetDtoById(id.Id);
             if (dto == null)
                 throw new NotFoundException("Запись не найдена");

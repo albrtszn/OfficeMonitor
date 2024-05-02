@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using OfficeMonitor.DTOs;
 using OfficeMonitor.ErrorHandler.Errors;
 using OfficeMonitor.Models;
+using OfficeMonitor.Models.Company;
 using OfficeMonitor.Models.Departments;
 using OfficeMonitor.Models.Manager;
+using OfficeMonitor.Models.WorkTime;
 using OfficeMonitor.Services.MasterService;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.Design;
@@ -34,6 +36,26 @@ namespace OfficeMonitor.Controllers
         {
             var plans = await ms.Plan.GetAllDtos();
             return PartialView("PartialViews/GetPlans", plans);
+        }
+        [Authorize(Roles = "COMPANY")]
+        [HttpGet("GetCompanyPlans")]
+        public async Task<IActionResult> GetCompanyPlans()
+        {
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int companyId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out companyId);
+            var companyDto = await ms.Company.GetDtoById(companyId);
+            if (companyDto == null)
+                throw new NotFoundException($"Компания не найдена. id={companyId}");
+            PlanDto planDto = await ms.Plan.GetDtoById(companyDto.IdPlan.Value);
+            if(planDto == null)
+                throw new NotFoundException($"План не найден. id={companyDto.IdPlan}");
+            List<PlanDto> plans = await ms.Plan.GetAllDtos();
+            CompanyPlansModel model = new CompanyPlansModel {
+                CompanyPlan = planDto,
+                Plans = plans
+            };
+            return PartialView("PartialViews/GetCompanyPlans", model);
         }
         [Authorize(Roles = "COMPANY")]
         [HttpGet("GetCompanyInfo")]
@@ -208,18 +230,73 @@ namespace OfficeMonitor.Controllers
             }
             return PartialView("PartialViews/Departments", departmentModels);
         }
-        ///  End of Partial Gets Methods
 
+        [Authorize(Roles = "MANAGER")]
+        [HttpGet("GetWorkTimeOfDepartments")]
+        public async Task<IActionResult> GetWorkTimeOfDepartments()
+        {
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int managerId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out managerId);
+            var managerDto = await ms.Manager.GetDtoById(managerId);
+            if (managerDto == null)
+                throw new NotFoundException($"Менеджер не найден. id={managerId}");
+
+            var departmentsManager = (await ms.DepartmentManager.GetAll()).Where(x => x != null && x.IdManager != null && x.IdDepartment != null
+                                                                                            && x.IdManager.Equals(managerId));
+
+            var departmentDtos = (await ms.Department.GetAllDtos()).Where(x => x != null &&
+                                                                            departmentsManager.Any(a => a.IdManager != null && a.IdManager.Equals(managerId) &&
+                                                                                                      a.IdDepartment != null && a.IdDepartment.Equals(x.Id)));
+            List<GetWorkTimeModel> models = new List<GetWorkTimeModel>();
+            foreach (var department in departmentDtos)
+            {
+                WorkTimeDto? workTimeDto = await ms.WorkTime.GetDtoByDepartmentId(department.Id);
+                if(workTimeDto == null)
+                {
+                    models.Add(new GetWorkTimeModel
+                    {
+                        Id = 0,
+                        Department = department,
+                        StartTime = TimeOnly.MinValue,
+                        EndTime = TimeOnly.MinValue,
+                    });
+                }
+                else
+                {
+                    models.Add(new GetWorkTimeModel
+                    {
+                        Id = workTimeDto.Id,
+                        Department = department,
+                        StartTime = workTimeDto.StartTime.Value,
+                        EndTime = workTimeDto.EndTime.Value
+                    });
+                }
+            }
+            return PartialView("PartialViews/GetWorkTimeOfDepartments", models);
+        }
+        ///  End of Partial Gets Methods
         public IActionResult Index()
         {
             return View();
         }
-
+        [HttpGet("Privacy")]
         public IActionResult Privacy()
         {
             return View();
         }
-
+        [HttpGet("LogOut")]
+        public IActionResult LogOut()
+        {
+            int countOfCookies = 0;
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+                countOfCookies++;
+            }
+            return Redirect("/");
+        }
+        [HttpGet("Login")]
         public IActionResult Login()
         {
             return View();

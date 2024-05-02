@@ -24,7 +24,7 @@
                 removebackgroundColor();
                 firstElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
                 $("#dashboard-content").load("/GetManagerInfo");
-                dashboardContent.style.display = 'block';
+                dashboardContent.style.display = '';
             }
         };
         secondElem.onclick = function () {
@@ -36,7 +36,7 @@
                 removebackgroundColor();
                 $("#dashboard-content").load("/GetManagerDepartments");
                 secondElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
-                dashboardContent.style.display = 'block';
+                dashboardContent.style.display = '';
             }
         };
         thirdElem.onclick = function () {
@@ -46,9 +46,9 @@
             }
             else {
                 removebackgroundColor();
-                $("#dashboard-content").load("/");
+                $("#dashboard-content").load("/GetWorkTimeOfDepartments"); 
                 thirdElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
-                dashboardContent.style.display = 'block';
+                dashboardContent.style.display = '';
             }
         };
         fourthElem.onclick = function () {
@@ -60,7 +60,7 @@
                 removebackgroundColor();
                 $("#dashboard-content").load("/");
                 fourthElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
-                dashboardContent.style.display = 'block';
+                dashboardContent.style.display = '';
             }
         };
     });
@@ -72,7 +72,7 @@
             <ul class="dashboard-menu" id="dashboard-menu">
                 <li id="firstElem"><a href="#">Личные данные</a></li>
                 <li id="secondElem"><a href="#">Отделы</a></li>
-                <li id="thirdElem"><a href="#">Option</a></li>
+                <li id="thirdElem"><a href="#">Рабочее время</a></li>
                 <li id="fourthElem"><a href="#">Option</a></li>
             </ul>
         </div>

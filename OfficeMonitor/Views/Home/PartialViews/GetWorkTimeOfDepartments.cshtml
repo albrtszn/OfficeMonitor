@@ -6,8 +6,8 @@
     $.ajax({
         contentType: 'application/json; charset=utf-8',
         dataType: 'html',
-        type: 'Get',
-            url: '/api/Rest/GetDepartmentsByManagerHtml',
+        type: 'GET',
+            url: '/api/GetDepartmentsByManagerHtml',
         success: function (response) {
             //alert("Загрузка отделов: "+response);
             $('#department').html(response);
@@ -18,9 +18,23 @@
     });
     }
 
-    function openUpdateModal(id) {
+    function openUpdateModal(id, departmentId, departmentname) {
         loadDepartments();
-        $("#department").val(id);
+        var updateForm = $("#update-worktime-form");
+        var createForm = $("#create-worktime-form");
+        if (id === null) {
+            createForm.find("#departmentId").val(departmentId);
+            createForm.find("#departmentName").text(departmentname);
+            createForm.show();
+            updateForm.hide();
+        }else{
+            updateForm.find("#workTimeId").val(id);
+            updateForm.find("#departmentId").val(departmentId);
+            updateForm.find("#departmentName").text(departmentname);
+            createForm.hide();
+            updateForm.show();
+        }
+        $("#department").val(departmentId);
         var modal = document.getElementById('modal');
         modal.style.display = 'block';
     }
@@ -28,33 +42,87 @@
         var modal = document.getElementById('modal');
         modal.style.display = 'none';
     }
+    function updateWorkTime1(){
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            type: 'POST',
+            url: '/api/UpdateWorkTime',
+            data: { 
+                "Id": $('#workTimeId').val(),
+                "IdDepartment": $('#department').val(),
+                "StartTime": $('#startTime').val(),
+                "EndTime": $('#endTime').val()
+            },
+            success: function (response) {
+                alert("Время работы обновлено");
+            },
+            error: function (response) {
+                alert("Ошибка при обновлении времени работы" + response.responseText);
+            }
+        });
+    }
+    function deleteWorkTime(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            type: 'POST',
+            url: '/api/DeleteWorkTime',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                alert("Время работы удалено");
+            },
+            error: function (response) {
+                alert("Ошибка при удалении времени работы" + response.responseText);
+            }
+        });
+    }
 </script>
 
 <div class="modal" id="modal">
     <div class="modal-content">
         <span class="modal-close" onclick="closeModal()">&times;</span>
         <div class="modal-body" id="modal-body">
-            <div class="worktime-form">
-                <div class="form-name">Редактирование рабочего времени</div>
+            <div class="create-worktime-form" id="create-worktime-form">
+                <div class="form-name">Назначение рабочего времени</div>
                 <hr>
-                <form method="post">
-                    <label for="department">Отдел</label><br>
-                    <select id="department" name="department">
-                        <option value="-">-</option>
-                    </select><br>
+                <form asp-controller="api" asp-action="AddWorkTime" method="post">
+                    <input type="hidden" id="departmentId" name="IdDepartment" />
+                    
+                    <label for="departmentName">Отдел: </label>
+                    <span id="departmentName"></span><br>
 
                     <label for="start-time">Начало работы</label><br>
-                    <input type="time" min="00:00" max="24:00"><br>
+                    <input id="startTime" name="StartTime" type="time" min="00:00" max="24:00"><br>
 
                     <label for="start-time">Конец работы</label><br>
-                    <input type="time" min="00:00" max="24:00"><br>
+                    <input id="endTime" name="EndTime" type="time" min="00:00" max="24:00"><br>
 
-                    <!--<label for="gender">Gender</label>
-                    <input type="radio"> Male
-                    <input type="radio"> Female
-                    <br>-->
+                    <button type="submit">Подтвердить</button>
+                </form>
+            </div>
 
-                    <input type="submit">
+            <div class="update-worktime-form" id="update-worktime-form">
+                <div class="form-name">Редактирование рабочего времени</div>
+                <hr>
+                <form asp-controller="api" asp-action="UpdateWorkTime">
+                    <input type="hidden" id="workTimeId" name="Id"/>
+                    <input type="hidden" id="departmentId" name="IdDepartment" />
+
+                    <label for="departmentName">Отдел: </label>
+                    <span id="departmentName"></span><br>
+
+                    <label for="start-time">Начало работы</label><br>
+                    <input id="startTime" name="StartTime" type="time" min="00:00" max="24:00"><br>
+
+                    <label for="start-time">Конец работы</label><br>
+                    <input id="endTime" name="EndTime" type="time" min="00:00" max="24:00"><br>
+
+                    <button type="submit">Подтвердить</button>
                 </form>
             </div>
         </div>
@@ -65,7 +133,7 @@
     <thead>
         <tr>
             <th>№</th>
-            <th>Id</th>
+            <!--<th>Id</th>-->
             <th>Наименование</th>
             <th>Начало работы</th>
             <th>Конец работы</th>
@@ -77,27 +145,26 @@
             int numberOfRow = 1;
             foreach (GetWorkTimeModel workTime in Model)
             {
-                <tr>
-                    <td>@numberOfRow.ToString()</td>
-                    @if (workTime.Id == 0)
+                            <tr>
+                                <td>@numberOfRow.ToString()</td>
+                                @if (workTime.Id == 0)
                     {
-                        <td>-</td>
-                        <td>@workTime.Department.Name</td>
-                        <td>не назначено</td>
-                        <td>не назначено</td>
-                        <td>
-                            <button onclick="openUpdateModal(@workTime.Department.Id)">Редактировать</button>
-                        </td>
+                                    <td>@workTime.Department.Name</td>
+                                    <td>не назначено</td>
+                                    <td>не назначено</td>
+                                    <td>
+                                        <button onclick="openUpdateModal(null, @workTime.Department.Id, '@workTime.Department.Name')">Редактировать</button>
+                                    </td>
                     }else{
-                        <td>@workTime.Id</td>
-                        <td>@workTime.Department.Name</td>
-                        <td>@workTime.StartTime</td>
-                        <td>@workTime.EndTime</td>
-                        <td>
-                            <button onclick="openUpdateModal(@workTime.Department.Id)">Редактировать</button>
-                        </td>
+                                    <td>@workTime.Department.Name</td>
+                                    <td>@workTime.StartTime</td>
+                                    <td>@workTime.EndTime</td>
+                                    <td>
+                                        <button onclick="openUpdateModal(@workTime.Id, @workTime.Department.Id, '@workTime.Department.Name')">Редактировать</button>
+                                        <button onclick="deleteWorkTime(@workTime.Id)">Удалить</button>
+                                    </td>
                     }
-                </tr>
+                            </tr>
                 numberOfRow++;
             }
         }

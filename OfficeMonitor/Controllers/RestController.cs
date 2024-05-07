@@ -23,7 +23,8 @@ using Profile = DataBase.Repository.Models.Profile;
 
 namespace OfficeMonitor.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class RestController : ControllerBase
     {
@@ -41,6 +42,13 @@ namespace OfficeMonitor.Controllers
 
         [HttpGet("Ping")]
         public async Task<IActionResult> Ping()
+        {
+            return Ok(new { message = $"Ping: {HttpContext.Request.Host + HttpContext.Request.Path} {DateTime.Now}." });
+        }
+
+
+        [HttpPost("PostPing")]
+        public async Task<IActionResult> PostPing()
         {
             return Ok(new { message = $"Ping: {HttpContext.Request.Host + HttpContext.Request.Path} {DateTime.Now}." });
         }
@@ -420,10 +428,12 @@ namespace OfficeMonitor.Controllers
 
         [SwaggerOperation(Tags = new[] { "Rest/WorkTime" })]
         [HttpPost("AddWorkTime")]
-        public async Task<IActionResult> AddWorkTime([FromBody] AddWorkTimeModel? model)
+        public async Task<IActionResult> AddWorkTime([FromForm] AddWorkTimeModel model)
         {
             if (model == null || !ModelState.IsValid)
                 return BadRequest("Невалидное значение");
+            logger.LogInformation($"/api/AddWorkTime POST idDepartment={model.IdDepartment} " +
+                      $"startTime={model.StartTime} endTime={model.EndTime}");
             Department? department = await ms.Department.GetById(model.IdDepartment);
             if (department == null)
                 throw new NotFoundException("Отдел не найдена");
@@ -433,10 +443,12 @@ namespace OfficeMonitor.Controllers
 
         [SwaggerOperation(Tags = new[] { "Rest/WorkTime" })]
         [HttpPost("UpdateWorkTime")]
-        public async Task<IActionResult> UpdateWorkTime([FromBody] UpdateWorkTimeModel? model)
+        public async Task<IActionResult> UpdateWorkTime([FromForm] UpdateWorkTimeModel? model)
         {
             if (model == null || model.Id <= 0 || !ModelState.IsValid)
                 return BadRequest("Невалидное значение");
+            logger.LogInformation($"/api/UpdateWorkTime POST id={model.Id} idDepartment={model.IdDepartment} " +
+                                  $"startTime={model.StartTime} endTime={model.EndTime}");
             WorkTime? WorkTime = await ms.WorkTime.GetById(model.Id);
             if (WorkTime == null)
                 return NotFound("Запись не найдена");
@@ -448,11 +460,12 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/WorkTime" })]
-        [HttpDelete("DeleteWorkTime")]
+        [HttpPost("DeleteWorkTime")]
         public async Task<IActionResult> DeleteWorkTime([FromBody] IntIdModel? id)
         {
+            logger.LogInformation($"/api/DeleteWorkTime POST id={id.Id}");
             if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
-                return BadRequest("Невалидное значение");
+                throw new BadRequestException("Невалидное значение");
             WorkTime? WorkTime = await ms.WorkTime.GetById(id.Id);
             if (WorkTime == null)
                 throw new NotFoundException("Запись не найдена");

@@ -1,4 +1,5 @@
 ﻿using DataBase.Repository.Models;
+using OfficeMonitor.DTOs;
 
 namespace OfficeMonitor.Services.MasterService
 {
@@ -65,6 +66,31 @@ namespace OfficeMonitor.Services.MasterService
             {
                 return false;
             }
+        }
+
+        public async Task<List<Employee>> GetEmployeesByDepartment(int departmentId)
+        {
+            //var employees = (await Employee.GetAll()).Where(async x => x.IdProfile != null && (await IsProfileExistsInDepartment(x.IdProfile.Value, departmentId)));
+            var employees = (await Employee.GetAll());
+            List<Employee> employeesByDepartment = new List<Employee>();
+            foreach(var employee in employees)
+            {
+                if(employee.IdProfile != null && await IsProfileExistsInDepartment(employee.IdProfile.Value, departmentId))
+                    employeesByDepartment.Add(employee);
+            }
+            return employeesByDepartment;
+        }
+        public async Task<List<EmployeeDto>> GetEmployeeDtosByDepartment(int departmentId)
+        {
+            //var employees = (await Employee.GetAll()).Where(async x => x.IdProfile != null && (await IsProfileExistsInDepartment(x.IdProfile.Value, departmentId)));
+            var employees = (await Employee.GetAllDtos());
+            List<EmployeeDto> employeeDtosByDepartment = new List<EmployeeDto>();
+            foreach (var employee in employees)
+            {
+                if (employee.IdProfile != null && await IsProfileExistsInDepartment(employee.IdProfile.Value, departmentId))
+                    employeeDtosByDepartment.Add(employee);
+            }
+            return employeeDtosByDepartment;
         }
     }
 }

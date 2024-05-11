@@ -1,0 +1,34 @@
+﻿@using OfficeMonitor.Models.Departments
+@model DepartmentStatistic
+
+<div class="info-content">
+    <div class="info-card">
+        @if(Model.WorkTime!=null){
+            <div class="name">Время работы</div>
+            <div class="value">@Model.WorkTime.StartTime - @Model.WorkTime.EndTime</div>
+        }else{
+            <div class="name">Время работы</div>
+            <div class="value">не установлено</div>
+        }
+    </div>
+
+    <div class="info-card">
+        <div class="name">Всего часов</div>
+        <div class="value">@Model.TotalHours</div>
+    </div>
+
+    <div class="info-card">
+        <div class="name">Отработанных часов</div>
+        <div class="value">@Model.WorkedPercent %</div>
+    </div>
+
+    <div class="info-card">
+        <div class="name">Часов простоя</div>
+        <div class="value">@Model.IdlePercent %</div>
+    </div>
+
+    <div class="info-card">
+        <div class="name">Часов отвлечения</div>
+        <div class="value">@Model.DiversionPercent %</div>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+﻿@using OfficeMonitor.DTOs
+@model List<DepartmentDto>
+
+    <script>
+        function getStatisticOfDepartment(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: '/GetDepartmentStatistic',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                alert("Статистика получена " + response);
+                $("#department-statistic").html(response);
+            },
+            error: function (response) {
+                alert("Ошибка при получении статистики" + response.responseText);
+            }
+        });
+        }
+    </script>
+
+    <div class="button-list">
+    @foreach(DepartmentDto dto in Model){
+        <button onclick="getStatisticOfDepartment(@dto.Id)">@dto.Name</button>
+    }
+    </div>
+
+    <div id="department-statistic">
+
+    </div>

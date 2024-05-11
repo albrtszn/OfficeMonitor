@@ -45,6 +45,14 @@ namespace OfficeMonitor.Services
             return Employees;
         }
 
+        public async Task<List<EmployeeDto>> GetAllDtosByDepartmentId(int id)
+        {
+            List<EmployeeDto> Employees = new List<EmployeeDto>();
+            List<Employee> list = await EmployeeRepo.GetAll();
+            list.ForEach(x => Employees.Add(mapper.Map<EmployeeDto>(x)));
+            return Employees;
+        }
+
         public async Task<Employee?> GetById(int id)
         {
             return await EmployeeRepo.GetById(id);

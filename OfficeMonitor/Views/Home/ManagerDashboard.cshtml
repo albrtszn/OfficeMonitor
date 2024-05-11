@@ -58,7 +58,7 @@
             }
             else {
                 removebackgroundColor();
-                $("#dashboard-content").load("/");
+                $("#dashboard-content").load("/GetDepartmentStatistics");
                 fourthElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
                 dashboardContent.style.display = '';
             }
@@ -73,7 +73,7 @@
                 <li id="firstElem"><a href="#">Личные данные</a></li>
                 <li id="secondElem"><a href="#">Отделы</a></li>
                 <li id="thirdElem"><a href="#">Рабочее время</a></li>
-                <li id="fourthElem"><a href="#">Option</a></li>
+                <li id="fourthElem"><a href="#">Анализ</a></li>
             </ul>
         </div>
         <div class="dashboard-content" id="dashboard-content">

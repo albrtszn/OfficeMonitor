@@ -40,6 +40,15 @@ namespace OfficeMonitor.Services
             return await WorkTimeRepo.GetById(id);
         }
 
+        public async Task<WorkTime> GetByDepartmentId(int id)
+        {
+            WorkTime? workTime = (await WorkTimeRepo.GetAll()).FirstOrDefault(x => x != null && x.IdDepartment != null
+                                                                                 && x.IdDepartment.Equals(id));
+            if (workTime == null)
+                return null;
+            return workTime;
+        }
+
         public async Task<WorkTimeDto?> GetDtoByDepartmentId(int id)
         {
             WorkTime? workTime = (await WorkTimeRepo.GetAll()).FirstOrDefault(x=>x!=null && x.IdDepartment!= null 

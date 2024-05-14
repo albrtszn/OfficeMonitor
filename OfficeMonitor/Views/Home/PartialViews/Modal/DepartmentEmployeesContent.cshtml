@@ -1,0 +1,62 @@
+﻿@using OfficeMonitor.Models.Employee
+@model List<GetEmployeeModel>
+
+    <script>
+    function UpdateEmployeeContent(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: '/UpdateEmployeeContent',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                $("#modal-body").html(response);
+                $("#employeeId").val(id);
+            },
+            error: function (response) {
+                alert("Ошибка при удалении времени работы" + response.responseText);
+            }
+        });
+    } 
+    </script>
+
+<button onclick="AddEmployeeContent()">Добавить сотрудника</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Id</th>
+            <th>ФИО</th>
+            <th>email</th>
+            <th>Пароль</th>
+            <th>Должность</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int numberOfRow = 1;
+            foreach (GetEmployeeModel employee in Model)
+            {
+                <tr>
+                    <td>@numberOfRow.ToString()</td>
+                    <td>@employee.Id</td>
+                    <td>@employee.Surname @employee.Name @employee.Patronamic</td>
+                    <td>@employee.Login</td>
+                    <td>@employee.Password.Substring(0, 10) ...</td>
+                    <td>@employee.Profile.Name</td>
+                    <td>
+                        <button onclick="UpdateEmployeeContent(@employee.Id)">Редакьтировть</button>
+                        <button onclick="DeleteEmployee(@employee.Id)">Удалить</button>
+                    </td>
+                </tr>
+                numberOfRow++;
+            }
+        }
+    </tbody>
+</table>
+<button onclick="closeModal()">Назад</button>

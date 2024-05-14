@@ -7,10 +7,13 @@ using OfficeMonitor.ErrorHandler.Errors;
 using OfficeMonitor.Models;
 using OfficeMonitor.Models.Company;
 using OfficeMonitor.Models.Departments;
+using OfficeMonitor.Models.Employee;
 using OfficeMonitor.Models.Manager;
 using OfficeMonitor.Models.WorkTime;
 using OfficeMonitor.Services.MasterService;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -234,6 +237,64 @@ namespace OfficeMonitor.Controllers
             }
             return PartialView("PartialViews/Departments", departmentModels);
         }
+        [Authorize(Roles = "MANAGER")]
+        [HttpPost("GetDepartmentEmployeesContent")]
+        public async Task<IActionResult> GetDepartmentEmployeesContent([FromBody] IntIdModel? id)
+        {
+            if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+                throw new BadRequestException("Невалидное значение");
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int managerId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out managerId);
+            var managerDto = await ms.Manager.GetDtoById(managerId);
+            if (managerDto == null)
+                throw new NotFoundException($"Менеджер не найден. id={managerId}");
+
+            var departmentsManager = (await ms.DepartmentManager.GetAll()).Where(x => x != null && x.IdManager != null && x.IdDepartment != null
+                                                                                            && x.IdManager.Equals(managerId));
+
+            var department = (await ms.Department.GetAllDtos()).Find(x => x != null &&
+                                                                            departmentsManager.Any(a => a.IdManager != null && a.IdManager.Equals(managerId) &&
+                                                                                                        a.IdDepartment != null && a.IdDepartment.Equals(x.Id)));
+            List<GetEmployeeModel> models = new List<GetEmployeeModel>();
+            foreach (Employee employee in await ms.Employee.GetAll())
+            {
+                if (employee.IdProfile != null && await ms.IsProfileExistsInDepartment(employee.IdProfile.Value, department.Id))
+                {
+                    ProfileDto profileDto = await ms.Profile.GetDtoById(employee.IdProfile.Value);
+                    models.Add(new GetEmployeeModel
+                    {
+                        Id = employee.Id,
+                        Name = employee.Name,
+                        Surname = employee.Surname,
+                        Patronamic = employee.Patronamic,
+                        Login = employee.Login,
+                        Password = employee.Password,
+                        Department = await ms.Department.GetDtoById(profileDto.IdDepartment.Value),
+                        Profile = profileDto
+                    });
+                }
+            }
+            return PartialView("PartialViews/Modal/DepartmentEmployeesContent", models);
+        }
+        [Authorize(Roles = "MANAGER")]
+        [HttpPost("UpdateEmployeeContent")]
+        public async Task<IActionResult> UpdateEmployeeContent([FromBody] IntIdModel? id)
+        {
+            if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+                throw new BadRequestException("Невалидное значение");
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int managerId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out managerId);
+            var managerDto = await ms.Manager.GetDtoById(managerId);
+            if (managerDto == null)
+                throw new NotFoundException($"Менеджер не найден. id={managerId}");
+
+            GetEmployeeModel model = await ms.GetEmployeeModelbyId(id.Id);
+            if(model == null)
+                throw new BadRequestException("Пользователь не найден");
+            return PartialView("PartialViews/Modal/UpdateEmployeeContent", model);
+        }
 
         [Authorize(Roles = "MANAGER")]
         [HttpGet("GetWorkTimeOfDepartments")]
@@ -298,17 +359,16 @@ namespace OfficeMonitor.Controllers
                                                                             departmentsManager.Any(a => a.IdManager != null && a.IdManager.Equals(managerId) &&
                                                                                                       a.IdDepartment != null && a.IdDepartment.Equals(x.Id)))
                                                                     .ToList();
-            
             return PartialView("PartialViews/DepartmentsStatistic", departmentDtos);
         }
 
         [Authorize(Roles = "MANAGER")]
         [HttpPost("GetDepartmentStatistic")]
-        public async Task<IActionResult> GetDepartmentStatistic([FromBody]IntIdModel id)
+        public async Task<IActionResult> GetDepartmentStatistic([FromBody] GetDepartmentStatistic model)
         {
             if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
                 throw new BadRequestException("Невалидное значение");
-            logger.LogInformation($"/api/GetDepartmentStatistic POST id={id.Id}");
+            logger.LogInformation($"/api/GetDepartmentStatistic POST departmentId={model.DepartmentId}, dataRane={model.DateRange}");
 
             var claimsIdentity = this.User.Identity as ClaimsIdentity;
             int managerId = 0;
@@ -320,36 +380,54 @@ namespace OfficeMonitor.Controllers
             var departmentsManager = (await ms.DepartmentManager.GetAll()).Where(x => x != null && x.IdManager != null && x.IdDepartment != null
                                                                                            && x.IdManager.Equals(managerId));
 
-            var departmentDto = (await ms.Department.GetAllDtos()).Find(x => x != null && x.Id.Equals(id.Id) &&
-                                                                             departmentsManager.Any(a=> a.IdDepartment != null && a.IdDepartment.Equals(id.Id)));
-                                                                            /*departmentsManager.Any(a => a.IdManager != null && a.IdManager.Equals(managerId) &&
-                                                                                                        a.IdDepartment != null && a.IdDepartment.Equals(x.Id) 
-                                                                                                        && a.Id.Equals(id.Id)));*/
+            var departmentDto = (await ms.Department.GetAllDtos()).Find(x => x != null && x.Id.Equals(model.DepartmentId) &&
+                                                                             departmentsManager.Any(a=> a.IdDepartment != null && a.IdDepartment.Equals(model.DepartmentId)));
 
             DepartmentStatistic statistic = new DepartmentStatistic();
-            List<EmployeeDto> employees = await ms.GetEmployeeDtosByDepartment(id.Id);
-            WorkTimeDto workTimeOfDepartment = await ms.WorkTime.GetDtoByDepartmentId(id.Id);
+            List<EmployeeDto> employees = await ms.GetEmployeeDtosByDepartment(model.DepartmentId);
+            WorkTimeDto? workTimeOfDepartment = await ms.WorkTime.GetDtoByDepartmentId(model.DepartmentId);
             if (departmentDto != null && workTimeOfDepartment != null && !employees.IsNullOrEmpty())
-            {
-                double hours = (workTimeOfDepartment.EndTime - workTimeOfDepartment.StartTime).Value.TotalHours;
-
-
+            { 
                 int totalWorkedHours = 0;
                 int totalIdleHours = 0;
-                int totalDiverHours = 0;
+                int totalDiverHours = 0;                        
+                string[] dates = model.DateRange.Split(" - ");
+                DateOnly startDate;
+                DateOnly.TryParse(dates[0], out startDate);
+                DateOnly endDate;
+                DateOnly.TryParse(dates[1], out endDate);
                 foreach (var employee in employees)
                 {
                     List<Action> employeeActions = await ms.Action.GetAllByEmployee(employee.Id);
                     foreach(var action in employeeActions)
                     {
+                        if (action.Date != null && 
+                            (action.Date.Value>=startDate && action.Date.Value<=endDate))
+                        {
+
+                        }
                     }
                 }
+
+                double totalMinutes = 0;
+                double minutesPerEmployee = (workTimeOfDepartment.EndTime - workTimeOfDepartment.StartTime).Value.TotalMinutes;
+                while (startDate<=endDate)
+                {
+                    if (!startDate.DayOfWeek.Equals(DayOfWeek.Saturday) && !startDate.DayOfWeek.Equals(DayOfWeek.Sunday))
+                        totalMinutes += minutesPerEmployee;
+                    startDate = startDate.AddDays(1);
+                }
+
                 statistic.Name = departmentDto.Name;
                 statistic.WorkTime = workTimeOfDepartment;
                 statistic.WorkedPercent = 0;
                 statistic.IdlePercent = 0;
                 statistic.DiversionPercent = 0;
-                statistic.TotalHours = employees.Count * hours;
+                statistic.TotalHours = new TimeSummaryModel
+                { 
+                    Hours = ((int)totalMinutes / 60).ToString(),
+                    Minutes = ((int)totalMinutes % 60).ToString()
+                };
             }
             return PartialView("PartialViews/GetDepartmentStatistic", statistic);
         }

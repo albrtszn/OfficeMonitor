@@ -1,5 +1,6 @@
 ﻿using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
+using OfficeMonitor.Models.Employee;
 
 namespace OfficeMonitor.Services.MasterService
 {
@@ -67,7 +68,29 @@ namespace OfficeMonitor.Services.MasterService
                 return false;
             }
         }
-
+        public async Task<GetEmployeeModel> GetEmployeeModelbyId(int id)
+        {
+            Employee employee = await Employee.GetById(id);
+            if(employee != null)
+            {
+                ProfileDto profile = await Profile.GetDtoById(employee.Id);
+                if(profile != null)
+                {
+                    return new GetEmployeeModel
+                    {
+                        Id = employee.Id,
+                        Name = employee.Name,
+                        Surname = employee.Surname,
+                        Patronamic = employee.Patronamic,
+                        Login = employee.Login,
+                        Password = employee.Password,
+                        Department = await Department.GetDtoById(profile.IdDepartment.Value),
+                        Profile = profile
+                    };
+                }
+            }
+            return null;
+        }
         public async Task<List<Employee>> GetEmployeesByDepartment(int departmentId)
         {
             //var employees = (await Employee.GetAll()).Where(async x => x.IdProfile != null && (await IsProfileExistsInDepartment(x.IdProfile.Value, departmentId)));

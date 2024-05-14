@@ -3,8 +3,14 @@
 
     <script>
         function getStatisticOfDepartment(id) {
-        var IntIdModel = {
-            "Id": id
+        var startDate = $('#daterange').data('daterangepicker').startDate.format('DD.MM.YYYY');
+        var endDate = $('#daterange').data('daterangepicker').endDate.format('DD.MM.YYYY');
+        console.log("Start Date:", startDate, "End Date:", endDate);
+        var dataRange = startDate+' - '+endDate;
+        
+        var GetDepartmentStatistic = {
+            "DepartmentId": id,
+            "DateRange": dataRange
         };
 
         $.ajax({
@@ -12,9 +18,9 @@
             dataType: 'html',
             type: 'POST',
             url: '/GetDepartmentStatistic',
-            data: JSON.stringify(IntIdModel),
+            data: JSON.stringify(GetDepartmentStatistic),
             success: function (response) {
-                alert("Статистика получена " + response);
+                //alert("Статистика получена " + response);
                 $("#department-statistic").html(response);
             },
             error: function (response) {
@@ -22,7 +28,23 @@
             }
         });
         }
+        $(document).ready(function(){
+            $('#daterange').daterangepicker({
+                locale: {
+                    format: 'DD.MM.YYYY'
+                },
+                calender_style: "picker_1",
+                maxDate: new Date()
+            });
+        },
+           function (start, end) {
+               console.log("Selected dates:", start.format('DD.MM.YYYY'), end.format('DD.MM.YYYY'));
+               var startDate = start.format('DD.MM.YYYY');
+               var endDate = end.format('DD.MM.YYYY');
+           });
     </script>
+
+    <input type="text" id="daterange" name="daterange" value="01.05.2024 - 10.05.2024"/>
 
     <div class="button-list">
     @foreach(DepartmentDto dto in Model){

@@ -26,10 +26,22 @@ namespace OfficeMonitor.Services
             return await ProfileRepo.GetAll();
         }
 
+        public async Task<List<Profile>> GetAllByDepartment(int id)
+        {
+            return (await ProfileRepo.GetAll()).Where(x=> x.IdDepartment!=null && x.IdDepartment.Equals(id)).ToList();
+        }
+
         public async Task<List<ProfileDto>> GetAllDtos()
         {
             List<ProfileDto> Profiles = new List<ProfileDto>();
             List<Profile> list = await ProfileRepo.GetAll();
+            list.ForEach(x => Profiles.Add(mapper.Map<ProfileDto>(x)));
+            return Profiles;
+        }        
+        public async Task<List<ProfileDto>> GetAllDtosByDepartment(int id)
+        {
+            List<ProfileDto> Profiles = new List<ProfileDto>();
+            List<Profile> list = (await ProfileRepo.GetAll()).Where(x => x.IdDepartment != null && x.IdDepartment.Equals(id)).ToList();
             list.ForEach(x => Profiles.Add(mapper.Map<ProfileDto>(x)));
             return Profiles;
         }

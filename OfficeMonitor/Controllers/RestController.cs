@@ -572,6 +572,26 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Profile" })]
+        [HttpPost("GetProfilesByDepartmentHtml")]
+        public async Task<IActionResult> GetProfilesByDepartmentHtml([FromBody] IntIdModel id)
+        {
+            if (id == null || id.Id == 0 || !ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            Department? department = await ms.Department.GetById(id.Id);
+            if (department == null)
+                throw new NotFoundException("Запись не найдена");
+
+            var profileDtos = await ms.Profile.GetAllDtosByDepartment(id.Id);
+
+            string html = "";
+            foreach (ProfileDto dto in profileDtos)
+            {
+                html += $"<option value=\"{dto.Id}\">{dto.Name}</option>";
+            }
+            return Content(html);
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Profile" })]
         [HttpPost("GetProfile")]
         public async Task<IActionResult> GetProfile([FromBody] IntIdModel? id)
         {

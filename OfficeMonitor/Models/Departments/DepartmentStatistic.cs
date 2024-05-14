@@ -16,6 +16,6 @@ namespace OfficeMonitor.Models.Departments
         [Required]
         public decimal DiversionPercent { get; set; }
         [Required]
-        public double TotalHours { get; set; }
+        public TimeSummaryModel TotalHours { get; set; }
     }
 }

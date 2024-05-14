@@ -13,6 +13,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+
+    <!--<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>-->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js" defer></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 </head>
 
 <style>
@@ -144,6 +149,14 @@
         </header>
     </section>
     
+    <div class="modal" id="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div class="modal-body" id="modal-body">
+            </div>
+        </div>
+    </div>
+
     @{/*<div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

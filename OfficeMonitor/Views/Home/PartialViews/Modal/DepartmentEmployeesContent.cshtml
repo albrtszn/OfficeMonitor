@@ -2,6 +2,21 @@
 @model List<GetEmployeeModel>
 
     <script>
+    function AddEmployeeContent() {
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'GET',
+            url: '/AddEmployeeContent',
+            success: function (response) {
+                $("#modal-body").html(response);
+            },
+            error: function (response) {
+                alert("Ошибка при удалении времени работы" + response.responseText);
+            }
+        });
+    }
+
     function UpdateEmployeeContent(id) {
         var IntIdModel = {
             "Id": id

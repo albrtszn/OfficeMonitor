@@ -2,63 +2,45 @@
 @model List<GetWorkTimeModel>
 
 <script>
-    function loadDepartments(){
-    $.ajax({
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'html',
-        type: 'GET',
-            url: '/api/GetDepartmentsByManagerHtml',
-        success: function (response) {
-            //alert("Загрузка отделов: "+response);
-            $('#department').html(response);
-        },
-        error: function (response) {
-            alert("Ошибка при загрузке отделов");
-        }
-    });
-    }
-
-    function openUpdateModal(id, departmentId, departmentname) {
-        loadDepartments();
-        var updateForm = $("#update-worktime-form");
-        var createForm = $("#create-worktime-form");
-        if (id === null) {
-            createForm.find("#departmentId").val(departmentId);
-            createForm.find("#departmentName").text(departmentname);
-            createForm.show();
-            updateForm.hide();
-        }else{
-            updateForm.find("#workTimeId").val(id);
-            updateForm.find("#departmentId").val(departmentId);
-            updateForm.find("#departmentName").text(departmentname);
-            createForm.hide();
-            updateForm.show();
-        }
-        $("#department").val(departmentId);
-        var modal = document.getElementById('modal');
-        modal.style.display = 'block';
-    }
-    function closeUpdateModal() {
-        var modal = document.getElementById('modal');
-        modal.style.display = 'none';
-    }
-    function updateWorkTime1(){
+    function openAddModal(id) {
+        var IntIdModel = {
+            "Id": id
+        };
         $.ajax({
             contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
+            dataType: 'html',
             type: 'POST',
-            url: '/api/UpdateWorkTime',
-            data: { 
-                "Id": $('#workTimeId').val(),
-                "IdDepartment": $('#department').val(),
-                "StartTime": $('#startTime').val(),
-                "EndTime": $('#endTime').val()
-            },
+            url: '/AddWorkTimeContent',
+            data: JSON.stringify(IntIdModel),
             success: function (response) {
-                alert("Время работы обновлено");
+                $("#modal-body").html(response);
+                openModal();
             },
             error: function (response) {
-                alert("Ошибка при обновлении времени работы" + response.responseText);
+                //$("#modal-body").html(response);
+                //openModal();
+                alert("Ошибка при редактировании времени работы" + response.responseText);
+            }
+        });
+    }
+    function openUpdateModal(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: '/UpdateWorkTimeContent',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                $("#modal-body").html(response);
+                openModal();
+            },
+            error: function (response) {
+                //$("#modal-body").html(response);
+                //openModal();
+                alert("Ошибка при редактировании времени работы" + response.responseText);
             }
         });
     }
@@ -66,7 +48,6 @@
         var IntIdModel = {
             "Id": id
         };
-
         $.ajax({
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
@@ -82,52 +63,6 @@
         });
     }
 </script>
-
-<div class="modal" id="modal">
-    <div class="modal-content">
-        <span class="modal-close" onclick="closeModal()">&times;</span>
-        <div class="modal-body" id="modal-body">
-            <div class="create-worktime-form" id="create-worktime-form">
-                <div class="form-name">Назначение рабочего времени</div>
-                <hr>
-                <form asp-controller="api" asp-action="AddWorkTime" method="post">
-                    <input type="hidden" id="departmentId" name="IdDepartment" />
-                    
-                    <label for="departmentName">Отдел: </label>
-                    <span id="departmentName"></span><br>
-
-                    <label for="start-time">Начало работы</label><br>
-                    <input id="startTime" name="StartTime" type="time" min="00:00" max="24:00"><br>
-
-                    <label for="start-time">Конец работы</label><br>
-                    <input id="endTime" name="EndTime" type="time" min="00:00" max="24:00"><br>
-
-                    <button type="submit">Подтвердить</button>
-                </form>
-            </div>
-
-            <div class="update-worktime-form" id="update-worktime-form">
-                <div class="form-name">Редактирование рабочего времени</div>
-                <hr>
-                <form asp-controller="api" asp-action="UpdateWorkTime">
-                    <input type="hidden" id="workTimeId" name="Id"/>
-                    <input type="hidden" id="departmentId" name="IdDepartment" />
-
-                    <label for="departmentName">Отдел: </label>
-                    <span id="departmentName"></span><br>
-
-                    <label for="start-time">Начало работы</label><br>
-                    <input id="startTime" name="StartTime" type="time" min="00:00" max="24:00"><br>
-
-                    <label for="start-time">Конец работы</label><br>
-                    <input id="endTime" name="EndTime" type="time" min="00:00" max="24:00"><br>
-
-                    <button type="submit">Подтвердить</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 <table class="table">
     <thead>
@@ -145,26 +80,26 @@
             int numberOfRow = 1;
             foreach (GetWorkTimeModel workTime in Model)
             {
-                            <tr>
-                                <td>@numberOfRow.ToString()</td>
-                                @if (workTime.Id == 0)
+                                <tr>
+                                    <td>@numberOfRow.ToString()</td>
+                                    @if (workTime.Id == 0)
                     {
-                                    <td>@workTime.Department.Name</td>
-                                    <td>не назначено</td>
-                                    <td>не назначено</td>
-                                    <td>
-                                        <button onclick="openUpdateModal(null, @workTime.Department.Id, '@workTime.Department.Name')">Редактировать</button>
-                                    </td>
+                                        <td>@workTime.Department.Name</td>
+                                        <td>не назначено</td>
+                                        <td>не назначено</td>
+                                        <td>
+                                            <button onclick="openAddModal(@workTime.Department.Id)">Редактировать</button>
+                                        </td>
                     }else{
-                                    <td>@workTime.Department.Name</td>
-                                    <td>@workTime.StartTime</td>
-                                    <td>@workTime.EndTime</td>
-                                    <td>
-                                        <button onclick="openUpdateModal(@workTime.Id, @workTime.Department.Id, '@workTime.Department.Name')">Редактировать</button>
-                                        <button onclick="deleteWorkTime(@workTime.Id)">Удалить</button>
-                                    </td>
+                                        <td>@workTime.Department.Name</td>
+                                        <td>@workTime.StartTime</td>
+                                        <td>@workTime.EndTime</td>
+                                        <td>
+                                            <button onclick="openUpdateModal(@workTime.Id)">Редактировать</button>
+                                            <button onclick="deleteWorkTime(@workTime.Id)">Удалить</button>
+                                        </td>
                     }
-                            </tr>
+                                </tr>
                 numberOfRow++;
             }
         }

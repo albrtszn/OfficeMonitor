@@ -1,6 +1,7 @@
 ﻿using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
 using OfficeMonitor.Models.Employee;
+using OfficeMonitor.Models.WorkTime;
 
 namespace OfficeMonitor.Services.MasterService
 {
@@ -114,6 +115,27 @@ namespace OfficeMonitor.Services.MasterService
                     employeeDtosByDepartment.Add(employee);
             }
             return employeeDtosByDepartment;
+        }
+
+        public async Task<GetWorkTimeModel?> GetWorkTimeModel(int id)
+        {
+            GetWorkTimeModel? workTimeModel = null;
+            WorkTime workTime = await WorkTime.GetById(id);
+            if(workTime != null)
+            {
+                DepartmentDto departmentDto = await Department.GetDtoById(workTime.IdDepartment.Value);
+                if (departmentDto != null)
+                {
+                    workTimeModel = new GetWorkTimeModel
+                    {
+                        Id = workTime.Id,
+                        Department = departmentDto,
+                        StartTime = workTime.StartTime.Value,
+                        EndTime = workTime.EndTime.Value
+                    };
+                }
+            }
+            return workTimeModel;
         }
     }
 }

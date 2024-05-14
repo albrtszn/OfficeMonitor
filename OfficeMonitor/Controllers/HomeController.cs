@@ -278,6 +278,21 @@ namespace OfficeMonitor.Controllers
             return PartialView("PartialViews/Modal/DepartmentEmployeesContent", models);
         }
         [Authorize(Roles = "MANAGER")]
+        [HttpGet("AddEmployeeContent")]
+        public async Task<IActionResult> AddEmployeeContent()
+        {
+            if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+                throw new BadRequestException("Невалидное значение");
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int managerId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out managerId);
+            var managerDto = await ms.Manager.GetDtoById(managerId);
+            if (managerDto == null)
+                throw new NotFoundException($"Менеджер не найден. id={managerId}");
+
+            return PartialView("PartialViews/Modal/AddEmployeeContent");
+        }        
+        [Authorize(Roles = "MANAGER")]
         [HttpPost("UpdateEmployeeContent")]
         public async Task<IActionResult> UpdateEmployeeContent([FromBody] IntIdModel? id)
         {
@@ -339,6 +354,35 @@ namespace OfficeMonitor.Controllers
                 }
             }
             return PartialView("PartialViews/GetWorkTimeOfDepartments", models);
+        }
+        [Authorize(Roles = "MANAGER")]
+        [HttpPost("AddWorkTimeContent")]
+        public async Task<IActionResult> AddWorkTimeContent([FromBody]IntIdModel id)
+        {
+            if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+                throw new BadRequestException("Невалидное значение");
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int managerId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out managerId);
+            DepartmentDto departmentDto = await ms.Department.GetDtoById(id.Id);
+            if (departmentDto == null)
+                throw new NotFoundException($"Запись не найдена. id={id.Id}");
+
+            return PartialView("PartialViews/Modal/WorkTime/AddWorkTimeContent", departmentDto);
+        }
+        [Authorize(Roles = "MANAGER")]
+        [HttpPost("UpdateWorkTimeContent")]
+        public async Task<IActionResult> UpdateWorkTimeContent([FromBody] IntIdModel? id)
+        {
+            if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+                throw new BadRequestException("Невалидное значение");
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int managerId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out managerId);
+            GetWorkTimeModel model = await ms.GetWorkTimeModel(id.Id);
+            if (model == null)
+                throw new NotFoundException($"Запись не найдена. id={id.Id}");
+            return PartialView("PartialViews/Modal/WorkTime/UpdateWorkTimeContent", model);
         }
 
         [Authorize(Roles = "MANAGER")]

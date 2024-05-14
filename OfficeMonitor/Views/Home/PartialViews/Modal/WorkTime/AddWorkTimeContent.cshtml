@@ -1,0 +1,22 @@
+﻿@using OfficeMonitor.DTOs
+@model DepartmentDto
+
+<div class="create-worktime-form" id="create-worktime-form">
+    <div class="form-name">Назначение рабочего времени</div>
+    <hr>
+    <form asp-controller="api" asp-action="AddWorkTime" method="post">
+        <input type="hidden" id="departmentId" name="IdDepartment" value="@Model.Id" />
+
+        <label for="departmentName">Отдел: </label>
+        <span id="departmentName">@Model.Name</span><br>
+
+        <label for="start-time">Начало работы</label><br>
+        <input id="startTime" name="StartTime" type="time" min="00:00" max="24:00"><br>
+
+        <label for="start-time">Конец работы</label><br>
+        <input id="endTime" name="EndTime" type="time" min="00:00" max="24:00"><br>
+
+        <button type="submit">Подтвердить</button>
+    </form>
+    <button onclick="closeModal()">Назад</button>
+</div>

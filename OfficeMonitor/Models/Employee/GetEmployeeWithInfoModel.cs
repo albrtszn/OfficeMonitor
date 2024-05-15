@@ -11,15 +11,7 @@ namespace OfficeMonitor.Models.Employee
 
         [Required]
         [StringLength(50)]
-        public string Name { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string Surname { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string Patronamic { get; set; }
+        public string FIO { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -31,9 +23,14 @@ namespace OfficeMonitor.Models.Employee
 
         [Required]
         public ProfileDto Profile { get; set; }
+
         [Required]
-        public decimal WorkPercentage { get; set; }
+        public TimeSummaryModel WorkTime { get; set; }
+
         [Required]
-        public decimal IdlePercentage { get; set; }
+        public TimeSummaryModel IdleTime { get; set; }
+
+        [Required]
+        public TimeSummaryModel DiversionTime { get; set; }
     }
 }

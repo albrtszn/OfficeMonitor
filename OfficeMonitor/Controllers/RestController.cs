@@ -20,6 +20,10 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Profile = DataBase.Repository.Models.Profile;
+using Action = DataBase.Repository.Models.Action;
+using OfficeMonitor.Models.Action;
+using OfficeMonitor.Models.App;
+using OfficeMonitor.Models.TypeApp;
 
 namespace OfficeMonitor.Controllers
 {
@@ -400,6 +404,258 @@ namespace OfficeMonitor.Controllers
                 await ms.Department.DeleteById(department.Id);
             }
             await ms.Company.DeleteById(company.Id);
+            return Ok();
+        }
+
+        /*
+        *  #TypeApp
+        */
+        [SwaggerOperation(Tags = new[] { "Rest/TypeApp" })]
+        [HttpGet("GetTypeApps")]
+        public async Task<IActionResult> GetTypeApps()
+        {
+            return Ok(await ms.TypeApp.GetAllDtos());
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/TypeApp" })]
+        [HttpPost("GetTypeApp")]
+        public async Task<IActionResult> GetTypeApp([FromBody] IntIdModel? id)
+        {
+            //  todo return exception with required field
+            if (id == null || id.Id == 0 || !ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            TypeAppDto? dto = await ms.TypeApp.GetDtoById(id.Id);
+            if (dto == null)
+                throw new NotFoundException("Запись не найдена");
+            return Ok(dto);
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/TypeApp" })]
+        [HttpPost("AddTypeApp")]
+        public async Task<IActionResult> AddTypeApp([FromBody] AddTypeAppModel model)
+        {
+            if (model == null || !ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            await ms.TypeApp.Save(model);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/TypeApp" })]
+        [HttpPost("UpdateTypeApp")]
+        public async Task<IActionResult> UpdateTypeApp([FromBody] UpdateTypeAppModel model)
+        {
+            if (model == null || model.Id <= 0 || !ModelState.IsValid)
+                return BadRequest("Невалидное значение");
+            TypeApp? TypeApp = await ms.TypeApp.GetById(model.Id);
+            if (TypeApp == null)
+                throw new NotFoundException("Запись не найдена");
+            TypeApp? typeApp = await ms.TypeApp.GetById(model.Id);
+            if (typeApp == null)
+                throw new NotFoundException("Запись не найдена");
+            await ms.TypeApp.Save(model);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/TypeApp" })]
+        [HttpDelete("DeleteTypeApp")]
+        public async Task<IActionResult> DeleteTypeApp([FromBody] IntIdModel? id)
+        {
+            if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+                return BadRequest("Невалидное значение");
+            TypeApp? TypeApp = await ms.TypeApp.GetById(id.Id);
+            if (TypeApp == null)
+                throw new NotFoundException("Запись не найдена");
+            await ms.TypeApp.DeleteById(TypeApp.Id);
+            return Ok();
+        }
+
+        /*
+        *  #App
+        */
+        [SwaggerOperation(Tags = new[] { "Rest/App" })]
+        [HttpGet("GetApps")]
+        public async Task<IActionResult> GetApps()
+        {
+            return Ok(await ms.App.GetAllDtos());
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/App" })]
+        [HttpPost("GetApp")]
+        public async Task<IActionResult> GetApp([FromBody] IntIdModel? id)
+        {
+            if (id == null || id.Id == 0 || !ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            AppDto? dto = await ms.App.GetDtoById(id.Id);
+            if (dto == null)
+                throw new NotFoundException("Запись не найдена");
+            return Ok(dto);
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/App" })]
+        [HttpPost("AddApp")]
+        public async Task<IActionResult> AddApp([FromBody] AddAppModel model)
+        {
+            if (model == null || !ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            TypeApp? typeApp = await ms.TypeApp.GetById(model.IdTypeApp);
+            if (typeApp == null)
+                throw new NotFoundException("Запись не найдена");
+            await ms.App.Save(model);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/App" })]
+        [HttpPost("UpdateApp")]
+        public async Task<IActionResult> UpdateApp([FromBody] UpdateAppModel model)
+        {
+            if (model == null || model.Id <= 0 || !ModelState.IsValid)
+                return BadRequest("Невалидное значение");
+            App? app = await ms.App.GetById(model.Id);
+            TypeApp? typeApp = await ms.TypeApp.GetById(model.IdTypeApp);
+            if (app == null || typeApp == null)
+                throw new NotFoundException("Запись не найдена");
+            await ms.App.Save(model);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/App" })]
+        [HttpDelete("DeleteApp")]
+        public async Task<IActionResult> DeleteApp([FromBody] IntIdModel? id)
+        {
+            if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+                return BadRequest("Невалидное значение");
+            App? App = await ms.App.GetById(id.Id);
+            if (App == null)
+                throw new NotFoundException("Запись не найдена");
+            await ms.App.DeleteById(App.Id);
+            return Ok();
+        }
+
+        /*
+        *  #Action
+        */
+        [SwaggerOperation(Tags = new[] { "Rest/Action" })]
+        [HttpGet("GetActions")]
+        public async Task<IActionResult> GetActions()
+        {
+            return Ok(await ms.Action.GetAllDtos());
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Action" })]
+        [HttpPost("GetAction")]
+        public async Task<IActionResult> GetAction([FromBody] IntIdModel? id)
+        {
+            //  todo return exception with required field
+            if (id == null || id.Id == 0 || !ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            ActionDto? dto = await ms.Action.GetDtoById(id.Id);
+            if (dto == null)
+                throw new NotFoundException("Запись не найдена");
+            return Ok(dto);
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Action" })]
+        [HttpPost("GenerateActionForEmployee")]
+        public async Task<IActionResult> GenerateActionForEmployee(int? IdEmployee, string dataRange)
+        {
+            if (!IdEmployee.HasValue || dataRange.IsNullOrEmpty() || !ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            Employee? employee = await ms.Employee.GetById(IdEmployee.Value);
+            string[] dates = dataRange.Split("-");
+            DateOnly startDate;
+            DateOnly endDate;
+            if (employee == null || 
+                !DateOnly.TryParse(dates[0], out startDate) || !DateOnly.TryParse(dates[1], out endDate))
+                throw new NotFoundException("Запись не найдена");
+
+
+            Profile profile = await ms.Profile.GetById(employee.IdProfile.Value);
+            if(profile==null)
+                throw new NotFoundException("Запись не найдена");
+            WorkTime workTime = await ms.WorkTime.GetByDepartmentId(profile.IdDepartment.Value);
+            List<App> apps = await ms.App.GetAll();
+            if (workTime != null && apps.Count != 0) {
+                while (startDate <= endDate)
+                {
+                    if (!startDate.DayOfWeek.Equals(DayOfWeek.Saturday) && !startDate.DayOfWeek.Equals(DayOfWeek.Sunday))
+                    {
+                        Random rnd = new Random(DateTime.Now.Second);
+                        TimeOnly startTime = workTime.StartTime.Value;
+                        while (startTime <= workTime.EndTime)
+                        {
+                            int minutesOfApp = rnd.Next(10, 90);
+                            TimeOnly endOfApp = startTime.AddMinutes(minutesOfApp);
+                            App app = apps[rnd.Next(0, apps.Count)];
+                            //actions.Add(new Action
+                            await ms.Action.Save(new Action
+                            {
+                                IdEmployee = IdEmployee.Value,
+                                IdApp = app.Id,
+                                Date = startDate,
+                                StartTime = startTime,
+                                EndTime = endOfApp
+                            });
+                            startTime = startTime.AddMinutes(minutesOfApp);
+                        }
+                    }
+                    startDate = startDate.AddDays(1);
+                }
+            }
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Action" })]
+        [HttpPost("AddAction")]
+        public async Task<IActionResult> AddAction([FromBody] AddActionModel model)
+        {
+            if (model == null || !ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            Employee? employee = await ms.Employee.GetById(model.IdEmployee);
+            App? app = await ms.App.GetById(model.IdApp);
+            if (employee == null || app == null)
+                throw new NotFoundException("Запись не найдена");
+            await ms.Action.Save(model);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Action" })]
+        [HttpPost("UpdateAction")]
+        public async Task<IActionResult> UpdateAction([FromBody] UpdateActionModel model)
+        {
+            if (model == null || model.Id <= 0 || !ModelState.IsValid)
+                return BadRequest("Невалидное значение");
+            Action? Action = await ms.Action.GetById(model.Id);
+            if (Action == null)
+                throw new NotFoundException("Запись не найдена");
+            Employee? employee = await ms.Employee.GetById(model.IdEmployee);
+            App? app = await ms.App.GetById(model.IdApp);
+            if (employee == null || app == null)
+                throw new NotFoundException("Запись не найдена");
+            await ms.Action.Save(model);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Action" })]
+        [HttpDelete("DeleteAction")]
+        public async Task<IActionResult> DeleteAction([FromBody] IntIdModel? id)
+        {
+            if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+                return BadRequest("Невалидное значение");
+            Action? Action = await ms.Action.GetById(id.Id);
+            if (Action == null)
+                throw new NotFoundException("Запись не найдена");
+            await ms.Action.DeleteById(Action.Id);
+            return Ok();
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Action" })]
+        [HttpDelete("DeleteAllActions")]
+        public async Task<IActionResult> DeleteAllActions()
+        {
+            foreach (Action action in await ms.Action.GetAll())
+            {
+                await ms.Action.DeleteById(action.Id);
+            }
             return Ok();
         }
 

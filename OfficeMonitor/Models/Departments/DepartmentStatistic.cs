@@ -1,4 +1,5 @@
 ﻿using OfficeMonitor.DTOs;
+using OfficeMonitor.Models.Employee;
 using System.ComponentModel.DataAnnotations;
 
 namespace OfficeMonitor.Models.Departments
@@ -10,12 +11,21 @@ namespace OfficeMonitor.Models.Departments
         [Required] 
         public WorkTimeDto? WorkTime { get; set; }
         [Required]
-        public decimal WorkedPercent { get; set; }
+        public TimeSummaryModel RequiredTotalHours { get; set; }
         [Required]
-        public decimal IdlePercent { get; set; }        
+        public TimeSummaryModel TotalHours{ get; set; }
         [Required]
-        public decimal DiversionPercent { get; set; }
+        public double WorkedPercent { get; set; }
         [Required]
-        public TimeSummaryModel TotalHours { get; set; }
+        public double IdlePercent { get; set; }        
+        [Required]
+        public double DiversionPercent { get; set; }
+        [Required]
+        public List<GetEmployeeWithInfoModel> Employees { get; set; }
+
+        public DepartmentStatistic()
+        {
+            this.Employees = new List<GetEmployeeWithInfoModel>();
+        }
     }
 }

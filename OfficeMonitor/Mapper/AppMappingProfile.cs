@@ -2,11 +2,14 @@
 using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
 using OfficeMonitor.Models;
+using OfficeMonitor.Models.Action;
+using OfficeMonitor.Models.App;
 using OfficeMonitor.Models.ClaimRole;
 using OfficeMonitor.Models.Company;
 using OfficeMonitor.Models.Departments;
 using OfficeMonitor.Models.Employee;
 using OfficeMonitor.Models.Manager;
+using OfficeMonitor.Models.TypeApp;
 using OfficeMonitor.Models.WorkTime;
 using Action = DataBase.Repository.Models.Action;
 using Profile = DataBase.Repository.Models.Profile;
@@ -54,6 +57,9 @@ namespace OfficeMonitor.Mapper
             CreateMap<Manager, AddManagerModel>().ReverseMap();
             CreateMap<Admin, AddAdminModel>().ReverseMap();
             CreateMap<ClaimRole, AddClaimRoleModel>().ReverseMap();
+            CreateMap<Action, AddActionModel>().ReverseMap();
+            CreateMap<TypeApp, AddTypeAppModel>().ReverseMap();
+            CreateMap<App, AddAppModel>().ReverseMap();
             //  UpdateModels
             CreateMap<ClaimRole, UpdateClaimRoleModel>().ReverseMap();
             CreateMap<Employee, UpdateEmployeeModel>().ReverseMap();
@@ -61,7 +67,9 @@ namespace OfficeMonitor.Mapper
             //CreateMap<Admin, UpdateAdminModel>().ReverseMap();
             CreateMap<Company, UpdateCompanyModel>().ReverseMap();
             CreateMap<WorkTime, UpdateWorkTimeModel>().ReverseMap();
-            
+            CreateMap<Action, UpdateActionModel>().ReverseMap();
+            CreateMap<TypeApp, UpdateTypeAppModel>().ReverseMap();
+            CreateMap<App, UpdateAppModel>().ReverseMap();
         }
     }
 }

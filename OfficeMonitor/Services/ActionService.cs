@@ -2,6 +2,7 @@
 using CRUD.implementation;
 using DataBase.Repository.Models;
 using OfficeMonitor.DTOs;
+using OfficeMonitor.Models.Action;
 using Action = DataBase.Repository.Models.Action;
 
 namespace OfficeMonitor.Services
@@ -29,6 +30,14 @@ namespace OfficeMonitor.Services
         public async Task<List<Action>> GetAllByEmployee(int employeeId)
         {
             return (await ActionRepo.GetAll()).Where(x=>x.IdEmployee!=null && x.IdEmployee.Equals(employeeId)).ToList();
+        }
+
+        public async Task<List<Action>> GetAllByEmployeeInDay(int employeeId, DateOnly day)
+        {
+            return (await ActionRepo.GetAll())
+                                    .Where(x => x.IdEmployee != null && x.IdEmployee.Equals(employeeId) &&
+                                                x.Date.HasValue && x.Date.Value.Equals(day))
+                                    .ToList();
         }
 
         public async Task<List<ActionDto>> GetAllDtos()
@@ -65,6 +74,16 @@ namespace OfficeMonitor.Services
         public async Task<bool> Save(ActionDto ActionDtoToSave)
         {
             return await ActionRepo.Save(mapper.Map<Action>(ActionDtoToSave));
+        }        
+        
+        public async Task<bool> Save(AddActionModel ActionModelToSave)
+        {
+            return await ActionRepo.Save(mapper.Map<Action>(ActionModelToSave));
+        }        
+        
+        public async Task<bool> Save(UpdateActionModel ActionModelToSave)
+        {
+            return await ActionRepo.Save(mapper.Map<Action>(ActionModelToSave));
         }
     }
 }

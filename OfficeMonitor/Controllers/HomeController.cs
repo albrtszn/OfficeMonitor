@@ -430,48 +430,103 @@ namespace OfficeMonitor.Controllers
             DepartmentStatistic statistic = new DepartmentStatistic();
             List<EmployeeDto> employees = await ms.GetEmployeeDtosByDepartment(model.DepartmentId);
             WorkTimeDto? workTimeOfDepartment = await ms.WorkTime.GetDtoByDepartmentId(model.DepartmentId);
-            if (departmentDto != null && workTimeOfDepartment != null && !employees.IsNullOrEmpty())
-            { 
-                int totalWorkedHours = 0;
-                int totalIdleHours = 0;
-                int totalDiverHours = 0;                        
-                string[] dates = model.DateRange.Split(" - ");
-                DateOnly startDate;
-                DateOnly.TryParse(dates[0], out startDate);
-                DateOnly endDate;
-                DateOnly.TryParse(dates[1], out endDate);
+
+            double minutesPerDay = (workTimeOfDepartment.EndTime - workTimeOfDepartment.StartTime).Value.TotalMinutes;
+            string[] dates = model.DateRange.Split(" - ");
+            DateOnly startWorkDate;
+            DateOnly endWorkDate;
+            if (departmentDto != null && workTimeOfDepartment != null && !employees.IsNullOrEmpty() &&
+                DateOnly.TryParse(dates[0], out startWorkDate) && DateOnly.TryParse(dates[1], out endWorkDate))
+            {
+                int totalMinutes = 0;
+                int totalWorkedMinutes = 0;
+                int totalIdleminutes = 0;
+                int totalDiverMinutes = 0;                        
                 foreach (var employee in employees)
                 {
-                    List<Action> employeeActions = await ms.Action.GetAllByEmployee(employee.Id);
-                    foreach(var action in employeeActions)
+                    DateOnly currentDay = startWorkDate;
+                    double employeeTotalMinutes = 0;
+                    int employeeWorkedMinutes = 0;
+                    int employeeIdleMinutes = 0;
+                    int employeeDiverMinutes = 0;
+                    int countOfDay = 0;
+                    while (currentDay <= endWorkDate)
                     {
-                        if (action.Date != null && 
-                            (action.Date.Value>=startDate && action.Date.Value<=endDate))
+                        foreach (Action action in (await ms.Action.GetAllByEmployeeInDay(employee.Id, currentDay)).OrderBy(x => x.StartTime))
                         {
-
+                            logger.LogInformation($"action id={action.Id} startTime={action.StartTime} endTime={action.EndTime}");
+                            int actionTime = (int)(action.EndTime.Value.ToTimeSpan().TotalMinutes - action.StartTime.Value.ToTimeSpan().TotalMinutes);
+                            App? app = await ms.App.GetById(action.IdApp.Value);
+                            if (app != null)
+                            {
+                                if (app.IdTypeApp == 1)
+                                {
+                                    employeeWorkedMinutes += actionTime;
+                                    totalWorkedMinutes += actionTime;
+                                }
+                                if (app.IdTypeApp == 2)
+                                {
+                                    employeeDiverMinutes += actionTime;
+                                    totalDiverMinutes += actionTime;
+                                }
+                                employeeTotalMinutes += actionTime;
+                                totalMinutes += actionTime;
+                            }
                         }
+                        currentDay = currentDay.AddDays(1);
+                        countOfDay++;
                     }
+                    statistic.Employees.Add(new GetEmployeeWithInfoModel
+                    {
+                        Id = employee.Id,
+                        FIO = employee.Surname+" "+employee.Name+" "+employee.Patronamic,
+                        Login = employee.Login,
+                        Password = employee.Password,
+                        Profile = await ms.Profile.GetDtoById(employee.IdProfile.Value),
+                        WorkTime = new TimeSummaryModel
+                        {
+                            Hours = ((int)((employeeTotalMinutes - employeeIdleMinutes - employeeDiverMinutes) / 60)).ToString(),
+                            Minutes = ((int)((employeeTotalMinutes - employeeIdleMinutes - employeeDiverMinutes) % 60)).ToString()
+                        },
+                        IdleTime= new TimeSummaryModel
+                        {
+                            Hours = ((int)((employeeTotalMinutes - employeeWorkedMinutes - employeeDiverMinutes) / 60)).ToString(),
+                            Minutes = ((int)((employeeTotalMinutes - employeeWorkedMinutes - employeeDiverMinutes) % 60)).ToString()
+                        },
+                        DiversionTime = new TimeSummaryModel 
+                        { 
+                            Hours = ((int)((employeeTotalMinutes - employeeWorkedMinutes - employeeIdleMinutes) / 60)).ToString(),
+                            Minutes = ((int)((employeeTotalMinutes - employeeWorkedMinutes - employeeIdleMinutes) % 60)).ToString()
+                        }
+                    });
                 }
 
-                double totalMinutes = 0;
-                double minutesPerEmployee = (workTimeOfDepartment.EndTime - workTimeOfDepartment.StartTime).Value.TotalMinutes;
-                while (startDate<=endDate)
+                double requiredMinutes = 0;
+                while (startWorkDate <= endWorkDate)
                 {
-                    if (!startDate.DayOfWeek.Equals(DayOfWeek.Saturday) && !startDate.DayOfWeek.Equals(DayOfWeek.Sunday))
-                        totalMinutes += minutesPerEmployee;
-                    startDate = startDate.AddDays(1);
+                    if (!startWorkDate.DayOfWeek.Equals(DayOfWeek.Saturday) && !startWorkDate.DayOfWeek.Equals(DayOfWeek.Sunday))
+                        requiredMinutes += minutesPerDay;
+                    startWorkDate = startWorkDate.AddDays(1);
                 }
 
                 statistic.Name = departmentDto.Name;
                 statistic.WorkTime = workTimeOfDepartment;
-                statistic.WorkedPercent = 0;
-                statistic.IdlePercent = 0;
-                statistic.DiversionPercent = 0;
-                statistic.TotalHours = new TimeSummaryModel
+                statistic.WorkedPercent = Math.Round((double)(totalMinutes - totalIdleminutes - totalDiverMinutes)/ requiredMinutes *100, 2);
+                statistic.IdlePercent = Math.Round((double)(totalMinutes - totalWorkedMinutes - totalDiverMinutes) / totalMinutes * 100, 2);
+                statistic.DiversionPercent = Math.Round((double) (totalMinutes - totalWorkedMinutes - totalIdleminutes )/ totalMinutes * 100, 2);
+                statistic.RequiredTotalHours = new TimeSummaryModel
                 { 
-                    Hours = ((int)totalMinutes / 60).ToString(),
-                    Minutes = ((int)totalMinutes % 60).ToString()
+                    Hours = ((int)requiredMinutes / 60).ToString(),
+                    Minutes = ((int)requiredMinutes % 60).ToString()
                 };
+                statistic.TotalHours = new TimeSummaryModel
+                {
+                    Hours = ((int)(totalMinutes / 60)).ToString(),
+                    Minutes = ((int)(totalMinutes % 60)).ToString()
+                };
+
+                logger.LogInformation($"/GetDepartmentStatistic totalMinutes={totalMinutes} totalWorkedMinutes={totalWorkedMinutes}" +
+                                      $"totalDiverMinutes={totalDiverMinutes} totalIdleMinutes={totalIdleminutes}");
             }
             return PartialView("PartialViews/GetDepartmentStatistic", statistic);
         }

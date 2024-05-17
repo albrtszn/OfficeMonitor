@@ -46,12 +46,12 @@
 
     <input type="text" id="daterange" name="daterange" value="01.05.2024 - 10.05.2024"/>
 
-    <div class="button-list">
+<div class="row-button-list">
     @foreach(DepartmentDto dto in Model){
         <button onclick="getStatisticOfDepartment(@dto.Id)">@dto.Name</button>
     }
-    </div>
+ </div>
 
-    <div id="department-statistic">
+<div id="department-statistic">
 
-    </div>
+</div>

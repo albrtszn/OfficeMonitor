@@ -51,7 +51,9 @@
                 <td>@department.CountOfWorkers</td>
                 <td>@department.CountOfManagers</td>
                 <td>
-                    <button onclick="openEmployeeModal(@department.Id)">Сотрудники</button>
+                    <div class="row-button-list">
+                        <button onclick="openEmployeeModal(@department.Id)">Сотрудники</button>
+                    </div>
                 </td>
             </tr>
             numberOfRow++;

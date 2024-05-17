@@ -37,8 +37,10 @@
         });
     } 
     </script>
+<div class="row-button-list">
+    <button onclick="AddEmployeeContent()">Добавить сотрудника</button>
+</div>
 
-<button onclick="AddEmployeeContent()">Добавить сотрудника</button>
 
 <table class="table">
     <thead>
@@ -65,8 +67,10 @@
                     <td>@employee.Password.Substring(0, 10) ...</td>
                     <td>@employee.Profile.Name</td>
                     <td>
-                        <button onclick="UpdateEmployeeContent(@employee.Id)">Редакьтировть</button>
-                        <button onclick="DeleteEmployee(@employee.Id)">Удалить</button>
+                        <div class="column-button-list">
+                            <button onclick="UpdateEmployeeContent(@employee.Id)">Редакьтировть</button>
+                            <button onclick="DeleteEmployee(@employee.Id)">Удалить</button>
+                        </div>
                     </td>
                 </tr>
                 numberOfRow++;
@@ -74,4 +78,7 @@
         }
     </tbody>
 </table>
-<button onclick="closeModal()">Назад</button>
+
+<div class="row-button-list">
+    <button onclick="closeModal()">Назад</button>
+</div>

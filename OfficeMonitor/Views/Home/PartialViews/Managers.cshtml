@@ -72,7 +72,9 @@
                         <option value="-">-</option>
                     </select><br>
 
-                    <input type="submit">
+                    <div class="row-button-list">
+                        <button type="submit">Подтвердить</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -106,7 +108,9 @@
                         <td>@manager.Department.Name</td>
                         <td>@manager.Profile.Name</td>
                         <td>
-                            <button onclick="openUpdateModal(@manager.Id)">Редактировать</button>
+                            <div class="row-button-list">
+                                <button onclick="openUpdateModal(@manager.Id)">Редактировать</button>
+                            </div>
                         </td>
                     </tr>
                 numberOfRow++;

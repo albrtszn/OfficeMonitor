@@ -88,15 +88,19 @@
                                         <td>не назначено</td>
                                         <td>не назначено</td>
                                         <td>
-                                            <button onclick="openAddModal(@workTime.Department.Id)">Редактировать</button>
+                                            <div class="column-button-list">
+                                                <button onclick="openAddModal(@workTime.Department.Id)">Редактировать</button>
+                                            </div>
                                         </td>
                     }else{
                                         <td>@workTime.Department.Name</td>
                                         <td>@workTime.StartTime</td>
                                         <td>@workTime.EndTime</td>
                                         <td>
-                                            <button onclick="openUpdateModal(@workTime.Id)">Редактировать</button>
-                                            <button onclick="deleteWorkTime(@workTime.Id)">Удалить</button>
+                                            <div class="column-button-list">
+                                                <button onclick="openUpdateModal(@workTime.Id)">Редактировать</button>
+                                                <button onclick="deleteWorkTime(@workTime.Id)">Удалить</button>
+                                            </div>
                                         </td>
                     }
                                 </tr>

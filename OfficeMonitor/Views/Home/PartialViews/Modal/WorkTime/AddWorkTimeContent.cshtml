@@ -1,7 +1,7 @@
 ﻿@using OfficeMonitor.DTOs
 @model DepartmentDto
 
-<div class="create-worktime-form" id="create-worktime-form">
+<div class="form" id="create-worktime-form">
     <div class="form-name">Назначение рабочего времени</div>
     <hr>
     <form asp-controller="api" asp-action="AddWorkTime" method="post">
@@ -16,7 +16,9 @@
         <label for="start-time">Конец работы</label><br>
         <input id="endTime" name="EndTime" type="time" min="00:00" max="24:00"><br>
 
-        <button type="submit">Подтвердить</button>
+        <div class="row-button-list">
+            <button type="submit">Подтвердить</button>
+            <button type="button" onclick="closeModal()">Назад</button>
+        </div>
     </form>
-    <button onclick="closeModal()">Назад</button>
 </div>

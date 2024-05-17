@@ -573,12 +573,12 @@ a {
     display: flex;
     flex-direction: column;
     padding: 10px;
-    border: 1px solid black;
+
     border-radius: 0 10px 10px 0;
 }
 
 .info-page, .company-plan, .company-departments, .company-managers {
-    border: 1px solid black;
+    
 }
 
 .info-page {
@@ -629,7 +629,6 @@ a {
 
 .info-card .value {
     margin: 0 auto;
-    ;
 }
 
 .table {
@@ -679,8 +678,50 @@ a {
     z-index: 1;
 }
 
-    .modal-close:hover, .modal-close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
+.modal-close:hover, .modal-close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.row-button-list {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.row-button-list button {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: #e6e6e6;
+}
+.row-button-list button:hover {
+    background-color: #b3b3b3;
+}
+.column-button-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.column-button-list button {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: #e6e6e6;
+}
+.column-button-list button:hover {
+    background-color: #b3b3b3;
+}
+.form form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.form input{
+    min-width: 250px;
+    max-width: fit-content;
+    padding: 5px;
+    border-radius: 5px;
+}

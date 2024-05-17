@@ -34,6 +34,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Views\Company\Modal\" />
+	  <Folder Include="Views\Home\Modal\Company\" />
 	  <Folder Include="wwwroot\images\" />
 	  <Folder Include="wwwroot\fonts\" />
 	</ItemGroup>

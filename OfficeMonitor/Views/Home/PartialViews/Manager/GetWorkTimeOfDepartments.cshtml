@@ -10,7 +10,7 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'html',
             type: 'POST',
-            url: '/AddWorkTimeContent',
+            url: 'manager/AddWorkTimeContent',
             data: JSON.stringify(IntIdModel),
             success: function (response) {
                 $("#modal-body").html(response);
@@ -31,7 +31,7 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'html',
             type: 'POST',
-            url: '/UpdateWorkTimeContent',
+            url: 'manager/UpdateWorkTimeContent',
             data: JSON.stringify(IntIdModel),
             success: function (response) {
                 $("#modal-body").html(response);

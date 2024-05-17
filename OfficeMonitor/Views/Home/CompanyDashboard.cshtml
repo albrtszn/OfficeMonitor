@@ -23,7 +23,7 @@
             else {
                 removebackgroundColor();
                 firstElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
-                $("#dashboard-content").load("/GetCompanyInfo");
+                $("#dashboard-content").load("Company/GetCompanyInfo");
                 dashboardContent.style.display = 'block';
             }
         };
@@ -34,7 +34,7 @@
             }
             else {
                 removebackgroundColor();
-                $("#dashboard-content").load("/GetCompanyPlans");
+                $("#dashboard-content").load("Company/GetCompanyPlans");
                 secondElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
                 dashboardContent.style.display = 'block';
             }
@@ -46,7 +46,7 @@
             }
             else {
                 removebackgroundColor();
-                $("#dashboard-content").load("/GetCompanyDepartmentsInfo");
+                $("#dashboard-content").load("Company/GetDepartments");
                 thirdElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
                 dashboardContent.style.display = 'block';
             }
@@ -58,7 +58,7 @@
             }
             else {
                 removebackgroundColor();
-                $("#dashboard-content").load("/GetCompanyManagersInfo");
+                $("#dashboard-content").load("Company/GetManagers");
                 fourthElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
                 dashboardContent.style.display = 'block';
             }

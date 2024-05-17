@@ -1,7 +1,4 @@
-﻿@using OfficeMonitor.Models.Employee
-@model GetEmployeeModel
-
-<script>
+﻿<script>
     $(document).ready(function () {
         $.ajax({
             contentType: 'application/json; charset=utf-8',
@@ -10,23 +7,18 @@
             url: '/api/GetDepartmentsByManagerHtml',
             success: function (response) {
                 $("#department").html(response);
+                getProfiles();
             },
             error: function (response) {
                 alert("Ошибка получения отделов" + response.responseText);
             }
         });
-
-        getProfiles();
-
-        var departmentSelect = document.getElementById("department");;
-        departmentSelect.addEventListener('change', function (e) {
-            getProfiles();
-        });
     });
 
     function getProfiles() {
+        alert($('#department').val());
         var IntIdModel = {
-            "Id": $('#employeeDepartmentId').val()
+            "Id": $('#department').val()
         };
         $.ajax({
             contentType: 'application/json; charset=utf-8',
@@ -66,38 +58,36 @@
 
 <div class="form-name">Назначение рабочего времени</div>
 <hr>
-<form asp-controller="api" asp-action="UpdateEmployee" method="post">
-    <input type="hidden" id="Id" name="IdDepartment" />
+<form asp-controller="api" asp-action="AddEmployee" method="post">
 
     <label for="Name">Имя</label><br>
-    <input id="Name" name="Name" type="text" value="@Model.Name"><br>
+    <input id="Name" name="Name" type="text"/><br>
 
     <label for="Surname">Фамилия</label><br>
-    <input id="Surname" name="Surname" type="text" value="@Model.Surname"><br>
+    <input id="Surname" name="Surname" type="text"/><br>
 
     <label for="Patronamic">Отчество</label><br>
-    <input id="Patronamic" name="Patronamic" type="text" value="@Model.Patronamic"><br>
+    <input id="Patronamic" name="Patronamic" type="text"/><br>
 
     <label for="Email">Почта</label><br>
-    <input id="Email" name="Email" type="text" value="@Model.Login"><br>
+    <input id="Email" name="Email" type="text"/><br>
 
     <label for="Password">Пароль</label><br>
-    <input id="Password" name="Password" type="text" value="@Model.Password"><br>
+    <input id="Password" name="Password" type="text"/><br>
 
-    <input id="employeeDepartmentId" type="hidden" value="@Model.Department.Id" />
     <label for="department">Отдел</label><br>
-    <select id="department" name="IdDepartment" onchange="getProfiles()" value="@Model.Department.Id">
+    <select id="department" name="IdDepartment" onselect="getProfiles()" onchange="getProfiles()">
         <option value="-">-</option>
     </select><br>
 
-    <input id="employeeProfileId" type="hidden" value="@Model.Department.Id" />
     <label for="profile">Должность</label><br>
-    <select id="profile" name="IdProfile" value="@Model.Profile.Id">
+    <select id="profile" name="IdProfile">
         <option value="-">-</option>
     </select><br>
 
     <div class="row-button-list">
         <button type="submit">Подтвердить</button>
-        <button onclick="openEmployeeModal()">Назад</button>
+        <button type="button" onclick="openEmployeeModal()">Назад</button>
     </div>
 </form>
+

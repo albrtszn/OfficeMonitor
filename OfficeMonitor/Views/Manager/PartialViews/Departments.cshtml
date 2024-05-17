@@ -1,0 +1,61 @@
+﻿@using OfficeMonitor.Models.Departments
+@model List<GetDepartmentModel>
+
+<script>
+    function openEmployeeModal(id){
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: 'Manager/GetDepartmentEmployeesContent',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                $("#modal-body").html(response);
+                $("#departmentId").val(id);
+            },
+            error: function (response) {
+                alert("Ошибка при удалении времени работы" + response.responseText);
+            }
+        });
+        openModal();
+    }
+</script>
+
+<input type="hidden" name="departmentId" id="departmentId" value="" />
+<input type="hidden" name="employeeId" name="employeeId" value="" />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Id</th>
+            <th>Наименование</th>
+            <th>Описание</th>
+            <th>Кол-во сотрудников</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+        int numberOfRow = 1;
+        foreach (GetDepartmentModel department in Model)
+        {
+            <tr>
+                <td>@numberOfRow.ToString()</td>
+                <td>@department.Id</td>
+                <td>@department.Name</td>
+                <td>@department.Description</td>
+                <td>@department.CountOfWorkers</td>
+                <td>
+                    <div class="row-button-list">
+                        <button onclick="openEmployeeModal(@department.Id)">Сотрудники</button>
+                    </div>
+                </td>
+            </tr>
+            numberOfRow++;
+        }}
+    </tbody>
+</table>

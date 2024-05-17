@@ -1,0 +1,111 @@
+﻿@using OfficeMonitor.Models.WorkTime
+@model List<GetWorkTimeModel>
+
+<script>
+    function openAddModal(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: 'Manager/AddWorkTimeContent',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                $("#modal-body").html(response);
+                openModal();
+            },
+            error: function (response) {
+                //$("#modal-body").html(response);
+                //openModal();
+                alert("Ошибка при редактировании времени работы" + response.responseText);
+            }
+        });
+    }
+    function openUpdateModal(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: 'Manager/UpdateWorkTimeContent',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                $("#modal-body").html(response);
+                openModal();
+            },
+            error: function (response) {
+                //$("#modal-body").html(response);
+                //openModal();
+                alert("Ошибка при редактировании времени работы" + response.responseText);
+            }
+        });
+    }
+    function deleteWorkTime(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            type: 'POST',
+            url: '/api/DeleteWorkTime',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                alert("Время работы удалено");
+            },
+            error: function (response) {
+                alert("Ошибка при удалении времени работы" + response.responseText);
+            }
+        });
+    }
+</script>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>№</th>
+            <!--<th>Id</th>-->
+            <th>Наименование</th>
+            <th>Начало работы</th>
+            <th>Конец работы</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int numberOfRow = 1;
+            foreach (GetWorkTimeModel workTime in Model)
+            {
+                                <tr>
+                                    <td>@numberOfRow.ToString()</td>
+                                    @if (workTime.Id == 0)
+                    {
+                                        <td>@workTime.Department.Name</td>
+                                        <td>не назначено</td>
+                                        <td>не назначено</td>
+                                        <td>
+                                            <div class="column-button-list">
+                                                <button onclick="openAddModal(@workTime.Department.Id)">Редактировать</button>
+                                            </div>
+                                        </td>
+                    }else{
+                                        <td>@workTime.Department.Name</td>
+                                        <td>@workTime.StartTime</td>
+                                        <td>@workTime.EndTime</td>
+                                        <td>
+                                            <div class="column-button-list">
+                                                <button onclick="openUpdateModal(@workTime.Id)">Редактировать</button>
+                                                <button onclick="deleteWorkTime(@workTime.Id)">Удалить</button>
+                                            </div>
+                                        </td>
+                    }
+                                </tr>
+                numberOfRow++;
+            }
+        }
+    </tbody>
+</table>

@@ -1,0 +1,81 @@
+﻿@using OfficeMonitor.DTOs
+@model CompanyDto
+
+<div id="firstContent" class="info-page">
+    <div class="info-credentials">
+        @{
+            if (Model != null && Model.Name != null)
+            {
+                <div class="name">@Model.Name</div>
+            }
+            else
+            {
+                <div class="name">-</div>
+            }
+        }
+        @{
+            if (Model != null && Model.Description != null)
+            {
+                <div class="description">@Model.Description</div>
+            }
+            else
+            {
+                <div class="description">-</div>
+            }
+        }
+    </div>
+    <div class="info-content">
+        <div class="info-card">
+            <div class="name">Статус</div>
+            @{
+                if (Model != null && Model.IsActive != null)
+                {
+                    <div class="value">@Model.IsActive</div>
+                }
+                else
+                {
+                    <div class="value">-</div>
+                }
+            }
+        </div>
+        <div class="info-card">
+            <div class="name">Тариф</div>
+            @{
+                if (Model != null && Model.IdPlan != null)
+                {
+                    <div class="value">@Model.IdPlan</div>
+                }
+                else
+                {
+                    <div class="value">-</div>
+                }
+            }
+        </div>
+        <div class="info-card">
+            <div class="name">Баланс</div>
+            @{
+                if (Model != null && Model.Balance != null)
+                {
+                    <div class="value">@Model.Balance</div>
+                }
+                else
+                {
+                    <div class="value">-</div>
+                }
+            }
+        </div>
+        <div class="info-card">
+            <div class="name">Дата регистрации</div>
+            @{
+                if (Model != null && Model.Name != null)
+                {
+                    <div class="value">@Model.DateOfRegister</div>
+                }
+                else
+                {
+                    <div class="value">-</div>
+                }
+            }
+        </div>
+    </div>
+</div>

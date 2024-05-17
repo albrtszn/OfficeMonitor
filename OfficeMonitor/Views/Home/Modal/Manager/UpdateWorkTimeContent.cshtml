@@ -1,0 +1,25 @@
+﻿@using OfficeMonitor.Models.WorkTime
+@model GetWorkTimeModel
+
+<div class="form" id="update-worktime-form">
+    <div class="form-name">Редактирование рабочего времени</div>
+    <hr>
+    <form asp-controller="api" asp-action="UpdateWorkTime">
+        <input type="hidden" id="workTimeId" name="Id" value="@Model.Id" />
+        <input type="hidden" id="departmentId" name="IdDepartment" value="@Model.Department.Id" />
+
+        <label for="departmentName">Отдел: </label>
+        <span id="departmentName">@Model.Department.Name</span>
+
+        <label for="start-time">Начало работы</label>
+        <input id="startTime" name="StartTime" type="time" value="@Model.StartTime" min="00:00" max="24:00">
+
+        <label for="start-time">Конец работы</label>
+        <input id="endTime" name="EndTime" type="time" value="@Model.EndTime" min="00:00" max="24:00" />
+
+        <div class="row-button-list">
+            <button type="submit">Подтвердить</button>
+            <button type="button" onclick="closeModal()">Назад</button>
+        </div>
+    </form>
+</div>

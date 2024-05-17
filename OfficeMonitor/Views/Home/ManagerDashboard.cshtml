@@ -23,7 +23,7 @@
             else {
                 removebackgroundColor();
                 firstElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
-                $("#dashboard-content").load("/GetManagerInfo");
+                $("#dashboard-content").load("Manager/GetManagerInfo");
                 dashboardContent.style.display = '';
             }
         };
@@ -34,7 +34,7 @@
             }
             else {
                 removebackgroundColor();
-                $("#dashboard-content").load("/GetManagerDepartments");
+                $("#dashboard-content").load("Manager/GetDepartments");
                 secondElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
                 dashboardContent.style.display = '';
             }
@@ -46,7 +46,7 @@
             }
             else {
                 removebackgroundColor();
-                $("#dashboard-content").load("/GetWorkTimeOfDepartments"); 
+                $("#dashboard-content").load("Manager/GetWorkTimeOfDepartments");
                 thirdElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
                 dashboardContent.style.display = '';
             }
@@ -58,7 +58,7 @@
             }
             else {
                 removebackgroundColor();
-                $("#dashboard-content").load("/GetDepartmentStatistics");
+                $("#dashboard-content").load("Manager/DepartmentsStatistic");
                 fourthElem.style.backgroundColor = 'rgb(168, 167, 167, 0.8)';
                 dashboardContent.style.display = '';
             }

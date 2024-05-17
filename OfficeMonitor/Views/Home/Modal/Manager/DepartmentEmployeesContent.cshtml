@@ -7,7 +7,7 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'html',
             type: 'GET',
-            url: '/AddEmployeeContent',
+            url: 'manager/AddEmployeeContent',
             success: function (response) {
                 $("#modal-body").html(response);
             },
@@ -25,7 +25,7 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'html',
             type: 'POST',
-            url: '/UpdateEmployeeContent',
+            url: 'manager/UpdateEmployeeContent',
             data: JSON.stringify(IntIdModel),
             success: function (response) {
                 $("#modal-body").html(response);
@@ -68,7 +68,7 @@
                     <td>@employee.Profile.Name</td>
                     <td>
                         <div class="column-button-list">
-                            <button onclick="UpdateEmployeeContent(@employee.Id)">Редакьтировть</button>
+                            <button onclick="UpdateEmployeeContent(@employee.Id)">Редактировть</button>
                             <button onclick="DeleteEmployee(@employee.Id)">Удалить</button>
                         </div>
                     </td>

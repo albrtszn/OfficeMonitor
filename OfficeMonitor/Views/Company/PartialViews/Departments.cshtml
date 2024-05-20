@@ -2,6 +2,63 @@
 @model List<GetDepartmentModel>
 
 <script>
+    function openAddDepartmentModal() {
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'GET',
+            url: 'Company/AddDepartment',
+            success: function (response) {
+                $("#modal-body").html(response);
+            },
+            error: function (response) {
+                alert("Ошибка " + response.responseText);
+            }
+        });
+        openModal();
+    }
+
+    function deleteDepartment(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            type: 'POST',
+            url: '/api/DeleteDepartment',
+            data: JSON.stringify(IntIdModel),
+            success: function (data) {
+
+            },
+            error: function (response) {
+                alert("Ошибка " + response.responseText);
+            }
+        });
+    }
+
+    function openUpdateModal(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: 'Company/GetUpdateDepartment',
+            data: JSON.stringify(IntIdModel),
+            success: function (data) {
+                $("#modal-body").html(data);
+            },
+            error: function (response) {
+                //$("#modal-body").html(response);
+                //openModal();
+                alert("Ошибка" + response.responseText);
+            }
+        });
+        openModal();
+    }
+
     function openEmployeeModal(id){
         var IntIdModel = {
             "Id": id
@@ -10,22 +67,22 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'html',
             type: 'POST',
-            url: '/GetDepartmentEmployeesContent',
+            url: 'Company/DeleteDepartment',
             data: JSON.stringify(IntIdModel),
             success: function (response) {
                 $("#modal-body").html(response);
-                $("#departmentId").val(id);
             },
             error: function (response) {
-                alert("Ошибка при удалении времени работы" + response.responseText);
+                alert("Ошибка " + response.responseText);
             }
         });
         openModal();
     }
 </script>
 
-<input type="hidden" name="departmentId" id="departmentId" value="" />
-<input type="hidden" name="employeeId" name="employeeId" value="" />
+<div class="row-button-list">
+    <button onclick="openAddDepartmentModal()">Добавить отдел</button>
+</div>
 
 <table class="table">
     <thead>
@@ -43,19 +100,21 @@
         int numberOfRow = 1;
         foreach (GetDepartmentModel department in Model)
         {
-            <tr>
-                <td>@numberOfRow.ToString()</td>
-                <td>@department.Id</td>
-                <td>@department.Name</td>
-                <td>@department.Description</td>
-                <td>@department.CountOfWorkers</td>
-                <td>@department.CountOfManagers</td>
-                <td>
-                    <div class="row-button-list">
-                        <button onclick="openEmployeeModal(@department.Id)">Сотрудники</button>
-                    </div>
-                </td>
-            </tr>
+                    <tr>
+                        <td>@numberOfRow.ToString()</td>
+                        <td>@department.Id</td>
+                        <td>@department.Name</td>
+                        <td>@department.Description</td>
+                        <td>@department.CountOfWorkers</td>
+                        <td>@department.CountOfManagers</td>
+                        <td>
+                            <div class="row-button-list">
+                                <button onclick="openEmployeeModal(@department.Id)">Сотрудники</button>
+                                <button onclick="openUpdateModal(@department.Id)">Редактировать</button>
+                                <button onclick="deleteDepartment(@department.Id)">Удалить</button>
+                            </div>
+                        </td>
+                    </tr>
             numberOfRow++;
         }}
     </tbody>

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CRUD.implementation;
 using OfficeMonitor.DTOs;
-using OfficeMonitor.Models;
+using OfficeMonitor.Models.Profile;
 using Profile = DataBase.Repository.Models.Profile;
 
 namespace OfficeMonitor.Services

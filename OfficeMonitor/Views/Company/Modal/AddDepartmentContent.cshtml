@@ -1,0 +1,74 @@
+﻿<script>
+    function deleteProfile(e) {
+        $(e).closest('li').remove();
+    }
+
+    $(document).ready(function () {
+        $('#AddProfileButton').click(function () {
+            var profile = $("#Profile").val();
+            if (profile != null && profile && /\S/.test(profile)) {
+                var li = "<li onclick='deleteProfile(this)'>" + profile + "</li>";
+                $("#Profiles").append(li);
+                var profile = $("#Profile").val('');
+            } else {
+                alert("Значение невалидно");
+                var profile = $("#Profile").val('');
+            }
+        });
+    });
+
+    function PostAddDepartment() {
+        var profiles = (Array.from($('#Profiles li'))
+            .map(el => el.innerText != 'Удалить' && el.innerText));
+            //.join(" "));
+        console.log(profiles);
+
+        var AddDepartmentCompanyModel = {
+            "Name": $('#Name').val(),
+            "Description": $('#Description').val(),
+            "Profiles": profiles
+        };
+        console.log(AddDepartmentCompanyModel);
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            type: 'POST',
+            url: 'Company/AddDepartment',
+            data: JSON.stringify(AddDepartmentCompanyModel),
+            success: function (data) {
+                alert("Отправлено" + data);
+            },
+            error: function (jqXHR, exception) {
+                alert("Ошибка" + exception);
+            }
+        });
+        closeModal();
+    }
+</script>
+
+<div class="form-name">Добавление отдела</div>
+<hr>
+
+<label for="Name">Название</label>
+<br>
+<input id="Name" name="Name" type="text" />
+<br>
+
+<label for="Description">Описание</label>
+<br>
+<input id="Description" name="Description" type="text" />
+<br>
+
+<label for="Profiles">Должности</label>
+<br>
+<ul id="Profiles" name="Profiles" class="profile-list">
+</ul>
+
+<input type="text" id="Profile" />
+<input type="button" value="Добавить должность" id="AddProfileButton" />
+
+<div class="row-button-list">
+    <button type="button" onclick="PostAddDepartment()">Подтвердить</button>
+    <button type="button" onclick="closeModal()">Назад</button>
+</div>

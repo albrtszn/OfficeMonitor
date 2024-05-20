@@ -1,0 +1,112 @@
+﻿@using OfficeMonitor.Models.Departments
+@using OfficeMonitor.Models.Profile
+@model UpdateDepartmentCompanyModel
+
+<script>
+    function deleteProfile(e) {
+        $(e).closest('li').remove();
+    }
+
+    $(document).ready(function () {
+        $('#AddProfileButton').click(function () {
+            var profile = $("#Profile").val();
+            if (profile != null && profile && /\S/.test(profile)) {
+                var li = "<li onclick='deleteProfile(this)' value='0'>" + profile + "</li>";
+                $("#Profiles").append(li);
+                var profile = $("#Profile").val('');
+            } else {
+                alert("Значение невалидно");
+                var profile = $("#Profile").val('');
+            }
+        });
+    });
+
+    function PostUpdateDepartment() {
+        var profiles = [];
+        var list = Array.from($('#Profiles li'));
+        list.forEach(element => {
+            var value = $(element).attr('value');
+            var text = element.innerText;
+
+            var profile = {
+                "Id": value,
+                "Name": text
+            };
+            profiles.push(profile);
+        });
+
+        var UpdateDepartmentCompanyModel = {
+            "Id": $('#Id').val(),
+            "Name": $('#Name').val(),
+            "Description": $('#Description').val(),
+            "Profiles": profiles
+        };
+        console.log(UpdateDepartmentCompanyModel);
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            type: 'POST',
+            url: 'Company/UpdateDepartment',
+            data: JSON.stringify(UpdateDepartmentCompanyModel),
+            success: function (data) {
+                alert("Отправлено" + data);
+            },
+            error: function (jqXHR, exception) {
+                console.log("Ошибка" + exception);
+            }
+        });
+        closeModal();
+    }
+
+    function deleteDepartmentProfile(e, id) {
+        $(e).closest('li').remove();
+
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            type: 'POST',
+            url: 'api/DeleteProfile',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+            },
+            error: function (response) {
+                console.log("Ошибка при редактировании времени работы" + response.responseText);
+            }
+        });
+    }
+</script>
+
+<div class="form-name">Добавление отдела</div>
+<hr>
+
+<input type="hidden" id="Id" value="@Model.Id" />
+
+<label for="Name">Название</label>
+<br>
+<input id="Name" name="Name" value="@Model.Name" type="text" />
+<br>
+
+<label for="Description">Описание</label>
+<br>
+<input id="Description" name="Description" value="@Model.Description" type="text" />
+<br>
+
+<label for="Profiles">Должности</label>
+<br>
+<ul id="Profiles" name="Profiles" class="profile-list">
+    @foreach(ProfileModel profile in Model.Profiles){
+        <li onclick="deleteDepartmentProfile(this, @profile.Id)" value="@profile.Id">@profile.Name</li>
+    }
+</ul>
+
+<input type="text" id="Profile" />
+<input type="button" value="Добавить должность" id="AddProfileButton" />
+
+<div class="row-button-list">
+    <button type="button" onclick="PostUpdateDepartment()">Подтвердить</button>
+    <button type="button" onclick="closeModal()">Назад</button>
+</div>

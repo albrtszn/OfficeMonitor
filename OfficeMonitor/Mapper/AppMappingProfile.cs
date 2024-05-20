@@ -9,6 +9,7 @@ using OfficeMonitor.Models.Company;
 using OfficeMonitor.Models.Departments;
 using OfficeMonitor.Models.Employee;
 using OfficeMonitor.Models.Manager;
+using OfficeMonitor.Models.Profile;
 using OfficeMonitor.Models.TypeApp;
 using OfficeMonitor.Models.WorkTime;
 using Action = DataBase.Repository.Models.Action;

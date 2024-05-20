@@ -185,4 +185,16 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Manager}/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Company}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Admin}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Employee}/{action=Index}/{id?}");
+
 app.Run();

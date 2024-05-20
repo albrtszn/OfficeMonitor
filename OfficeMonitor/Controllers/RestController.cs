@@ -24,6 +24,8 @@ using Action = DataBase.Repository.Models.Action;
 using OfficeMonitor.Models.Action;
 using OfficeMonitor.Models.App;
 using OfficeMonitor.Models.TypeApp;
+using OfficeMonitor.Models.Profile;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace OfficeMonitor.Controllers
 {
@@ -247,7 +249,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/ClaimRole" })]
-        [HttpDelete("DeleteClaimRole")]
+        [HttpPost("DeleteClaimRole")]
         public async Task<IActionResult> DeleteClaimRole([FromBody] IntIdModel? id)
         {
             if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
@@ -306,7 +308,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Plan" })]
-        [HttpDelete("DeletePlan")]
+        [HttpPost("DeletePlan")]
         public async Task<IActionResult> DeletePlan([FromBody] IntIdModel? id)
         {
             if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
@@ -374,7 +376,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Company" })]
-        [HttpDelete("DeleteCompany")]
+        [HttpPost("DeleteCompany")]
         public async Task<IActionResult> DeleteCompany([FromBody] IntIdModel? id)
         {
             if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
@@ -457,7 +459,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/TypeApp" })]
-        [HttpDelete("DeleteTypeApp")]
+        [HttpPost("DeleteTypeApp")]
         public async Task<IActionResult> DeleteTypeApp([FromBody] IntIdModel? id)
         {
             if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
@@ -519,7 +521,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/App" })]
-        [HttpDelete("DeleteApp")]
+        [HttpPost("DeleteApp")]
         public async Task<IActionResult> DeleteApp([FromBody] IntIdModel? id)
         {
             if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
@@ -636,7 +638,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Action" })]
-        [HttpDelete("DeleteAction")]
+        [HttpPost("DeleteAction")]
         public async Task<IActionResult> DeleteAction([FromBody] IntIdModel? id)
         {
             if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
@@ -649,7 +651,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Action" })]
-        [HttpDelete("DeleteAllActions")]
+        [HttpPost("DeleteAllActions")]
         public async Task<IActionResult> DeleteAllActions()
         {
             foreach (Action action in await ms.Action.GetAll())
@@ -805,14 +807,26 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Department" })]
-        [HttpDelete("DeleteDepartment")]
-        public async Task<IActionResult> DeleteDepartment([FromBody] IntIdModel? id)
+        [HttpPost("DeleteDepartment")]
+        public async Task<IActionResult> DeleteDepartment([FromBody] IntIdModel id)
         {
-            if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+            if (!ModelState.IsValid)
                 return BadRequest("Невалидное значение");
-            Department? department = await ms.Department.GetById(id.Id);
-            if (department == null)
-                throw new NotFoundException("Запись не найдена");
+            List<Profile> profiles = (await ms.Profile.GetAll()).Where(x => x.IdDepartment != null && x.IdDepartment.Equals(id.Id)).ToList();
+            foreach (Profile profile in profiles)
+            {
+                List<Employee> employees = (await ms.Employee.GetAll()).Where(x => x.IdProfile != null && x.IdProfile.Equals(id.Id)).ToList();
+                List<Manager> managers = (await ms.Manager.GetAll()).Where(x => x.IdProfile != null && x.IdProfile.Equals(id.Id)).ToList();
+                foreach (Employee employee in employees)
+                {
+                    await ms.Employee.DeleteById(employee.Id);
+                }
+                foreach (Manager manager in managers)
+                {
+                    await ms.Manager.DeleteById(manager.Id);
+                }
+                await ms.Profile.DeleteById(profile.Id);
+            }
             await ms.Department.DeleteById(id.Id);
             return Ok();
         }
@@ -890,7 +904,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Profile" })]
-        [HttpDelete("DeleteProfile")]
+        [HttpPost("DeleteProfile")]
         public async Task<IActionResult> DeleteProfile([FromBody] IntIdModel? id)
         {
             if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
@@ -960,7 +974,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Employee" })]
-        [HttpDelete("DeleteEmployee")]
+        [HttpPost("DeleteEmployee")]
         public async Task<IActionResult> DeleteEmployee([FromBody] IntIdModel? id)
         {
             if (id == null || !ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
@@ -1031,7 +1045,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Manager" })]
-        [HttpDelete("DeleteManager")]
+        [HttpPost("DeleteManager")]
         public async Task<IActionResult> DeleteManager([FromBody] IntIdModel? id)
         {
             if (id == null || !ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
@@ -1099,7 +1113,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/DepartmentManager" })]
-        [HttpDelete("DeleteDepartmentManager")]
+        [HttpPost("DeleteDepartmentManager")]
         public async Task<IActionResult> DeleteDepartmentManager([FromBody] IntIdModel? id)
         {
             if (id == null || !ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
@@ -1161,7 +1175,7 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Admin" })]
-        [HttpDelete("DeleteAdmin")]
+        [HttpPost("DeleteAdmin")]
         public async Task<IActionResult> DeleteAdmin([FromBody] IntIdModel? id)
         {
             if (id == null || !ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)

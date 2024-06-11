@@ -1,0 +1,136 @@
+﻿@model List<GetEmployeeOrManagerModel>
+
+<script>
+    function openUpdateManagerModal(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: 'Company/GetUpdateManager',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                $("#modal-body").html(response);
+            },
+            error: function (response) {
+                alert("Ошибка" + response.responseText);
+            }
+        });
+        openModal();
+    }
+    function deleteManager(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: 'Company/DeleteManager',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                $("#modal-body").html(response);
+            },
+            error: function (response) {
+                alert("Ошибка получение дожностей" + response.responseText);
+            }
+        });
+    }
+
+    function openUpdateEmployeeModal(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: 'Company/GetUpdateEmployee',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                $("#modal-body").html(response);
+            },
+            error: function (response) {
+                alert("Ошибка" + response.responseText);
+            }
+        });
+        openModal();
+    }
+    function deleteEmployee(id) {
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: 'Company/DeleteEmployee',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                $("#modal-body").html(response);
+            },
+            error: function (response) {
+                alert("Ошибка получение дожностей" + response.responseText);
+            }
+        });
+    }
+</script>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Id</th>
+            <th>Статус</th>
+            <th>ФИО</th>
+            <th>Email</th>
+            <th>Пароль</th>
+            <th>Отдел</th>
+            <th>Должность</th>
+            <th>Дейсвтия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int numberOfRow = 1;
+            foreach (GetEmployeeOrManagerModel worker in Model)
+            {
+                    <tr>
+                        <td>@numberOfRow</td>
+                        <td>@worker.Id</td>
+                        @if(worker.IsManager){
+                            <td>менеджер</td>
+                        }else{
+                            <td>сотрудник</td>
+                        }
+                        <td>@worker.Surname @worker.Name @worker.Patronamic</td>
+                        <td>@worker.Login</td>
+                        <td>@worker.Password.Substring(0, 10) ...</td>
+                        <td>@worker.Department.Name</td>
+                        <td>@worker.Profile.Name</td>
+                        <td>
+                            <div class="row-button-list">
+                            @if (worker.IsManager)
+                            {
+                                <button onclick="openUpdateManagerModal(@worker.Id)">Редактировать</button>
+                                <button onclick="deleteManager(@worker.Id)">Удалить</button>
+                            }
+                            else
+                            {
+                                <button onclick="openUpdateEmployeeModal(@worker.Id)">Редактировать</button>
+                                <button onclick="deleteEmployee(@worker.Id)">Удалить</button>
+                            }
+                            </div>
+                        </td>
+                    </tr>
+                numberOfRow++;
+            }
+        }
+    </tbody>
+</table>
+
+<div class="row-button-list">
+    <button type="button" onclick="closeModal()">Назад</button>
+</div>

@@ -2,7 +2,25 @@
 @model List<GetDepartmentModel>
 
 <script>
+    function openAddEmployeeModal() {
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'GET',
+            url: 'Manager/AddEmployeeContent',
+            success: function (response) {
+                $("#modal-body").html(response);
+            },
+            error: function (response) {
+                alert("Ошибка" + response.responseText);
+            }
+        });
+        openModal();
+    }
+
     function openEmployeeModal(id){
+        $("#CurrentDepartmentId").val(id);
+
         var IntIdModel = {
             "Id": id
         };
@@ -14,18 +32,21 @@
             data: JSON.stringify(IntIdModel),
             success: function (response) {
                 $("#modal-body").html(response);
-                $("#departmentId").val(id);
             },
             error: function (response) {
-                alert("Ошибка при удалении времени работы" + response.responseText);
+                alert("Ошибка" + response.responseText);
             }
         });
         openModal();
     }
 </script>
 
-<input type="hidden" name="departmentId" id="departmentId" value="" />
-<input type="hidden" name="employeeId" name="employeeId" value="" />
+<input type="hidden" id="CurrentDepartmentId" />
+<input type="hidden" id="EmployeeProfileId" />
+
+<div class="row-button-list">
+    <button onclick="openAddEmployeeModal()">Добавить сотрудника</button>
+</div>
 
 <table class="table">
     <thead>

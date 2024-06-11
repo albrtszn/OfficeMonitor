@@ -23,5 +23,7 @@ namespace OfficeMonitor.Models.Manager
         public string Password { get; set; } = null!;
         [Required]
         public int? IdProfile { get; set; }
+        [Required]
+        public List<int> ManagedDepartments { get; set; } = new List<int>();
     }
 }

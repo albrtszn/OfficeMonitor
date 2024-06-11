@@ -74,7 +74,7 @@ namespace OfficeMonitor.Services.MasterService
             Employee employee = await Employee.GetById(id);
             if(employee != null)
             {
-                ProfileDto profile = await Profile.GetDtoById(employee.Id);
+                ProfileDto profile = await Profile.GetDtoById(employee.IdProfile.Value);
                 if(profile != null)
                 {
                     return new GetEmployeeModel
@@ -92,6 +92,7 @@ namespace OfficeMonitor.Services.MasterService
             }
             return null;
         }
+
         public async Task<List<Employee>> GetEmployeesByDepartment(int departmentId)
         {
             //var employees = (await Employee.GetAll()).Where(async x => x.IdProfile != null && (await IsProfileExistsInDepartment(x.IdProfile.Value, departmentId)));
@@ -115,6 +116,31 @@ namespace OfficeMonitor.Services.MasterService
                     employeeDtosByDepartment.Add(employee);
             }
             return employeeDtosByDepartment;
+        }
+
+        public async Task<List<Manager>> GetManagersByDepartment(int departmentId)
+        {
+            //var employees = (await Employee.GetAll()).Where(async x => x.IdProfile != null && (await IsProfileExistsInDepartment(x.IdProfile.Value, departmentId)));
+            var managers = (await Manager.GetAll());
+            List<Manager> managersByDepartment = new List<Manager>();
+            foreach (var manager in managers)
+            {
+                if (manager.IdProfile != null && await IsProfileExistsInDepartment(manager.IdProfile.Value, departmentId))
+                    managersByDepartment.Add(manager);
+            }
+            return managersByDepartment;
+        }
+        public async Task<List<ManagerDto>> GetManagerDtosByDepartment(int departmentId)
+        {
+            //var employees = (await Employee.GetAll()).Where(async x => x.IdProfile != null && (await IsProfileExistsInDepartment(x.IdProfile.Value, departmentId)));
+            var managers = (await Manager.GetAllDtos());
+            List<ManagerDto> managerDtosByDepartment = new List<ManagerDto>();
+            foreach (var manager in managers)
+            {
+                if (manager.IdProfile != null && await IsProfileExistsInDepartment(manager.IdProfile.Value, departmentId))
+                    managerDtosByDepartment.Add(manager);
+            }
+            return managerDtosByDepartment;
         }
 
         public async Task<GetWorkTimeModel?> GetWorkTimeModel(int id)

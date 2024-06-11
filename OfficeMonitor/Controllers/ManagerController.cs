@@ -13,6 +13,7 @@ using OfficeMonitor.Models;
 using System.Security.Claims;
 using OfficeMonitor.Services.MasterService;
 using Action = DataBase.Repository.Models.Action;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace OfficeMonitor.Controllers
 {
@@ -26,6 +27,33 @@ namespace OfficeMonitor.Controllers
         {
             logger = _logger;
             ms = _ms;
+        }
+
+        [Authorize(Roles = "MANAGER")]
+        [HttpGet("GetDepartmentsByManagerHtml")]
+        public async Task<IActionResult> GetDepartmentsByCompanyHtml()
+        {
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int userId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out userId);
+            var manager = await ms.Manager.GetById(userId);
+            if (manager == null)
+                throw new NotFoundException($"Компания не найдена. id={userId}");
+
+            List<Department> departments = new List<Department>();
+            foreach(var departmentManager in await ms.DepartmentManager.GetAllByManager(manager.Id))
+            {
+                Department? department = await ms.Department.GetById(departmentManager.IdDepartment.Value);
+                if (department != null)
+                    departments.Add(department);
+            }
+
+            string html = "";
+            foreach (Department department in departments)
+            {
+                html += $"<option value=\"{department.Id}\">{department.Name}</option>";
+            }
+            return Content(html);
         }
 
         [Authorize(Roles = "MANAGER")]
@@ -95,16 +123,15 @@ namespace OfficeMonitor.Controllers
                     if (manager.IdProfile != null && await ms.IsProfileExistsInDepartment(manager.IdProfile.Value, department.Id))
                         countOfManagers++;
                 }
-                int countOfManagerForDepartment = (await ms.DepartmentManager.GetAll()).Where(x => x != null && x.IdDepartment != null
-                                                                                                    && x.IdDepartment.Equals(department.Id)).Count();
+
                 departmentModels.Add(new GetDepartmentModel
                 {
                     Id = department.Id,
                     Name = department.Name,
                     Description = department.Description,
                     IdCompany = department.IdCompany.Value,
-                    CountOfWorkers = countOfEmployees + countOfManagers,
-                    CountOfManagers = countOfManagerForDepartment
+                    CountOfWorkers = countOfEmployees,
+                    CountOfManagers = countOfManagers
                 });
             }
             return PartialView("PartialViews/Departments", departmentModels);
@@ -164,6 +191,25 @@ namespace OfficeMonitor.Controllers
 
             return PartialView("Modal/AddEmployeeContent");
         }
+
+        [Authorize(Roles = "MANAGER")]
+        [HttpPost("AddEmployee")]
+        public async Task<IActionResult> AddEmployee([FromForm] AddEmployeeModel model)
+        {
+            if (!ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int companyId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out companyId);
+            var companyDto = await ms.Company.GetById(companyId);
+            if (companyDto == null)
+                throw new NotFoundException($"Компания не найдена. id={companyId}");
+            ClaimRole? claimRole = (await ms.ClaimRole.GetEmployeeRole());
+
+            await ms.Employee.Save(model, claimRole);
+            return Ok();
+        }
+
         [Authorize(Roles = "MANAGER")]
         [HttpPost("UpdateEmployeeContent")]
         public async Task<IActionResult> UpdateEmployeeContent([FromBody] IntIdModel? id)
@@ -181,6 +227,37 @@ namespace OfficeMonitor.Controllers
             if (model == null)
                 throw new BadRequestException("Пользователь не найден");
             return PartialView("Modal/UpdateEmployeeContent", model);
+        }
+
+        [Authorize(Roles = "MANAGER")]
+        [HttpPost("UpdateEmployee")]
+        public async Task<IActionResult> UpdateEmployee([FromForm] UpdateEmployeeModel model)
+        {
+            if (!ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int companyId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out companyId);
+            var companyDto = await ms.Company.GetById(companyId);
+            if (companyDto == null)
+                throw new NotFoundException($"Компания не найдена. id={companyId}");
+            ClaimRole? claimRole = (await ms.ClaimRole.GetEmployeeRole());
+
+            await ms.Employee.Save(model, claimRole);
+            return Ok();
+        }
+
+        [Authorize(Roles = "MANAGER")]
+        [HttpPost("DeleteEmployee")]
+        public async Task<IActionResult> DeleteEmployee([FromBody] IntIdModel id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Невалидное значение");
+            if (await ms.Employee.GetById(id.Id) == null)
+                throw new NotFoundException("Сотрудник не найден");
+
+            await ms.Employee.DeleteById(id.Id);
+            return Ok();
         }
 
         [Authorize(Roles = "MANAGER")]

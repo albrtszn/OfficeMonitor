@@ -26,6 +26,11 @@ namespace OfficeMonitor.Services
             return await DepartmentManagerRepo.GetAll();
         }
 
+        public async Task<List<DepartmentManager>> GetAllByManager(int managerId)
+        {
+            return (await DepartmentManagerRepo.GetAll()).Where(x => x.IdManager != null && x.IdManager.Equals(managerId)).ToList();
+        }
+
         public async Task<List<DepartmentManagerDto>> GetAllDtos()
         {
             List<DepartmentManagerDto> DepartmentManagers = new List<DepartmentManagerDto>();

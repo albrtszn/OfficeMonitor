@@ -37,7 +37,7 @@
         });
     }
 
-    function openUpdateModal(id) {
+    function openUpdateDepartmentModal(id) {
         var IntIdModel = {
             "Id": id
         };
@@ -59,7 +59,8 @@
         openModal();
     }
 
-    function openEmployeeModal(id){
+    function openWorkersModal(id){
+        $("#CurrentDerpartmentId").val(id);
         var IntIdModel = {
             "Id": id
         };
@@ -67,7 +68,7 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'html',
             type: 'POST',
-            url: 'Company/DeleteDepartment',
+            url: 'Company/GetEmployeesByDepartment',
             data: JSON.stringify(IntIdModel),
             success: function (response) {
                 $("#modal-body").html(response);
@@ -78,10 +79,45 @@
         });
         openModal();
     }
+
+    function openAddEmployeeModal() {
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'GET',
+            url: 'Company/GetAddEmployee',
+            success: function (response) {
+                $('#modal-body').html(response);
+            },
+            error: function (response) {
+                console.log("Ошибка " + response.responseText);
+            }
+        });
+        openModal();
+    }
+    function openAddManagerModal() {
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'GET',
+            url: 'Company/GetAddManager',
+            success: function (response) {
+                $('#modal-body').html(response);
+            },
+            error: function (response) {
+                console.log("Ошибка " + response.responseText);
+            }
+        });
+        openModal();
+    }
 </script>
+
+<input type="hidden" id="CurrentDerpartmentId" />
 
 <div class="row-button-list">
     <button onclick="openAddDepartmentModal()">Добавить отдел</button>
+    <button onclick="openAddManagerModal()">Добавить менеджера</button>
+    <button onclick="openAddEmployeeModal()">Добавить сотрудника</button>
 </div>
 
 <table class="table">
@@ -109,8 +145,8 @@
                         <td>@department.CountOfManagers</td>
                         <td>
                             <div class="row-button-list">
-                                <button onclick="openEmployeeModal(@department.Id)">Сотрудники</button>
-                                <button onclick="openUpdateModal(@department.Id)">Редактировать</button>
+                                <button onclick="openWorkersModal(@department.Id)">Сотрудники</button>
+                                <button onclick="openUpdateDepartmentModal(@department.Id)">Редактировать</button>
                                 <button onclick="deleteDepartment(@department.Id)">Удалить</button>
                             </div>
                         </td>

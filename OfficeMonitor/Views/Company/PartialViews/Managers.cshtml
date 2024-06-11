@@ -2,83 +2,45 @@
 @model List<GetManagerModel>
 
 <script>
-    function loadDepartments(id) {
-        var IntIdModel = {
-            "Id":id
-        };
-
+    function openAddModal() {
         $.ajax({
             contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            type: 'POST',
-            url: '/api/Rest/GetManager',
-            data: JSON.stringify(IntIdModel),
+            dataType: 'html',
+            type: 'GET',
+            url: 'Company/GetAddManager',
             success: function (response) {
-                alert("Загрузка менеджера: "+response);
-                //$('#department').html(response);
-                $("#surname").val(response.Surname);
-                $("#name").val(response.Name);
-                $("#patronamic").val(response.Patronamic);
-                $("#login").val(response.Login);
-                $("#password").val(response.Password);
+                $('#modal-body').html(response);
             },
             error: function (response) {
-                alert("Ошибка при загрузке менеджера");
+                console.log("Ошибка при загрузке");
             }
         });
+        openModal();
     }
 
     function openUpdateModal(id) {
-        loadDepartments(id);
-        var modal = document.getElementById('modal');
-        modal.style.display = 'block';
-    }
-    function closeUpdateModal() {
-        var modal = document.getElementById('modal');
-        modal.style.display = 'none';
+        var IntIdModel = {
+            "Id": id
+        };
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: 'Company/GetUpdateManager',
+            data: JSON.stringify(IntIdModel),
+            success: function (response) {
+                $("#modal-body").html(response);
+            },
+            error: function (response) {
+                alert("Ошибка получение дожностей" + response.responseText);
+            }
+        });
+        openModal();
     }
 </script>
 
-<div class="modal" id="modal">
-    <div class="modal-content">
-        <span class="modal-close" onclick="closeModal()">&times;</span>
-        <div class="modal-body" id="modal-body">
-            <div class="worktime-form">
-                <div class="form-name">Редактирование менеджера</div>
-                <hr>
-                <form method="post">
-                    <label for="surname">Фамилия</label><br>
-                    <input id="surname" type="text" name="surname"><br>
-
-                    <label for="name">Имя</label><br>
-                    <input id="name" type="text" name="name"><br>
-
-                    <label for="patronamic">Отчество</label><br>
-                    <input id="patronamic" type="text" name="patronamic"><br>
-
-                    <label for="login">Email</label><br>
-                    <input id="login" type="text" name="email"><br>
-
-                    <label for="password">Пароль</label><br>
-                    <input id="password" type="text" name="password"><br>
-
-                    <label for="department">Отдел</label><br>
-                    <select id="department" name="department">
-                        <option value="-">-</option>
-                    </select><br>
-
-                    <label for="profile">Должность</label><br>
-                    <select id="profile" name="profile">
-                        <option value="-">-</option>
-                    </select><br>
-
-                    <div class="row-button-list">
-                        <button type="submit">Подтвердить</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="row-button-list">
+    <button onclick="openAddModal()">Добавить</button>
 </div>
 
 <table class="table">
@@ -99,20 +61,20 @@
             int numberOfRow = 1;
             foreach (GetManagerModel manager in Model)
             {
-                    <tr>
-                        <td>@numberOfRow</td>
-                        <td>@manager.Id</td>
-                        <td>@manager.Surname @manager.Name @manager.Patronamic</td>
-                        <td>@manager.Login</td>
-                        <td>@manager.Password.Substring(0,10) ...</td>
-                        <td>@manager.Department.Name</td>
-                        <td>@manager.Profile.Name</td>
-                        <td>
-                            <div class="row-button-list">
-                                <button onclick="openUpdateModal(@manager.Id)">Редактировать</button>
-                            </div>
-                        </td>
-                    </tr>
+                            <tr>
+                                <td>@numberOfRow</td>
+                                <td>@manager.Id</td>
+                                <td>@manager.Surname @manager.Name @manager.Patronamic</td>
+                                <td>@manager.Login</td>
+                                <td>@manager.Password.Substring(0,10) ...</td>
+                                <td>@manager.Department.Name</td>
+                                <td>@manager.Profile.Name</td>
+                                <td>
+                                    <div class="row-button-list">
+                                        <button onclick="openUpdateModal(@manager.Id)">Редактировать</button>
+                                    </div>
+                                </td>
+                            </tr>
                 numberOfRow++;
             }
         }

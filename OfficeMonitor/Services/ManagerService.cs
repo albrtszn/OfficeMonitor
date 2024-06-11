@@ -125,6 +125,12 @@ namespace OfficeMonitor.Services
             return await ManagerRepo.Save(manager);
         }
 
+        public async Task<bool> Save(UpdateManagerModel ManagerModelToSave)
+        {
+            Manager manager = mapper.Map<Manager>(ManagerModelToSave);
+            return await ManagerRepo.Save(manager);
+        }
+
         public async Task<bool> Save(UpdateManagerModel ManagerModelToSave, ClaimRole? claimRole)
         {
             Manager manager = mapper.Map<Manager>(ManagerModelToSave);

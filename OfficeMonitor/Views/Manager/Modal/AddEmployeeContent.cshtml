@@ -16,7 +16,6 @@
     });
 
     function getProfiles() {
-        alert($('#department').val());
         var IntIdModel = {
             "Id": $('#department').val()
         };
@@ -34,31 +33,11 @@
             }
         });
     }
-
-    function deleteWorkTime(id) {
-        var IntIdModel = {
-            "Id": id
-        };
-
-        $.ajax({
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            type: 'POST',
-            url: '/api/DeleteEmployee',
-            data: JSON.stringify(IntIdModel),
-            success: function (response) {
-                alert("Время работы удалено");
-            },
-            error: function (response) {
-                alert("Ошибка при удалении времени работы" + response.responseText);
-            }
-        });
-    }
 </script>
 
 <div class="form-name">Назначение рабочего времени</div>
 <hr>
-<form asp-controller="api" asp-action="AddEmployee" method="post">
+<form asp-controller="Manager" asp-action="AddEmployee" method="post">
 
     <label for="Name">Имя</label><br>
     <input id="Name" name="Name" type="text"/><br>
@@ -70,7 +49,7 @@
     <input id="Patronamic" name="Patronamic" type="text"/><br>
 
     <label for="Email">Почта</label><br>
-    <input id="Email" name="Email" type="text"/><br>
+    <input id="Email" name="Login" type="text"/><br>
 
     <label for="Password">Пароль</label><br>
     <input id="Password" name="Password" type="text"/><br>
@@ -87,7 +66,7 @@
 
     <div class="row-button-list">
         <button type="submit">Подтвердить</button>
-        <button type="button" onclick="openEmployeeModal()">Назад</button>
+        <button type="button" onclick="closeModal()">Назад</button>
     </div>
 </form>
 

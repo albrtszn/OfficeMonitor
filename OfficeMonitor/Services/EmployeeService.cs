@@ -130,6 +130,12 @@ namespace OfficeMonitor.Services
                 employee.IdClaimRole = claimRole.Id;
             return await EmployeeRepo.Save(employee);
         }
+        public async Task<bool> Save(UpdateEmployeeModel EmployeeModelToSave)
+        {
+            EmployeeModelToSave.Password = PasswordHasher.Generate(EmployeeModelToSave.Password);
+            Employee employee = mapper.Map<Employee>(EmployeeModelToSave);
+            return await EmployeeRepo.Save(employee);
+        }
         public async Task<bool> Save(UpdateEmployeeModel EmployeeModelToSave, ClaimRole? claimRole)
         {
             EmployeeModelToSave.Password = PasswordHasher.Generate(EmployeeModelToSave.Password);

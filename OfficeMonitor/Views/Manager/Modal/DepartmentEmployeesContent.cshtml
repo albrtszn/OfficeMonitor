@@ -2,45 +2,46 @@
 @model List<GetEmployeeModel>
 
     <script>
-    function AddEmployeeContent() {
-        $.ajax({
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'html',
-            type: 'GET',
-            url: 'Manager/AddEmployeeContent',
-            success: function (response) {
-                $("#modal-body").html(response);
-            },
-            error: function (response) {
-                alert("Ошибка при удалении времени работы" + response.responseText);
-            }
-        });
+    function UpdateEmployeeContent(id) {
+            var IntIdModel = {
+                "Id": id
+            };
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'html',
+                type: 'POST',
+                url: 'Manager/UpdateEmployeeContent',
+                data: JSON.stringify(IntIdModel),
+                success: function (response) {
+                    $("#modal-body").html(response);
+                },
+                error: function (response) {
+                    alert("Ошибка " + response.responseText);
+                }
+            });
+            openModal();
     }
 
-    function UpdateEmployeeContent(id) {
+
+    function DeleteEmployee(id) {
         var IntIdModel = {
             "Id": id
         };
         $.ajax({
             contentType: 'application/json; charset=utf-8',
-            dataType: 'html',
+            dataType: 'json',
             type: 'POST',
-            url: 'Manager/UpdateEmployeeContent',
+            url: 'Manager/DeleteEmployee',
             data: JSON.stringify(IntIdModel),
             success: function (response) {
                 $("#modal-body").html(response);
-                $("#employeeId").val(id);
             },
             error: function (response) {
-                alert("Ошибка при удалении времени работы" + response.responseText);
+                alert("Ошибка " + response.responseText);
             }
         });
-    } 
+    }
     </script>
-<div class="row-button-list">
-    <button onclick="AddEmployeeContent()">Добавить сотрудника</button>
-</div>
-
 
 <table class="table">
     <thead>
@@ -59,20 +60,20 @@
             int numberOfRow = 1;
             foreach (GetEmployeeModel employee in Model)
             {
-                <tr>
-                    <td>@numberOfRow.ToString()</td>
-                    <td>@employee.Id</td>
-                    <td>@employee.Surname @employee.Name @employee.Patronamic</td>
-                    <td>@employee.Login</td>
-                    <td>@employee.Password.Substring(0, 10) ...</td>
-                    <td>@employee.Profile.Name</td>
-                    <td>
-                        <div class="column-button-list">
-                            <button onclick="UpdateEmployeeContent(@employee.Id)">Редактировть</button>
-                            <button onclick="DeleteEmployee(@employee.Id)">Удалить</button>
-                        </div>
-                    </td>
-                </tr>
+                        <tr>
+                            <td>@numberOfRow.ToString()</td>
+                            <td>@employee.Id</td>
+                            <td>@employee.Surname @employee.Name @employee.Patronamic</td>
+                            <td>@employee.Login</td>
+                            <td>@employee.Password.Substring(0, 10) ...</td>
+                            <td>@employee.Profile.Name</td>
+                            <td>
+                                <div class="column-button-list">
+                                    <button onclick="UpdateEmployeeContent(@employee.Id)">Редактировть</button>
+                                    <button onclick="DeleteEmployee(@employee.Id)">Удалить</button>
+                                </div>
+                            </td>
+                        </tr>
                 numberOfRow++;
             }
         }

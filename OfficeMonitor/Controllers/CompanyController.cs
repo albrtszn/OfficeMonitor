@@ -63,7 +63,23 @@ namespace OfficeMonitor.Controllers
             var companyDto = await ms.Company.GetDtoById(companyId);
             if (companyDto == null)
                 throw new NotFoundException($"Компания не найдена. id={companyId}");
-            return PartialView("PartialViews/CompanyInfo", companyDto);
+            var planDto = await ms.Plan.GetDtoById(companyDto.IdPlan.Value);
+            if (planDto == null)
+                throw new NotFoundException($"План не найден. id={companyDto.IdPlan}");
+            GetCompanyModel model = new GetCompanyModel
+            {
+                Login = companyDto.Login,
+                Password = companyDto.Password,
+                Name = companyDto.Name,
+                Description = companyDto.Description,
+                Plan = planDto,
+                Balance = companyDto.Balance,
+                IsActive = companyDto.IsActive.Value,
+                IsBanned = companyDto.IsBanned.Value,
+                DateOfEndPayment = companyDto.DateOfEndPayment,
+                DateOfRegister = companyDto.DateOfRegister
+            };
+            return PartialView("PartialViews/CompanyInfo", model);
         }
 
         [Authorize(Roles = "COMPANY")]
@@ -441,7 +457,7 @@ namespace OfficeMonitor.Controllers
             string html = "";
             foreach (Department dto in departments)
             {
-                html += $"<option value=\"{dto.Id}\">{dto.Name}</option>";
+                html += $"<option value=\"{dto.Id}\">{dto.Name}</option></br>";
             }
             return Content(html);
         }
@@ -463,7 +479,7 @@ namespace OfficeMonitor.Controllers
             foreach (Department dto in departments)
             {
                 html += $"<input type=\"checkbox\" name=\"ManagedDepartments\" id=\"department{number}\" value=\"" + dto.Id + "\" />";
-                html += $"<label for= \"department{number}\">" + dto.Name + "<label>";
+                html += $"<label for= \"department{number}\">" + dto.Name + "<label></br>";
                 number++;
             }
             return Content(html);
@@ -492,12 +508,12 @@ namespace OfficeMonitor.Controllers
                 if (managedDepartments.FirstOrDefault(x=>x.Id!=null && x.IdDepartment.Equals(dto.Id)) != null)
                 {
                     html += $"<input type=\"checkbox\" name=\"ManagedDepartments\" id=\"department{number}\" value=\"" + dto.Id + "\" checked=\"checked\"/>";
-                    html += $"<label for= \"department{number}\">" + dto.Name + "<label>";
+                    html += $"<label for= \"department{number}\">" + dto.Name + "<label></br>";
                     number++;
                     }
                 else {
                     html += $"<input type=\"checkbox\" name=\"ManagedDepartments\" id=\"department{number}\" value=\"" + dto.Id + "\" />";
-                    html += $"<label for= \"department{number}\">" + dto.Name + "<label>";
+                    html += $"<label for= \"department{number}\">" + dto.Name + "<label></br>";
                     number++;
                 }
             }

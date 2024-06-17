@@ -745,3 +745,9 @@ a {
     color: rgb(255, 0, 0);
     cursor: pointer;
 }
+
+.input-text {
+    padding: 5px;
+    border-radius: 5px;
+    min-width: 250px;
+}

@@ -1,4 +1,5 @@
-﻿@using OfficeMonitor.Models.Manager
+﻿@using OfficeMonitor.DTOs
+@using OfficeMonitor.Models.Manager
 @model GetManagerModel
 
 <div id="firstContent" class="info-page">
@@ -39,7 +40,7 @@
             }
         </div>
         <div class="info-card">
-            <div class="name">Тариф</div>
+            <div class="name">Должность</div>
             @{
                 if (Model != null && Model.Profile != null && Model.Profile.Name != null)
                 {
@@ -54,13 +55,17 @@
         <div class="info-card">
             <div class="name">Список менеджируемых отделов</div>
             @{
-                if (true)
+                if (Model.ManagedDepartments!=null && Model.ManagedDepartments.Count > 0)
                 {
-                    <div class="value">Список отделов</div>
+                    int number = 1;
+                    foreach (DepartmentDto department in Model.ManagedDepartments) {
+                        <div class="value">@number. @department.Name</div>
+                        number++;
+                    }
                 }
                 else
                 {
-                    <div class="value">-</div>
+                    <div class="value">не назначено</div>
                 }
             }
         </div>

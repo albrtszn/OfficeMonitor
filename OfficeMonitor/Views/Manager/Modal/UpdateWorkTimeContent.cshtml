@@ -12,10 +12,10 @@
         <span id="departmentName">@Model.Department.Name</span>
 
         <label for="start-time">Начало работы</label>
-        <input id="startTime" name="StartTime" type="time" value="@Model.StartTime" min="00:00" max="24:00">
+        <input id="startTime" name="StartTime" type="time" value="@Model.StartTime" min="00:00" max="24:00" class="input-text">
 
         <label for="start-time">Конец работы</label>
-        <input id="endTime" name="EndTime" type="time" value="@Model.EndTime" min="00:00" max="24:00" />
+        <input id="endTime" name="EndTime" type="time" value="@Model.EndTime" min="00:00" max="24:00" class="input-text" />
 
         <div class="row-button-list">
             <button type="submit">Подтвердить</button>

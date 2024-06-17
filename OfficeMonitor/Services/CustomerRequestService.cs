@@ -38,6 +38,11 @@ namespace OfficeMonitor.Services
             return await CustomerRequestRepo.GetById(id);
         }
 
+        public async Task<CustomerRequest?> GetByEmail(string email)
+        {
+            return (await CustomerRequestRepo.GetAll()).FirstOrDefault(x=>x.Email!=null && x.Email.Equals(email));
+        }
+
         public async Task<CustomerRequestDto> GetDtoById(int id)
         {
             return mapper.Map<CustomerRequestDto>(await CustomerRequestRepo.GetById(id));

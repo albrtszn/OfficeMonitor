@@ -40,19 +40,19 @@
 <form asp-controller="Manager" asp-action="AddEmployee" method="post">
 
     <label for="Name">Имя</label><br>
-    <input id="Name" name="Name" type="text"/><br>
+    <input id="Name" name="Name" type="text" class="input-text"/><br>
 
     <label for="Surname">Фамилия</label><br>
-    <input id="Surname" name="Surname" type="text"/><br>
+    <input id="Surname" name="Surname" type="text" class="input-text"/><br>
 
     <label for="Patronamic">Отчество</label><br>
-    <input id="Patronamic" name="Patronamic" type="text"/><br>
+    <input id="Patronamic" name="Patronamic" type="text" class="input-text"/><br>
 
     <label for="Email">Почта</label><br>
-    <input id="Email" name="Login" type="text"/><br>
+    <input id="Email" name="Login" type="text" class="input-text"/><br>
 
     <label for="Password">Пароль</label><br>
-    <input id="Password" name="Password" type="text"/><br>
+    <input id="Password" name="Password" type="text" class="input-text"/><br>
 
     <label for="department">Отдел</label><br>
     <select id="department" name="IdDepartment" onselect="getProfiles()" onchange="getProfiles()">

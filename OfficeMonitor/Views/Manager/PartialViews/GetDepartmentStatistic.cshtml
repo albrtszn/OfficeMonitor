@@ -2,6 +2,37 @@
 @using OfficeMonitor.Models.Employee
 @model DepartmentStatistic
 
+<script>
+    function openEmployeeStatisticModal(id) {
+        var startDate = $('#daterange').data('daterangepicker').startDate.format('DD.MM.YYYY');
+        var endDate = $('#daterange').data('daterangepicker').endDate.format('DD.MM.YYYY');
+        console.log("Start Date:", startDate, "End Date:", endDate);
+        var dataRange = startDate + ' - ' + endDate;
+
+        var GetEmployeeStatistic = {
+            "EmployeeId": id,
+            "DateRange": dataRange
+        };
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: 'Manager/GetEmployeeStatistic',
+            data: JSON.stringify(GetEmployeeStatistic),
+            success: function (response) {
+                //alert("Статистика получена " + response);
+                $("#modal-body").html(response);
+                alert("success");
+            },
+            error: function (response) {
+                alert("Ошибка при получении статистики" + response.responseText);
+            }
+        });
+        openModal();
+    }
+</script>
+
 <div class="info-content">
     <div class="info-card">
         @if(Model.WorkTime!=null){
@@ -58,22 +89,22 @@
             int numberOfRow = 1;
             foreach (GetEmployeeWithInfoModel employee in Model.Employees)
             {
-                <tr>
-                    <td>@numberOfRow</td>
-                    <td>@employee.Id</td>
-                    <td>@employee.FIO</td>
-                    <td>@employee.Login</td>
-                    <td>@employee.Password.Substring(0, 10)...</td>
-                    <td>@employee.Profile.Name</td>
-                    <td>@employee.WorkTime.Hours ч. @employee.WorkTime.Minutes м.</td>
-                    <td>@employee.IdleTime.Hours ч. @employee.IdleTime.Minutes м.</td>
-                    <td>@employee.DiversionTime.Hours ч. @employee.DiversionTime.Minutes м.</td>
-                    <td>
-                        <div class="column-button-list">
-                            <button onclick="openModal()">Подробно</button>
-                        </div>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>@numberOfRow</td>
+                        <td>@employee.Id</td>
+                        <td>@employee.FIO</td>
+                        <td>@employee.Login</td>
+                        <td>@employee.Password.Substring(0, 10)...</td>
+                        <td>@employee.Profile.Name</td>
+                        <td>@employee.WorkTime.Hours ч. @employee.WorkTime.Minutes м.</td>
+                        <td>@employee.IdleTime.Hours ч. @employee.IdleTime.Minutes м.</td>
+                        <td>@employee.DiversionTime.Hours ч. @employee.DiversionTime.Minutes м.</td>
+                        <td>
+                            <div class="column-button-list">
+                                <button onclick="openEmployeeStatisticModal(@employee.Id)">Подробно</button>
+                            </div>
+                        </td>
+                    </tr>
                 numberOfRow++;
             }
         }

@@ -1,0 +1,43 @@
+﻿<script>
+    $(document).ready(function () {
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'GET',
+            url: '/api/GetPlansRadioHtml',
+            success: function (response) {
+                $("#plans").html(response);
+            },
+            error: function (response) {
+                alert("Ошибка получения тарифов" + response.responseText);
+            }
+        });
+    });
+</script>
+
+<div class="form-name">Заявка создания учетной записи</div>
+<hr>
+<form asp-controller="Home" asp-action="AddCustomerRequest" method="post">
+
+    <label for="Name">Имя компании</label><br>
+    <input id="Name" name="Name" type="text" class="input-text"/><br>
+
+    <label for="Description">Описание</label><br>
+    <input id="Description" name="Description" type="text" class="input-text"/><br>
+
+    <label for="Email">Электронная почта</label><br>
+    <input id="Email" name="Email" type="text" class="input-text"/><br>
+
+    <label for="Password">Пароль</label><br>
+    <input id="Password" name="Password" type="text" class="input-text"/><br>
+
+    <label for="plans">Тариф</label><br>
+    <div id="plans">
+        <input type="radio" value="0">-</input>
+    </div><br>
+
+    <div class="row-button-list">
+        <button type="submit">Подтвердить</button>
+        <button type="button" onclick="closeModal()">Назад</button>
+    </div>
+</form>

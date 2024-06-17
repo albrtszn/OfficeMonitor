@@ -135,6 +135,11 @@ namespace OfficeMonitor.Services
         public async Task<bool> Save(UpdateCompanyModel CompanyModelToSave, ClaimRole? claimRole)
         {
             Company company = mapper.Map<Company>(CompanyModelToSave);
+            Company oldCompany = await CompanyRepo.GetById(company.Id);
+            if (oldCompany == null)
+                return false;
+            company.DateOfEndPayment = company.DateOfEndPayment;
+            company.DateOfRegister = company.DateOfRegister;
             company.Password = PasswordHasher.Generate(company.Password);
             if (claimRole != null)
                 company.IdClaimRole = claimRole.Id;

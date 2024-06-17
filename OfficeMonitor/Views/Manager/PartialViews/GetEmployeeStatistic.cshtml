@@ -1,0 +1,52 @@
+﻿@using OfficeMonitor.Models.Employee
+@model EmployeeStatistic
+
+<div class="info-content">
+    <div class="info-card">
+        <div class="name">ФИО</div>
+        <div class="value">@Model.Employee.Surname @Model.Employee.Name @Model.Employee.Patronamic</div>
+    </div>
+
+    <div class="info-card">
+        <div class="name">Рабочее время</div>
+        <div class="value">@Model.WorkTime.StartTime - @Model.WorkTime.EndTime</div>
+    </div>
+
+    <div class="info-card">
+        <div class="name">Требуемое количество часов</div>
+        <div class="value">@Model.RequiredTotalHours.Hours ч. @Model.RequiredTotalHours.Minutes м.</div>
+    </div>
+
+    <div class="info-card">
+        <div class="name">Всего часов</div>
+        <div class="value">@Model.TotalHours.Hours ч. @Model.TotalHours.Minutes м.</div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Дата</th>
+            <th>Активное время, %</th>
+            <th>Время простоя, %</th>
+            <th>Время отвлечения, %</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int numberOfRow = 1;
+            foreach (DayStatistic day in Model.Actions)
+            {
+                <tr>
+                    <td>@numberOfRow.ToString()</td>
+                    <td>@day.Date</td>
+                    <td>@day.WorkedPercent</td>
+                    <td>@day.IdlePercent</td>
+                    <td>@day.DiversionPercent</td>
+                </tr>
+                numberOfRow++;
+            }
+        }
+    </tbody>
+</table>

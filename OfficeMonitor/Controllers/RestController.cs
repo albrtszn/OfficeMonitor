@@ -272,6 +272,21 @@ namespace OfficeMonitor.Controllers
         }
 
         [SwaggerOperation(Tags = new[] { "Rest/Plan" })]
+        [HttpGet("GetPlansRadioHtml")]
+        public async Task<IActionResult> GetPlansRadioHtml()
+        {
+            string html = "";
+            int number = 1;
+            foreach (Plan plan in await ms.Plan.GetAll())
+            {
+                html += $"<input type=\"radio\" id=\"plan{number}\" value=\"{plan.Id}\" name=\"IdPlan\" />";
+                html += $"<label for=\"plan{number}\">{plan.Name}-{plan.MonthCost} BYN/month</label></br>";
+                number++;
+            }
+            return Content(html);
+        }
+
+        [SwaggerOperation(Tags = new[] { "Rest/Plan" })]
         [HttpPost("GetPlan")]
         public async Task<IActionResult> GetPlan([FromBody] IntIdModel? id)
         {
@@ -759,7 +774,7 @@ namespace OfficeMonitor.Controllers
             string html = "";
             foreach(DepartmentDto dto in departmentDtos)
             {
-                html += $"<option value=\"{dto.Id}\">{dto.Name}</option>";
+                html += $"<option value=\"{dto.Id}\">{dto.Name}</option></br>";
             }
             return Content(html);
         }
@@ -856,7 +871,7 @@ namespace OfficeMonitor.Controllers
             string html = "";
             foreach (ProfileDto dto in profileDtos)
             {
-                html += $"<option value=\"{dto.Id}\">{dto.Name}</option>";
+                html += $"<option value=\"{dto.Id}\">{dto.Name}</option></br>";
             }
             return Content(html);
         }

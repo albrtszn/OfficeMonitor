@@ -25,5 +25,11 @@ namespace OfficeMonitor.Models.Company
         //public int? IdClaimRole { get; set; }
         [Required]
         public bool IsActive { get; set; }
+        [Required]
+        public bool? IsBanned { get; set; }
+        [Required]
+        public DateTime? DateOfRegister { get; set; }
+        [Required]
+        public DateTime? DateOfEndPayment { get; set; }
     }
 }

@@ -26,5 +26,7 @@ namespace OfficeMonitor.Models.Manager
         public DepartmentDto Department { get; set; }
         [Required]
         public ProfileDto Profile { get; set; }
+        [Required]
+        public List<DepartmentDto> ManagedDepartments { get; set; }
     }
 }

@@ -192,38 +192,38 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<TokenAdmin>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TokenAdm__3213E83F980AAFAF");
+            entity.HasKey(e => e.Id).HasName("PK__TokenAdm__3213E83FC02D729F");
 
             entity.HasOne(d => d.IdAdminNavigation).WithMany(p => p.TokenAdmins)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenAdmi__idAdm__73BA3083");
+                .HasConstraintName("FK__TokenAdmi__idAdm__2180FB33");
         });
 
         modelBuilder.Entity<TokenCompany>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TokenCom__3213E83F77827610");
+            entity.HasKey(e => e.Id).HasName("PK__TokenCom__3213E83F2B1E1500");
 
             entity.HasOne(d => d.IdCompanyNavigation).WithMany(p => p.TokenCompanies)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenComp__idCom__76969D2E");
+                .HasConstraintName("FK__TokenComp__idCom__245D67DE");
         });
 
         modelBuilder.Entity<TokenEmployee>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TokenEmp__3213E83F25EC08EB");
+            entity.HasKey(e => e.Id).HasName("PK__TokenEmp__3213E83FECB77CCD");
 
             entity.HasOne(d => d.IdEmployeeNavigation).WithMany(p => p.TokenEmployees)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenEmpl__idEmp__6E01572D");
+                .HasConstraintName("FK__TokenEmpl__idEmp__1BC821DD");
         });
 
         modelBuilder.Entity<TokenManager>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TokenMan__3213E83F9AA0BED7");
+            entity.HasKey(e => e.Id).HasName("PK__TokenMan__3213E83F52A9B041");
 
             entity.HasOne(d => d.IdManagerNavigation).WithMany(p => p.TokenManagers)
                 .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__TokenMana__idMan__70DDC3D8");
+                .HasConstraintName("FK__TokenMana__idMan__1EA48E88");
         });
 
         modelBuilder.Entity<TypeApp>(entity =>

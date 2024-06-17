@@ -1,0 +1,44 @@
+﻿@using OfficeMonitor.DTOs
+@model List<PlanDto>
+<div class="row-button-list">
+    <button onclick="openAddEmployeeModal()">Добавить тарифный план</button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Id</th>
+            <th>Наименование</th>
+            <th>Описание</th>
+            <th>BYN/месяц</th>
+            <th>BYN/год</th>
+            <th>Кол-во сотрудников</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int numberOfRow = 1;
+            foreach (PlanDto plan in Model)
+            {
+                <tr>
+                    <td>@numberOfRow.ToString()</td>
+                    <td>@plan.Id</td>
+                    <td>@plan.Name</td>
+                    <td>@plan.Description</td>
+                    <td>@plan.MonthCost</td>
+                    <td>@plan.Yearcost</td>
+                    <td>@plan.CountOfEmployees</td>
+                    <td>
+                        <div class="row-button-list">
+                            <button>Редактировать</button>
+                            <button>Удалить</button>
+                        </div>
+                    </td>
+                </tr>
+                numberOfRow++;
+            }
+        }
+    </tbody>
+</table>

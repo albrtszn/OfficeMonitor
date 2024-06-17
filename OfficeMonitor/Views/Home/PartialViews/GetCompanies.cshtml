@@ -1,0 +1,69 @@
+﻿@using OfficeMonitor.DTOs
+@model List<CompanyDto>
+<div class="row-button-list">
+    <button onclick="openAddEmployeeModal()">Добавить компанию</button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Id</th>
+            <th>Наименование</th>
+            <th>Описание</th>
+            <th>Почта</th>
+            <th>Баланс</th>
+            <th>Статус</th>
+            <th>Блокировка</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int numberOfRow = 1;
+            foreach (CompanyDto company in Model)
+            {
+                <tr>
+                    <td>@numberOfRow.ToString()</td>
+                    <td>@company.Id</td>
+                    <td>@company.Name</td>
+                    <td>@company.Description</td>
+                    <td>@company.Login</td>
+                    <td>@company.Balance</td>
+                    @if (@company.IsActive.Value)
+                    {
+                        <td>
+                            Активно
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            Доступ остановлен
+                        </td>
+                    }
+                    @if (@company.IsBanned.Value)
+                    {
+                        <td>
+                            Заблокирован
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            Не заблокирован
+                        </td>
+                    }
+                    <td>
+                        <div class="row-button-list">
+                            <button>Сотрудники</button>
+                            <button>Редактировать</button>
+                            <button>Удалить</button>
+                        </div>
+                    </td>
+                </tr>
+                numberOfRow++;
+            }
+        }
+    </tbody>
+</table>

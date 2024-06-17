@@ -10,5 +10,6 @@ namespace OfficeMonitor.DTOs
         public string Email { get; set; } = null!;
         [StringLength(150)]
         public string? Name { get; set; }
+        public bool? IsReplyed { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using OfficeMonitor.Models.Company;
 using OfficeMonitor.Models.Departments;
 using OfficeMonitor.Models.Employee;
 using OfficeMonitor.Models.Manager;
+using OfficeMonitor.Models.Request;
 using OfficeMonitor.Models.WorkTime;
 using OfficeMonitor.Services.MasterService;
 using Swashbuckle.AspNetCore.Annotations;
@@ -41,7 +42,29 @@ namespace OfficeMonitor.Controllers
             var plans = await ms.Plan.GetAllDtos();
             return PartialView("PartialViews/GetPlans", plans);
         }
-        
+
+        [HttpGet("AdminDashboard")]
+        public async Task<IActionResult> AdminDashboard()
+        {
+            return View("AdminDashboard");
+        }
+        [HttpGet("GetAdminInfo")]
+        public async Task<IActionResult> GetAdminInfo()
+        {
+            return PartialView("PartialViews/GetAdminInfo");
+        }
+        [HttpGet("GetCompanies")]
+        public async Task<IActionResult> GetCompanies()
+        {
+            var companies = await ms.Company.GetAllDtos();
+            return PartialView("PartialViews/GetCompanies", companies);
+        }
+        [HttpGet("GetAdminPlans")]
+        public async Task<IActionResult> GetAdminPlans()
+        {
+            var plans = await ms.Plan.GetAllDtos();
+            return PartialView("PartialViews/GetAdminPlans", plans);
+        }
         ///  End of Partial Gets Methods
         public IActionResult Index()
         {
@@ -51,6 +74,47 @@ namespace OfficeMonitor.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+        [HttpGet("CustomerRequest")]
+        public IActionResult CustomerRequest()
+        {
+            return PartialView("Modal/AddCustomerRequestContent");
+        }
+        [HttpPost("AddCustomerRequest")]
+        public async Task<IActionResult> AddCustomerRequest([FromForm] AddCustomerRequestModel model)
+        {
+            if (!ModelState.IsValid)
+                throw new BadRequestException("Невалидное значение");
+            if(await ms.Plan.GetById(model.IdPlan) == null)
+                throw new NotFoundException("Значение не нейдено");
+
+            if(await ms.CustomerRequest.GetByEmail(model.Email) != null)
+                throw new BadRequestException("Значение уже есть");
+            await ms.CustomerRequest.Save(new CustomerRequest
+            {
+                Email = model.Email,
+                Name = model.Name,
+                IsReplyed = true
+            });
+
+            if (await ms.Company.GetByEmail(model.Email) != null)
+                throw new BadRequestException("Значение уже есть");
+            ClaimRole? claimRole = (await ms.ClaimRole.GetCompanyRole());
+            await ms.Company.Save(new Company
+            {
+                IdClaimRole = claimRole.Id,
+                Login = model.Email,
+                Password = model.Password,
+                Name = model.Name,
+                Description = model.Description,
+                IdPlan = model.IdPlan,
+                Balance = 0,
+                IsActive = true,
+                IsBanned = false,
+                DateOfRegister = DateTime.Now,
+                DateOfEndPayment = DateTime.Now
+            });
+            return Ok();
         }
         [HttpGet("LogOut")]
         public IActionResult LogOut()

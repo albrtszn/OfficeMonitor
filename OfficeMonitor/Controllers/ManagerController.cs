@@ -51,7 +51,7 @@ namespace OfficeMonitor.Controllers
             string html = "";
             foreach (Department department in departments)
             {
-                html += $"<option value=\"{department.Id}\">{department.Name}</option>";
+                html += $"<option value=\"{department.Id}\">{department.Name}</option></br>";
             }
             return Content(html);
         }
@@ -76,6 +76,13 @@ namespace OfficeMonitor.Controllers
                     departmentDto = await ms.Department.GetDtoById(profileDto.IdDepartment.Value);
             }
 
+            var departmentsManager = (await ms.DepartmentManager.GetAll()).Where(x => x != null && x.IdManager != null && x.IdDepartment != null
+                                                                                            && x.IdManager.Equals(managerId));
+
+            var departments = (await ms.Department.GetAllDtos()).Where(x => x != null &&
+                                                                            departmentsManager.Any(a => a.IdManager != null && a.IdManager.Equals(managerId) &&
+                                                                                                      a.IdDepartment != null && a.IdDepartment.Equals(x.Id)));
+
             GetManagerModel managerModel = new GetManagerModel
             {
                 Id = managerDto.Id,
@@ -85,7 +92,8 @@ namespace OfficeMonitor.Controllers
                 Login = managerDto.Login,
                 Password = managerDto.Password,
                 Department = departmentDto,
-                Profile = profileDto
+                Profile = profileDto,
+                ManagedDepartments = departments.ToList()
             };
 
             return PartialView("PartialViews/ManagerInfo", managerModel);
@@ -478,6 +486,108 @@ namespace OfficeMonitor.Controllers
                                       $"totalDiverMinutes={totalDiverMinutes} totalIdleMinutes={totalIdleminutes}");
             }
             return PartialView("PartialViews/GetDepartmentStatistic", statistic);
+        }
+
+        [Authorize(Roles = "MANAGER")]
+        [HttpPost("GetEmployeeStatistic")]
+        public async Task<IActionResult> GetEmployeeStatistic([FromBody] GetEmployeeStatistic model)
+        {
+            if (!ModelState.IsValid)//id == null || !id.Id.HasValue || id.Id == 0)
+                throw new BadRequestException("Невалидное значение");
+            logger.LogInformation($"/GetEmployeeStatistic POST employeeId={model.EmployeeId}, dataRane={model.DateRange}");
+
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            int managerId = 0;
+            int.TryParse(claimsIdentity.FindFirst(x => x.Type.Contains("userId"))?.Value, out managerId);
+            var managerDto = await ms.Manager.GetDtoById(managerId);
+            if (managerDto == null)
+                throw new NotFoundException($"Менеджер не найден. id={managerId}");
+
+
+            EmployeeStatistic statistic = new EmployeeStatistic();
+            EmployeeDto employeeDto = await ms.Employee.GetDtoById(model.EmployeeId);
+            Profile profile = await ms.Profile.GetById(employeeDto.IdProfile.Value);
+            WorkTimeDto? workTimeOfDepartment = await ms.WorkTime.GetDtoByDepartmentId(profile.IdDepartment.Value);
+            statistic.Employee = employeeDto;
+            statistic.WorkTime = workTimeOfDepartment;
+
+
+            double minutesPerDay = (workTimeOfDepartment.EndTime - workTimeOfDepartment.StartTime).Value.TotalMinutes;
+            string[] dates = model.DateRange.Split(" - ");
+            DateOnly startWorkDate;
+            DateOnly endWorkDate;
+            if (workTimeOfDepartment != null && employeeDto != null &&
+                DateOnly.TryParse(dates[0], out startWorkDate) && DateOnly.TryParse(dates[1], out endWorkDate))
+            {
+                int totalMinutes = 0;
+                int totalWorkedMinutes = 0;
+                int totalIdleminutes = 0;
+                int totalDiverMinutes = 0;
+
+                DateOnly currentDay = startWorkDate;
+
+                double requiredMinutes = 0;
+                while (startWorkDate <= endWorkDate)
+                {
+                    if (!startWorkDate.DayOfWeek.Equals(DayOfWeek.Saturday) && !startWorkDate.DayOfWeek.Equals(DayOfWeek.Sunday))
+                        requiredMinutes += minutesPerDay;
+                    startWorkDate = startWorkDate.AddDays(1);
+                }
+
+                int countOfDay = 0;
+                while (currentDay <= endWorkDate)
+                {
+                    double employeeTotalMinutes = 0;
+                    int employeeWorkedMinutes = 0;
+                    int employeeIdleMinutes = 0;
+                    int employeeDiverMinutes = 0;
+                    foreach (Action action in (await ms.Action.GetAllByEmployeeInDay(employeeDto.Id, currentDay)).OrderBy(x => x.StartTime))
+                    {
+                        logger.LogInformation($"action id={action.Id} startTime={action.StartTime} endTime={action.EndTime}");
+                        int actionTime = (int)(action.EndTime.Value.ToTimeSpan().TotalMinutes - action.StartTime.Value.ToTimeSpan().TotalMinutes);
+                        App? app = await ms.App.GetById(action.IdApp.Value);
+                        if (app != null)
+                        {
+                            if (app.IdTypeApp == 1)
+                            {
+                                employeeWorkedMinutes += actionTime;
+                                totalWorkedMinutes += actionTime;
+                            }
+                            if (app.IdTypeApp == 2)
+                            {
+                                employeeDiverMinutes += actionTime;
+                                totalDiverMinutes += actionTime;
+                            }
+                            employeeTotalMinutes += actionTime;
+                            totalMinutes += actionTime;
+                        }
+                    }
+                    statistic.Actions.Add(new DayStatistic
+                    {
+                        Date = currentDay,
+                        WorkedPercent = Math.Round((double)(totalMinutes - totalIdleminutes - totalDiverMinutes) / requiredMinutes * 100, 2),
+                        IdlePercent = Math.Round((double)(totalMinutes - totalWorkedMinutes - totalDiverMinutes) / totalMinutes * 100, 2),
+                        DiversionPercent = Math.Round((double)(totalMinutes - totalWorkedMinutes - totalIdleminutes) / totalMinutes * 100, 2)
+                });
+                currentDay = currentDay.AddDays(1);
+                    countOfDay++;
+                }
+
+                statistic.RequiredTotalHours = new TimeSummaryModel
+                {
+                    Hours = ((int)requiredMinutes / 60).ToString(),
+                    Minutes = ((int)requiredMinutes % 60).ToString()
+                };
+                statistic.TotalHours = new TimeSummaryModel
+                {
+                    Hours = ((int)(totalMinutes / 60)).ToString(),
+                    Minutes = ((int)(totalMinutes % 60)).ToString()
+                };
+
+                logger.LogInformation($"/GetDepartmentStatistic totalMinutes={totalMinutes} totalWorkedMinutes={totalWorkedMinutes}" +
+                                      $"totalDiverMinutes={totalDiverMinutes} totalIdleMinutes={totalIdleminutes}");
+            }
+            return PartialView("PartialViews/GetEmployeeStatistic", statistic);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿@using OfficeMonitor.DTOs
-@model CompanyDto
+﻿@using OfficeMonitor.Models.Company
+@model GetCompanyModel
 
 <div id="firstContent" class="info-page">
     <div class="info-credentials">
@@ -30,8 +30,17 @@
             @{
                 if (Model != null && Model.IsActive != null)
                 {
-                    <div class="value">@Model.IsActive</div>
-                }
+                    if(Model.IsActive){
+                        <div class="value">
+                            Активно
+                        </div>
+                    }
+                    else{
+                        <div class="value">
+                            Заблокировано
+                        </div>
+                    }
+            }
                 else
                 {
                     <div class="value">-</div>
@@ -41,9 +50,9 @@
         <div class="info-card">
             <div class="name">Тариф</div>
             @{
-                if (Model != null && Model.IdPlan != null)
+                if (Model != null && Model.Plan != null)
                 {
-                    <div class="value">@Model.IdPlan</div>
+                    <div class="value">@Model.Plan.Name</div>
                 }
                 else
                 {
@@ -70,6 +79,19 @@
                 if (Model != null && Model.Name != null)
                 {
                     <div class="value">@Model.DateOfRegister</div>
+                }
+                else
+                {
+                    <div class="value">-</div>
+                }
+            }
+        </div>
+        <div class="info-card">
+            <div class="name">Дата окончания средств</div>
+            @{
+                if (Model != null && Model.Name != null)
+                {
+                    <div class="value">@Model.DateOfEndPayment</div>
                 }
                 else
                 {

@@ -1,7 +1,23 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
+<script>
+    function openCustomerRequestModal() {
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'GET',
+            url: '/CustomerRequest',
+            success: function (response) {
+                $("#modal-body").html(response);
+            },
+            error: function (response) {
+                alert("Ошибка" + response.responseText);
+            }
+        });
+        openModal();
+    }
+</script>
 <div class="banner">
     <div class="banner-content">
         <div class="banner-left">
@@ -13,7 +29,7 @@
                 С легкостью сможешь контролировать </br> рабочие часы и индекс
                 выгораемости прямо сейчас!
             </div>
-            <button class="banner-button" href="">Подать заявку</button>
+            <button class="banner-button" onclick="openCustomerRequestModal()">Подать заявку</button>
         </div>
         <img src="~/images/tablet(screen).png" class="tablet-image" alt="tablet" />
         <!--<div class="banner-right">
